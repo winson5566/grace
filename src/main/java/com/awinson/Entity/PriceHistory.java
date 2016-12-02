@@ -8,8 +8,8 @@ import java.util.Date;
 /**
  * Created by winson on 2016/12/2.
  */
-//@Entity
-//@Table(name="price_history")
+@Entity
+@Table(name="price_history")
 public class PriceHistory {
     private String id;
     private Integer type;
@@ -17,7 +17,7 @@ public class PriceHistory {
     private String sell;
     private Date updateTime;
 
-//    @Id
+    @Id
     public String getId() {
         return id;
     }

@@ -14,6 +14,6 @@ spring:
       max-active: 50  # Maximum number of active connections that can be allocated from this pool at the same time.
       test-on-borrow: true  # Validate the connection before borrowing it from the pool.
 
-#mybatis:
-#  mapperLocations: classpath:mapper/*.xml
-#  typeAliasesPackage: tk.mapper.model
+mybatis:
+  mapperLocations: classpath:mapper/*.xml
+  typeAliasesPackage: tk.mapper.model
