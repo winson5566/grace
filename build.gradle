@@ -1,0 +1,21 @@
+group 'com.awinson'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'war'
+
+sourceCompatibility = 1.5
+
+repositories {
+    maven { url "http://maven.aliyun.com/nexus/content/groups/public/"}
+    mavenCentral()
+}
+
+dependencies {
+    testCompile("junit:junit:4.11")
+    compile("org.springframework.boot:spring-boot-starter-web:1.4.2.RELEASE")
+    compile("org.springframework.boot:spring-boot-starter-data-jpa:1.4.2.RELEASE")
+    compile("mysql:mysql-connector-java:6.0.5")
+    compile group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-starter', version: '1.1.1'
+
+}
