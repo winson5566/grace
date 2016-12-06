@@ -3,7 +3,9 @@ package com.awinson.Entity;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * Created by winson on 2016/12/2.
@@ -12,10 +14,23 @@ import java.util.Date;
 @Table(name="price_history")
 public class PriceHistory {
     private String id;
-    private Integer type;
-    private String buy;
-    private String sell;
+    private Integer platform;
+    private Integer coin;
+    private BigDecimal sellPrice;
+    private BigDecimal buyPrice;
     private Date updateTime;
+
+    public PriceHistory() {
+    }
+
+    public PriceHistory(Integer platform, Integer coin, BigDecimal sellPrice, BigDecimal buyPrice) {
+        this.platform = platform;
+        this.coin = coin;
+        this.buyPrice = buyPrice;
+        this.sellPrice = sellPrice;
+        this.id= UUID.randomUUID().toString();
+        this.updateTime=new Date();
+    }
 
     @Id
     public String getId() {
@@ -26,28 +41,36 @@ public class PriceHistory {
         this.id = id;
     }
 
-    public Integer getType() {
-        return type;
+    public Integer getPlatform() {
+        return platform;
     }
 
-    public void setType(Integer type) {
-        this.type = type;
+    public void setPlatform(Integer platform) {
+        this.platform = platform;
     }
 
-    public String getBuy() {
-        return buy;
+    public Integer getCoin() {
+        return coin;
     }
 
-    public void setBuy(String buy) {
-        this.buy = buy;
+    public void setCoin(Integer coin) {
+        this.coin = coin;
     }
 
-    public String getSell() {
-        return sell;
+    public BigDecimal getSellPrice() {
+        return sellPrice;
     }
 
-    public void setSell(String sell) {
-        this.sell = sell;
+    public void setSellPrice(BigDecimal sellPrice) {
+        this.sellPrice = sellPrice;
+    }
+
+    public BigDecimal getBuyPrice() {
+        return buyPrice;
+    }
+
+    public void setBuyPrice(BigDecimal buyPrice) {
+        this.buyPrice = buyPrice;
     }
 
     public Date getUpdateTime() {

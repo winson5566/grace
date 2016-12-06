@@ -1,5 +1,6 @@
 package com.awinson.repository;
 
+import com.awinson.Entity.Platform;
 import com.awinson.Entity.PriceHistory;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -11,5 +12,6 @@ import javax.transaction.Transactional;
  */
 @Transactional
 @Repository
-public interface PriceHistoryRepository extends CrudRepository<PriceHistory,String> {
+public interface PlatFormRepository extends CrudRepository<Platform,String> {
+
 }
