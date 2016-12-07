@@ -14,8 +14,8 @@ import java.util.UUID;
 @Table(name="price_history")
 public class PriceHistory {
     private String id;
-    private Integer platform;
-    private Integer coin;
+    private String platform;
+    private String coin;
     private BigDecimal sellPrice;
     private BigDecimal buyPrice;
     private Date updateTime;
@@ -23,7 +23,7 @@ public class PriceHistory {
     public PriceHistory() {
     }
 
-    public PriceHistory(Integer platform, Integer coin, BigDecimal sellPrice, BigDecimal buyPrice) {
+    public PriceHistory(String platform, String coin, BigDecimal sellPrice, BigDecimal buyPrice) {
         this.platform = platform;
         this.coin = coin;
         this.buyPrice = buyPrice;
@@ -41,19 +41,19 @@ public class PriceHistory {
         this.id = id;
     }
 
-    public Integer getPlatform() {
+    public String getPlatform() {
         return platform;
     }
 
-    public void setPlatform(Integer platform) {
+    public void setPlatform(String platform) {
         this.platform = platform;
     }
 
-    public Integer getCoin() {
+    public String getCoin() {
         return coin;
     }
 
-    public void setCoin(Integer coin) {
+    public void setCoin(String coin) {
         this.coin = coin;
     }
 

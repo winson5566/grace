@@ -1,8 +1,6 @@
 package com.awinson.timer;
 
-import com.awinson.config.Dict;
 import com.awinson.service.PriceService;
-import javafx.scene.layout.BackgroundImage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,7 +14,7 @@ import java.util.Map;
  */
 @Component
 @EnableScheduling
-public class TestTimer {
+public class PriceTimer {
 
 
     @Autowired
@@ -28,6 +26,14 @@ public class TestTimer {
     @Scheduled(cron="0/5 * *  * * ? ")   //每5秒执行一次价格查询
     public void getPrice(){
         priceService.getAllPlatformPrice();
+    }
+
+    /**
+     * 计算各平台价差
+     */
+    @Scheduled(cron = "0/5 * *  * * ? ")
+    public void getPriceMargin(){
+        priceService.calculationMargin();
     }
 
 

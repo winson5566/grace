@@ -1,6 +1,7 @@
 package com.awinson.service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,5 +20,11 @@ public interface PriceService {
      * @param coinType
      * @return
      */
-    Map<String,BigDecimal>  getDepth(int platformId, int coinType);
+    Map<String,BigDecimal>  getDepth(String platformId, String coinType);
+
+
+    /**
+     * 从缓存中获取价格,对比,讲价差写入缓冲并出入数据库
+     */
+    List<Map<String,Object>> calculationMargin();
 }

@@ -1,37 +1,65 @@
 package com.awinson.controller;
 
-import com.awinson.Entity.PriceHistory;
-import com.awinson.repository.PriceHistoryRepository;
+import com.awinson.config.CacheManager;
 import com.awinson.service.PriceService;
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Date;
-import java.util.UUID;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Created by winson on 2016/12/2.
+ * Created by winson on 2016/12/7.
  */
 @Controller
+@RequestMapping("test")
 public class TestController {
 
     @Autowired
-    private PriceHistoryRepository priceHistoryRepository;
-
-    @Autowired
     private PriceService priceService;
-
-    @RequestMapping("test")
+    /**
+     * 获取所有缓存的测试url
+     * @return
+     */
+    @RequestMapping("getAllCache")
     @ResponseBody
-    public void test(){
-
+    public String getAllCache(){
+        Map<String,Object> map =  CacheManager.getCaches();
+        if (map!=null&&map.size()>0){
+            Gson gson = new Gson();
+            return gson.toJson(map);
+        }
+        return "Cache is empty!";
     }
 
-    @RequestMapping("test1")
+    /**
+     * 获取指定类型缓存的测试url
+     * @return
+     */
+    @RequestMapping("getAllCacheByType")
     @ResponseBody
-    public void test1(){
-        priceService.getDepth(0,0);
+    public String getAllCacheByType(String type){
+        Map<String,Object> map =  CacheManager.getCachesByType(type);
+        if (map!=null&&map.size()>0){
+            Gson gson = new Gson();
+            return gson.toJson(map);
+        }
+        return "Cache in type="+type+" is empty!";
+    }
+
+    /**
+     * 根据缓存中的价格计算margin的测试
+     * @return
+     */
+    @RequestMapping("test")
+    @ResponseBody
+    public String test(){
+        List<Map<String, Object>> marginList = priceService.calculationMargin();
+        Gson gson = new Gson();
+        return gson.toJson(marginList).toString();
     }
 }

@@ -54,4 +54,12 @@ public class PriceServiceTest {
     public void getDepthTest101(){
         Map<String,BigDecimal> map = priceService.getDepth(Dict.Platform.OKCOIN_CN,Dict.Coin.BTC);
     }
+
+    /**
+     * 计算价差
+     */
+    @Test
+    public void calculationMargin(){
+        priceService.calculationMargin();
+    }
 }
