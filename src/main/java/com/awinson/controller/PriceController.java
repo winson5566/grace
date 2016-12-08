@@ -1,6 +1,6 @@
 package com.awinson.controller;
 
-import com.awinson.config.CacheManager;
+import com.awinson.cache.CacheManager;
 import com.awinson.service.PriceService;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,29 +20,6 @@ public class PriceController {
     private PriceService priceService;
 
     /**
-     * 查找最新价格(code)
-     * @return
-     */
-    @RequestMapping("price_code")
-    @ResponseBody
-    public String getPriceCode() {
-        Map<String, Object> result = new HashMap();
-        Map<String, Object> map = CacheManager.getCachesByType("0");
-        if (map!=null&&map.size()>0){
-            result.put("code",1);
-            result.put("msg","价格获取成功");
-            result.put("datas",map);
-            Gson gson = new Gson();
-            return gson.toJson(result);
-        }else {
-            result.put("code",0);
-            result.put("msg","缓存中没有数据,请稍后重试");
-            Gson gson = new Gson();
-            return gson.toJson(result);
-        }
-    }
-
-    /**
      * 查找最新价格
      * @return
      */
@@ -54,10 +31,31 @@ public class PriceController {
         if (map!=null&&map.size()>0){
             result.put("code",1);
             result.put("msg","价格获取成功");
-            result.put("datas",map);
+            result.put("data",map);
         }else {
             result.put("code",0);
-            result.put("msg","缓存中没有数据,请稍后重试");
+            result.put("msg","缓存中没有价格数据,请稍后重试");
+        }
+        Gson gson = new Gson();
+        return gson.toJson(result);
+    }
+
+    /**
+     * 查找最新价差
+     * @return
+     */
+    @RequestMapping("price_margin")
+    @ResponseBody
+    public String getPriceMargin() {
+        Map<String, Object> result = new HashMap();
+        Map<String, Object> map = CacheManager.getCachesByType("1");
+        if (map!=null&&map.size()>0){
+            result.put("code",1);
+            result.put("msg","价差获取成功");
+            result.put("data",map);
+        }else {
+            result.put("code",0);
+            result.put("msg","缓存中没有价差数据,请稍后重试");
         }
         Gson gson = new Gson();
         return gson.toJson(result);

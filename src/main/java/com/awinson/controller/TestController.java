@@ -1,11 +1,10 @@
 package com.awinson.controller;
 
-import com.awinson.config.CacheManager;
+import com.awinson.cache.CacheManager;
 import com.awinson.service.PriceService;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -33,7 +32,7 @@ public class TestController {
             Gson gson = new Gson();
             return gson.toJson(map);
         }
-        return "Cache is empty!";
+        return "cache is empty!";
     }
 
     /**
@@ -48,7 +47,7 @@ public class TestController {
             Gson gson = new Gson();
             return gson.toJson(map);
         }
-        return "Cache in type="+type+" is empty!";
+        return "cache in type="+type+" is empty!";
     }
 
     /**

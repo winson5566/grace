@@ -1,8 +1,10 @@
 package com.awinson.service;
 
+import com.awinson.cache.CacheManager;
 import com.awinson.Entity.PriceHistory;
 import com.awinson.Entity.PriceMargin;
 import com.awinson.config.*;
+import com.awinson.dictionary.Dict;
 import com.awinson.repository.PriceHistoryRepository;
 import com.awinson.repository.PriceMarginRepository;
 import com.awinson.utils.HttpUtils;

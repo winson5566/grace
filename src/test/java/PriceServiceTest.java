@@ -1,5 +1,5 @@
 import com.awinson.SpringBootStart;
-import com.awinson.config.Dict;
+import com.awinson.dictionary.Dict;
 import com.awinson.service.PriceService;
 import org.junit.Test;
 import org.junit.runner.RunWith;

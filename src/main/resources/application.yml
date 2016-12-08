@@ -2,14 +2,43 @@
 server:
   port: 8080
 
+#默认使用dev配置
+#java -jar xxx.jar --spring.profiles.active=test
 spring:
-  #DATASOURCE
+  profiles:
+    active: dev
+
+---
+# 开发环境配置
+spring:
+  profiles: dev
   datasource:
     url: jdbc:mysql://120.25.192.71:3306/grace
     username: root
     password: w5566
     driver-class-name: com.mysql.jdbc.Driver
     tomcat:
-      max-wait: 10000 # Number of ms to wait before throwing an exception if no connection is available
-      max-active: 50  # Maximum number of active connections that can be allocated from this pool at the same time.
-      test-on-borrow: true  # Validate the connection before borrowing it from the pool.
+      max-wait: 10000
+      max-active: 50
+      test-on-borrow: true
+# Server settings
+server:
+  port: 8080
+
+
+---
+# 测试环境配置
+spring:
+  profiles: test
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/grace
+    username: root
+    password: w5566
+    driver-class-name: com.mysql.jdbc.Driver
+    tomcat:
+      max-wait: 10000
+      max-active: 50
+      test-on-borrow: true
+# Server settings
+server:
+  port: 80

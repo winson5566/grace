@@ -1,4 +1,4 @@
-package com.awinson.config;
+package com.awinson.dictionary;
 
 /**
  * Created by winson on 2016/12/6.
@@ -17,14 +17,10 @@ public class Dict {
     public static class Type{
         public static final String price = "0";     //价格
         public static final String margin = "1";     //价差
-        public static final String update_time = "2";     //更新时间
     }
     public static class direction{
         public static final String buy = "0";     //买
         public static final String sell = "1";     //卖
-    }
-    public static class regular{
-        public static final String price = "0\\d{4}";     //价格
     }
 
 }
