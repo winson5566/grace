@@ -1,4 +1,4 @@
-package com.awinson.controller;
+package com.awinson.restful;
 
 import com.awinson.cache.CacheManager;
 import com.awinson.service.PriceService;
@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +15,7 @@ import java.util.Map;
 /**
  * Created by winson on 2016/12/7.
  */
-@Controller
+@RestController
 public class PriceController {
     @Autowired
     private PriceService priceService;
@@ -24,7 +25,6 @@ public class PriceController {
      * @return
      */
     @RequestMapping("price")
-    @ResponseBody
     public String getPrice() {
         Map<String, Object> result = new HashMap();
         Map<String, Object> map = CacheManager.getCachesByType("0");
@@ -45,7 +45,6 @@ public class PriceController {
      * @return
      */
     @RequestMapping("price_margin")
-    @ResponseBody
     public String getPriceMargin() {
         Map<String, Object> result = new HashMap();
         Map<String, Object> map = CacheManager.getCachesByType("1");

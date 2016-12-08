@@ -1,4 +1,4 @@
-package com.awinson.controller;
+package com.awinson.restful;
 
 import com.awinson.cache.CacheManager;
 import com.awinson.service.PriceService;
@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
@@ -14,7 +15,7 @@ import java.util.Map;
 /**
  * Created by winson on 2016/12/7.
  */
-@Controller
+@RestController
 @RequestMapping("test")
 public class TestController {
 
@@ -25,7 +26,6 @@ public class TestController {
      * @return
      */
     @RequestMapping("getAllCache")
-    @ResponseBody
     public String getAllCache(){
         Map<String,Object> map =  CacheManager.getCaches();
         if (map!=null&&map.size()>0){
@@ -40,7 +40,6 @@ public class TestController {
      * @return
      */
     @RequestMapping("getAllCacheByType")
-    @ResponseBody
     public String getAllCacheByType(String type){
         Map<String,Object> map =  CacheManager.getCachesByType(type);
         if (map!=null&&map.size()>0){
@@ -55,7 +54,6 @@ public class TestController {
      * @return
      */
     @RequestMapping("test")
-    @ResponseBody
     public String test(){
         List<Map<String, Object>> marginList = priceService.calculationMargin();
         Gson gson = new Gson();
