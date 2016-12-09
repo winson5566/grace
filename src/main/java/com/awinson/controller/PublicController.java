@@ -28,6 +28,15 @@ public class PublicController {
     }
 
     /**
+     * 查看公共模板common
+     * @return
+     */
+    @RequestMapping("/common")
+    public String common() {
+        return "common";
+    }
+
+    /**
      * 登陆页面
      * @return
      */

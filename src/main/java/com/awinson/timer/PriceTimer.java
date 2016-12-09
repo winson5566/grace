@@ -16,7 +16,6 @@ import java.util.Map;
 @EnableScheduling
 public class PriceTimer {
 
-
     @Autowired
     private PriceService priceService;
 
