@@ -28,33 +28,31 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Grace</a>
+            <a class="navbar-brand" href="/">Grace</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <div th:if="${#httpServletRequest.remoteUser == null}">
                 <form class="navbar-form navbar-right" role="form" action="/login" method="post">
                     <div class="form-group">
-                        <input type="text" placeholder="用户名" class="form-control" name="username"/>
+                        <input type="text" placeholder="username" class="form-control" name="username"/>
                     </div>
                     <div class="form-group">
-                        <input type="password" placeholder="密码" class="form-control" name="password"/>
+                        <input type="password" placeholder="password" class="form-control" name="password"/>
                     </div>
-                    <button type="submit" class="btn btn-success">登录</button>
+                    <button type="submit" class="btn btn-success">Login</button>
                 </form>
              </div>
             <div th:if="${#httpServletRequest.remoteUser != null}">
                 <form class="navbar-form navbar-right" action="/logout" method="post">
-                    <button type="submit" class="btn btn-success">注销</button>
+                    <button type="submit" class="btn btn-success">Logout</button>
                 </form>
-                <!--<p th:text="${#httpServletRequest.remoteUser}">-->
-                <!--sample_user-->
-                <!--</p>-->
+                <h2  class="navbar-form navbar-right" th:text="${#httpServletRequest.remoteUser}">Name</h2>
             </div>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#">行情</a></li>
-                <li><a href="#">设置</a></li>
-                <li><a href="#">后台</a></li>
-                <li><a href="#">帮助</a></li>
+                <!--<li><a href="#">行情</a></li>-->
+                <!--<li><a href="#">设置</a></li>-->
+                <!--<li><a href="#">后台</a></li>-->
+                <!--<li><a href="#">帮助</a></li>-->
             </ul>
 
         </div>

@@ -21,7 +21,6 @@ public class UserController {
      */
     @RequestMapping("")
     public String helloUser(HttpServletRequest request, Model model) {
-        model.addAttribute("user",request.getRemoteUser());
         return "/user/index";
     }
 }
