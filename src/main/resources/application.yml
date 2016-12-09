@@ -8,6 +8,7 @@ spring:
   profiles:
     active: dev
 
+
 ---
 # 开发环境配置
 spring:
@@ -21,6 +22,7 @@ spring:
       max-wait: 10000
       max-active: 50
       test-on-borrow: true
+
 # Server settings
 server:
   port: 8080
