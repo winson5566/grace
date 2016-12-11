@@ -11,11 +11,10 @@ import javax.persistence.Table;
 @Table(name = "sys_user")
 public class User {
     private String id;
-    private String usercode;
     private String username;
     private String password;
     private String salt;
-    private String lockded;
+    private String enable;
 
     @Id
     public String getId() {
@@ -24,14 +23,6 @@ public class User {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getUsercode() {
-        return usercode;
-    }
-
-    public void setUsercode(String usercode) {
-        this.usercode = usercode;
     }
 
     public String getUsername() {
@@ -58,11 +49,11 @@ public class User {
         this.salt = salt;
     }
 
-    public String getLockded() {
-        return lockded;
+    public String getEnable() {
+        return enable;
     }
 
-    public void setLockded(String lockded) {
-        this.lockded = lockded;
+    public void setEnable(String enable) {
+        this.enable = enable;
     }
 }

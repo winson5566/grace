@@ -20,7 +20,18 @@ public class UserController {
      * @return
      */
     @RequestMapping("")
-    public String helloUser(HttpServletRequest request, Model model) {
+    public String index(HttpServletRequest request, Model model) {
         return "/user/index";
+    }
+
+    /**
+     * 设置个人参数
+     * @param request
+     * @param model
+     * @return
+     */
+    @RequestMapping("setting")
+    public String setting(HttpServletRequest request, Model model) {
+        return "/user/setting";
     }
 }
