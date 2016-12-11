@@ -21,10 +21,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http
                 .authorizeRequests()
-                    .antMatchers("/css/**", "/").permitAll()
-                    .antMatchers("/u/**").hasRole("USER")
-                    .antMatchers("/admin/**").hasRole("ADMIN")
-                    .and()
+                .antMatchers("/css/**").permitAll()
+                .antMatchers("/u/**").hasRole("NORMAL")
+                .antMatchers("/admin/**").hasRole("ADMIN")
+                .and()
                 .formLogin()
                     .loginPage("/login")
                     .permitAll()
@@ -43,11 +43,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
-
         auth.jdbcAuthentication().dataSource(dataSource)
                 .usersByUsernameQuery(
-                        "select username,password, enabled from users where username=?")
+                        "select username as principal,password as credentials,locked " +
+                                "from sys_user " +
+                                "where username=?")
                 .authoritiesByUsernameQuery(
-                        "select username, role from user_roles where username=?");
+                        "SELECT u.username as principal,r.name as role " +
+                                "from sys_user u " +
+                                "INNER JOIN sys_user_role ur ON u.id = ur.sys_user_id " +
+                                "INNER JOIN sys_role r ON ur.sys_role_id = r.id " +
+                                "WHERE u.username=?")
+                .rolePrefix("ROLE_");
     }
+
+
 }

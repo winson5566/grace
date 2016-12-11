@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 
 <!--公共头部-->
 <head th:fragment="head">
@@ -32,6 +32,9 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <div th:if="${#httpServletRequest.remoteUser == null}">
+                <form class="navbar-form navbar-right" role="form" action="/register" method="get">
+                    <button type="submit" class="btn btn-success">Sign up</button>
+                </form>
                 <form class="navbar-form navbar-right" role="form" action="/login" method="post">
                     <div class="form-group">
                         <input type="text" placeholder="username" class="form-control" name="username"/>
@@ -39,12 +42,12 @@
                     <div class="form-group">
                         <input type="password" placeholder="password" class="form-control" name="password"/>
                     </div>
-                    <button type="submit" class="btn btn-success">Login</button>
+                    <button type="submit" class="btn btn-success">Sign in</button>
                 </form>
              </div>
             <div th:if="${#httpServletRequest.remoteUser != null}">
                 <form class="navbar-form navbar-right" action="/logout" method="post">
-                    <button type="submit" class="btn btn-success">Logout</button>
+                    <button type="submit" class="btn btn-success">Sign out</button>
                 </form>
                 <h2  class="navbar-form navbar-right" th:text="${#httpServletRequest.remoteUser}">Name</h2>
             </div>
