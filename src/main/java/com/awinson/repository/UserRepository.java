@@ -18,5 +18,4 @@ import java.util.stream.Stream;
 @Repository
 public interface UserRepository extends CrudRepository<User,String> {
     User findByUsername(String username);
-
 }

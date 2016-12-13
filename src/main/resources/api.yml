@@ -6,6 +6,9 @@ okcoin:
     ltc:
       ticker: https://www.okcoin.cn/api/v1/ticker.do?symbol=ltc_cny
       depth: https://www.okcoin.cn/api/v1/depth.do?symbol=ltc_cny
+    userinfo: https://www.okcoin.cn/api/v1/userinfo.do
+  un:
+    userinfo: https://www.okcoin.com/api/v1/userinfo.do
 
 bitvc:
   cn:

@@ -27,8 +27,6 @@ public class PriceServiceImpl implements PriceService {
 
     private static final Logger logger = LoggerFactory.getLogger(PriceServiceImpl.class);
     @Autowired
-    private HttpUtils httpUtils;
-    @Autowired
     private OkcoinCnBtcConfig okcoinChinaBtcConfig;
     @Autowired
     private OkcoinCnLtcConfig okcoinChinaLtcConfig;
@@ -76,7 +74,7 @@ public class PriceServiceImpl implements PriceService {
         //发送GET请求,返回json文本
         String json = null;
         try {
-            json = httpUtils.doGet(url);
+            json = HttpUtils.doGet(url);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,5 +1,6 @@
 package com.awinson.utils;
 
+import com.google.gson.Gson;
 import okhttp3.*;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +14,19 @@ import java.util.Map;
 @Service
 public class HttpUtils {
 
-    final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    final static MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-    OkHttpClient client = new OkHttpClient();
+    private static OkHttpClient client = new OkHttpClient();
 
-    public String doGet(String url) throws IOException {
-        Map<String,Object> map  = new HashMap();
+    /**
+     * 不带参数的GET请求
+     *
+     * @param url
+     * @return
+     * @throws IOException
+     */
+    public static String doGet(String url) throws IOException {
+        Map<String, Object> map = new HashMap();
         Request request = new Request.Builder()
                 .url(url)
                 .build();
@@ -27,14 +35,24 @@ public class HttpUtils {
         return response.body().string();
     }
 
-    String post(String url, String json) throws IOException {
-        RequestBody body = RequestBody.create(JSON, json);
+    public static String doPost(String url, Map<String, String> params) throws IOException {
+        FormBody.Builder formBody = new FormBody.Builder();
+        for (Map.Entry<String, String> map : params.entrySet()) {
+            String key = map.getKey().toString();
+            String value = "";
+            if (map.getValue() != null) {
+                value = map.getValue();
+            }
+            formBody.add(key, value);
+        }
+        RequestBody requestBody = formBody.build();
         Request request = new Request.Builder()
                 .url(url)
-                .post(body)
+                .post(requestBody)
                 .build();
         Response response = client.newCall(request).execute();
         return response.body().string();
     }
+
 
 }

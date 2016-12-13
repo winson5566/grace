@@ -1,5 +1,6 @@
 package com.awinson.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -9,9 +10,9 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "okcoin.cn.btc",locations = "classpath:api.yml")
 public class OkcoinCnBtcConfig {
+
     private String ticker;
     private String depth;
-
 
     public String getTicker() {
         return ticker;

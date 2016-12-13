@@ -1,13 +1,17 @@
-import com.awinson.Entity.User;
+import com.awinson.Entity.UserApi;
 import com.awinson.SpringBootStart;
+import com.awinson.repository.UserApiRepository;
 import com.awinson.repository.UserRepository;
-import org.assertj.core.util.Compatibility;
+import com.awinson.service.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by 10228 on 2016/12/11.
@@ -21,9 +25,27 @@ public class UserServiceTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserApiRepository userApiRepository;
+
+    @Autowired
+    private  UserService userService;
     @Test
-    public void getLastUserTest(){
-        User user= userRepository.findOneByUsercodeDesc();
-        System.out.println(user.getUsercode());
+    public void savaApiKeyTest(){
+        UserApi userApi = new UserApi();
+        userApi.setId(UUID.randomUUID().toString());
+        userApi.setApi("123");
+        userApi.setUserId("123");
+        userApi.setApiType("0");
+        userApi.setPlatform("00");
+        userApiRepository.save(userApi);
     }
+
+//    @Test
+//    public void getUserAllApiTest(){
+//        List<UserApi> list = userService.getUserAllApi();
+//        for (UserApi userApi: list) {
+//            System.out.println(userApi.getApi());
+//        }
+//    }
 }

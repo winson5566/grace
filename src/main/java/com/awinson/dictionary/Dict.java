@@ -22,5 +22,8 @@ public class Dict {
         public static final String buy = "0";     //买
         public static final String sell = "1";     //卖
     }
-
+    public static class key{
+        public static final String api = "0";     //apiKey
+        public static final String secret = "1";     //secretKey
+    }
 }
