@@ -1,8 +1,10 @@
 package com.awinson.controller;
 
 import com.awinson.Entity.UserApi;
+import com.awinson.cache.CacheManager;
 import com.awinson.dictionary.Dict;
 import com.awinson.repository.UserApiRepository;
+import com.awinson.service.BitvcService;
 import com.awinson.service.OkcoinService;
 import com.awinson.service.UserService;
 import com.awinson.valid.ApiKeyValid;
@@ -33,6 +35,9 @@ public class UserController {
 
     @Autowired
     private OkcoinService okcoinService;
+
+    @Autowired
+    private BitvcService bitvcService;
 
     /**
      * 用户的主页
@@ -82,10 +87,24 @@ public class UserController {
         okcoinUn.put("platform", "Okcoin国际站");
         map.put("01",okcoinUn);
 
-        //TODO 获取BITVC资产信息
+        //获取Bitvc资产信息
+        Map<String, Object> bitvcUn = bitvcService.getSpotUserinfo(Dict.Platform.BITVC_CN);
+        bitvcUn.put("platform", "Bitvc中国站");
+        map.put("10",bitvcUn);
 
         model.addAttribute("map", map);
         return "/user/account";
+    }
+
+    @RequestMapping("price")
+    public String priceInfo(Model model){
+        Map<String, Object> map = new HashMap();
+        Map<String, Object> priceMap = CacheManager.getCachesByType("0");
+        Map<String, Object> marginMap = CacheManager.getCachesByType("1");
+        map.put("priceMap",priceMap);
+        map.put("marginMap",marginMap);
+        model.addAttribute("map", map);
+        return "/user/price";
     }
 
 }

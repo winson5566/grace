@@ -7,47 +7,35 @@
     <title>Login</title>
     <!-- 新 Bootstrap 核心 CSS 文件 -->
     <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css"/>
-    <style type="text/css">
-        .form-signin{
-            max-width: 330px;
-            padding: 3px;
-            margin: 0 auto;
-        }
-        input{
-            margin-bottom: 5px;
-        }
-        .form-control{
-            height: 45px ;
-        }
-    </style>
+    <link rel="stylesheet"  href="/css/style.css" />
 </head>
 
-<body>
-<div class="container">
-    <div class="col-md-4 col-md-offset-4">
-        <div th:fragment="login">
-            <form class="form-signin" action="/login" method="post">
-                <h2 class="form-signin-heading">Sign in to Grace</h2>
-                <div class="starter-template">
-                    <div><input class="form-control" type="text" name="username" placeholder="Username"/></div>
-                    <div><input class="form-control" type="password" name="password" placeholder="Password"/></div>
-                    <div class="checkbox">
-                        <label>
-                            <input type="checkbox" value="remember-me"/>
-                            Remember Me </label>
-                    </div>
-                    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+<body id="index">
+    <div class="container margintop300" >
+        <div class="col-md-4 col-md-offset-4 background-white-97">
+            <div th:fragment="login">
+                <form class="form-signin login-form-signin" action="/login" method="post">
+                    <h2 class="form-signin-heading">Sign in to Grace</h2>
+                    <div class="starter-template">
+                        <div><input class="form-control  login-form-control" type="text" name="username" placeholder="Username"/></div>
+                        <div><input class="form-control login-form-control" type="password" name="password" placeholder="Password"/></div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" value="remember-me"/>
+                                Remember Me </label>
+                        </div>
+                        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
 
-                </div>
-            </form>
-            <form class="form-signin" action="/register" method="post">
-                <div class="starter-template">
-                    <button class="btn btn-lg btn-default btn-block" type="submit">Sign up</button>
-                </div>
-            </form>
+                    </div>
+                </form>
+                <form class="form-signin login-form-signin" action="/register" method="post">
+                    <div class="starter-template">
+                        <button class="btn btn-lg btn-default btn-block" type="submit">Sign up</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
 <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
