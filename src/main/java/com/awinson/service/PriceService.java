@@ -1,5 +1,7 @@
 package com.awinson.service;
 
+import javafx.beans.binding.ObjectExpression;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +27,8 @@ public interface PriceService {
 
     /**
      * 从缓存中获取价格,对比,讲价差写入缓冲并出入数据库
+     * @return
      */
     List<Map<String,Object>> calculationMargin();
+
 }

@@ -115,5 +115,10 @@ public class PublicController {
         return model;
     }
 
+    @RequestMapping(value="ws")
+    public String wsTest(){
+        return "ws";
+    }
+
 
 }

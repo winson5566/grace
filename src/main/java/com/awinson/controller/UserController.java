@@ -15,10 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Created by winson on 2016/12/8.
@@ -101,8 +98,19 @@ public class UserController {
         Map<String, Object> map = new HashMap();
         Map<String, Object> priceMap = CacheManager.getCachesByType("0");
         Map<String, Object> marginMap = CacheManager.getCachesByType("1");
-        map.put("priceMap",priceMap);
-        map.put("marginMap",marginMap);
+
+        Map<String,Object> priceMapNew = new HashMap();
+        for(Map.Entry<String,Object> entry : priceMap.entrySet()){
+            priceMapNew.put("p"+entry.getKey(),entry.getValue());
+        }
+
+        Map<String,Object> marginMapNew = new HashMap();
+        for(Map.Entry<String,Object> entry : marginMap.entrySet()){
+            marginMapNew.put("m"+entry.getKey(),entry.getValue());
+        }
+
+        map.put("priceMap",priceMapNew);
+        map.put("marginMap",marginMapNew);
         model.addAttribute("map", map);
         return "/user/price";
     }

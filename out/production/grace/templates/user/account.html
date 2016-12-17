@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--公共head-->
+<head th:include="common :: head"/>
+<body>
+<!--公共title+bar-->
+<span th:include="common :: frame"></span>
+
+<div class="container-fluid">
+    <span th:each="infos:${map}">
+        <span th:if="${infos.key}=='00' or ${infos.key}=='01' ">
+            <span th:if="${infos.value.result.result}==true">
+                <div class="row">
+                    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                        <h2 th:text="${infos.value.platform}" class="border-bottom">平台名</h2>
+                        <!--<p th:text="${infos.value}">数据</p>-->
+                        <span th:with="funds=${infos.value.result.info.funds}">
+                            <div class="col-md-3">
+
+                                <!--**********************************账户余额free**********************************-->
+                                <table class="table table-bordered" th:with="free=${funds.free}">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="3">账户余额</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>BTC</td>
+                                            <td th:text="${free.btc}"></td>
+                                            <td>฿</td>
+                                        </tr>
+                                        <tr>
+                                            <td>LTC</td>
+                                            <td th:text="${free.ltc}"></td>
+                                            <td>Ł</td>
+                                        </tr>
+                                         <tr>
+                                            <span th:if="${#maps.containsKey(free,'cny')}">
+                                                <td>CNY</td>
+                                                 <td th:text="${free.cny}"></td>
+                                                <td>￥</td>
+                                            </span>
+                                            <span th:if="${#maps.containsKey(free,'usd')}">
+                                                <td>USD</td>
+                                                 <td th:text="${free.usd}"></td>
+                                                <td>$</td>
+                                            </span>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!--**********************************借贷borrow**********************************-->
+                             <div th:if="${#maps.containsKey(funds, 'borrow')}" class="col-md-3">
+                                <table class="table table-bordered" th:with="borrow=${funds.borrow}">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="3">账户借款信息</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>BTC</td>
+                                            <td th:text="${borrow.btc}"></td>
+                                            <td>฿</td>
+                                        </tr>
+                                        <tr>
+                                            <td>LTC</td>
+                                            <td th:text="${borrow.ltc}"></td>
+                                            <td>Ł</td>
+                                        </tr>
+                                         <tr>
+                                            <span th:if="${#maps.containsKey(borrow,'cny')}">
+                                                <td>CNY</td>
+                                                 <td th:text="${borrow.cny}"></td>
+                                                <td>￥</td>
+                                            </span>
+                                            <span th:if="${#maps.containsKey(borrow,'usd')}">
+                                                <td>USD</td>
+                                                 <td th:text="${borrow.usd}"></td>
+                                                <td>$</td>
+                                            </span>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!--**********************************资产信息asset**********************************-->
+                            <div class="col-md-3">
+                                 <table class="table table-bordered" th:with="asset=${funds.asset}">
+                                     <thead>
+                                        <tr>
+                                            <th colspan="3">资产信息</th>
+                                        </tr>
+                                    </thead>
+                                     <tbody>
+                                        <tr>
+                                            <td>净资产</td>
+                                            <td th:text="${asset.net}"></td>
+                                            <span th:if="${#maps.containsKey(funds.freezed,'cny')}">
+                                                 <td>￥</td>
+                                             </span>
+                                            <span th:if="${#maps.containsKey(funds.freezed,'usd')}">
+                                                 <td>$</td>
+                                             </span>
+                                        </tr>
+                                        <tr>
+                                            <td>总资产</td>
+                                            <td th:text="${asset.total}"></td>
+                                            <span th:if="${#maps.containsKey(funds.freezed,'cny')}">
+                                                 <td>￥</td>
+                                             </span>
+                                            <span th:if="${#maps.containsKey(funds.freezed,'usd')}">
+                                                 <td>$</td>
+                                             </span>
+                                        </tr>
+                                     </tbody>
+                                </table>
+                            </div>
+
+                            <!--**********************************冻结信息freezed**********************************-->
+                            <div class="col-md-3">
+                                 <table class="table table-bordered" th:with="freezed=${funds.freezed}">
+                                     <thead>
+                                    <tr>
+                                        <th colspan="3">冻结资产</th>
+                                    </tr>
+                                    </thead>
+                                     <tbody>
+                                        <tr>
+                                            <td>BTC</td>
+                                            <td th:text="${freezed.btc}"></td>
+                                            <td>฿</td>
+                                        </tr>
+                                        <tr>
+                                            <td>LTC</td>
+                                            <td th:text="${freezed.ltc}"></td>
+                                            <td>Ł</td>
+                                        </tr>
+                                        <tr>
+                                            <span th:if="${#maps.containsKey(freezed,'cny')}">
+                                                <td>CNY</td>
+                                                 <td th:text="${freezed.cny}"></td>
+                                                <td>￥</td>
+                                            </span>
+                                            <span th:if="${#maps.containsKey(freezed,'usd')}">
+                                                <td>USD</td>
+                                                 <td th:text="${freezed.usd}"></td>
+                                                <td>$</td>
+                                            </span>
+                                        </tr>
+                                     </tbody>
+                                </table>
+                            </div>
+                        </span>
+                    </div>
+                </div>
+             </span>
+        </span>
+         <span th:if="${infos.key}=='10'">
+            <div class="row">
+                <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                    <h2 th:text="${infos.value.platform}" class="border-bottom">平台名</h2>
+                    <!--<p th:text="${infos.value}">数据</p>-->
+                    <span th:with="funds=${infos.value.result}">
+                        <div class="col-md-3">
+                            <!--**********************************账户余额free**********************************-->
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th colspan="3">账户余额</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>BTC</td>
+                                        <td th:text="${funds.available_btc}"></td>
+                                        <td>฿</td>
+                                    </tr>
+                                    <tr>
+                                        <td>LTC</td>
+                                        <td th:text="${funds.available_ltc}"></td>
+                                        <td>Ł</td>
+                                    </tr>
+                                    <tr>
+                                        <td>CNY</td>
+                                        <td th:text="${funds.available_cny}"></td>
+                                        <td>￥</td>
+                                    </tr>
+                                    <tr>
+                                        <td>USD</td>
+                                        <td th:text="${funds.available_usd}"></td>
+                                        <td>$</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!--**********************************借贷borrow**********************************-->
+                         <div class="col-md-3">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th colspan="3">账户借款信息</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>BTC</td>
+                                        <td th:text="${funds.loan_btc}"></td>
+                                        <td>฿</td>
+                                    </tr>
+                                    <tr>
+                                        <td>LTC</td>
+                                        <td th:text="${funds.loan_ltc}"></td>
+                                        <td>Ł</td>
+                                    </tr>
+                                     <tr>
+                                        <td>CNY</td>
+                                        <td th:text="${funds.loan_cny}"></td>
+                                        <td>￥</td>
+                                    </tr>
+                                    <tr>
+                                        <td>USD</td>
+                                        <td th:text="${funds.loan_usd}"></td>
+                                        <td>$</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!--**********************************资产信息asset**********************************-->
+                        <div class="col-md-3">
+                             <table class="table table-bordered">
+                                 <thead>
+                                    <tr>
+                                        <th colspan="3">资产信息</th>
+                                    </tr>
+                                </thead>
+                                 <tbody>
+                                    <tr>
+                                        <td>净资产</td>
+                                        <td th:text="${funds.net_asset}"></td>
+                                        <td>￥</td>
+                                    </tr>
+                                    <tr>
+                                        <td>总资产</td>
+                                        <td th:text="${funds.total}"></td>
+                                        <td>￥</td>
+                                    </tr>
+                                 </tbody>
+                            </table>
+                        </div>
+
+                        <!--**********************************冻结信息freezed**********************************-->
+                        <div class="col-md-3">
+                             <table class="table table-bordered">
+                                 <thead>
+                                <tr>
+                                    <th colspan="3">冻结资产</th>
+                                </tr>
+                                </thead>
+                                 <tbody>
+                                   <tr>
+                                        <td>BTC</td>
+                                        <td th:text="${funds.frozen_btc}"></td>
+                                        <td>฿</td>
+                                    </tr>
+                                    <tr>
+                                        <td>LTC</td>
+                                        <td th:text="${funds.frozen_ltc}"></td>
+                                        <td>Ł</td>
+                                    </tr>
+                                     <tr>
+                                        <td>CNY</td>
+                                        <td th:text="${funds.frozen_cny}"></td>
+                                        <td>￥</td>
+                                    </tr>
+                                    <tr>
+                                        <td>USD</td>
+                                        <td th:text="${funds.frozen_usd}"></td>
+                                        <td>$</td>
+                                    </tr>
+                                 </tbody>
+                            </table>
+                        </div>
+                    </span>
+                </div>
+            </div>
+         </span>
+    </span>
+</div>
+
+
+<!--公共foot-->
+<span th:include="common :: foot"></span>
+</body>
+</html>

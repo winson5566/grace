@@ -194,6 +194,7 @@ public class PriceServiceImpl implements PriceService {
                 }
             }
         }
+        logger.debug(String.valueOf( compareList.size()));
         return compareList;
     }
 
@@ -313,5 +314,7 @@ public class PriceServiceImpl implements PriceService {
         }
         return null;
     }
+
+
 }
 
