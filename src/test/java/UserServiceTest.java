@@ -3,6 +3,7 @@ import com.awinson.SpringBootStart;
 import com.awinson.repository.UserApiRepository;
 import com.awinson.repository.UserRepository;
 import com.awinson.service.UserService;
+import com.awinson.service.WebSocketServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -30,6 +30,9 @@ public class UserServiceTest {
 
     @Autowired
     private  UserService userService;
+
+    @Autowired
+    private WebSocketServiceImpl greetingService;
     @Test
     public void savaApiKeyTest(){
         UserApi userApi = new UserApi();
@@ -48,4 +51,5 @@ public class UserServiceTest {
 //            System.out.println(userApi.getApi());
 //        }
 //    }
+
 }

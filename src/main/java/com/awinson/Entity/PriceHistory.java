@@ -23,7 +23,7 @@ public class PriceHistory {
     public PriceHistory() {
     }
 
-    public PriceHistory(String platform, String coin, BigDecimal sellPrice, BigDecimal buyPrice) {
+    public PriceHistory(String platform, String coin, BigDecimal buyPrice, BigDecimal sellPrice) {
         this.platform = platform;
         this.coin = coin;
         this.buyPrice = buyPrice;

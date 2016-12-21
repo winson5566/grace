@@ -70,7 +70,8 @@
     <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
             <ul class="nav nav-sidebar">
-                <li class="active"><a href="#">交易系统</a></li>
+                <li class="active"><a href="/u/btc-trade">BTC</a></li>
+                <li class="active"><a href="/u/ltc-trade">LTC</a></li>
             </ul>
 
             <ul class="nav nav-sidebar">
@@ -95,9 +96,15 @@
 
 <span th:fragment="foot">
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"/>
     <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"/>
+</span>
+
+<span th:fragment="foot_ws">
+<span th:include="common :: foot"></span>
+<script src="/webjars/sockjs-client/sockjs.min.js"/>
+<script src="/webjars/stomp-websocket/stomp.min.js"/>
 </span>
 </body>
 </html>

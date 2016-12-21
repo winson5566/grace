@@ -7,7 +7,9 @@ import com.awinson.config.*;
 import com.awinson.dictionary.Dict;
 import com.awinson.repository.PriceHistoryRepository;
 import com.awinson.repository.PriceMarginRepository;
+import com.awinson.restful.PriceController;
 import com.awinson.utils.HttpUtils;
+import com.awinson.utils.StringUtil;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +40,10 @@ public class PriceServiceImpl implements PriceService {
     private PriceHistoryRepository priceHistoryRepository;
     @Autowired
     private PriceMarginRepository priceMarginRepository;
+    @Autowired
+    private WebSocketService webSocketService;
+    @Autowired
+    private PriceController priceController;
     final private Double btcMin = 1.0;
     final private Double ltcMin = 100.0;
 
@@ -95,8 +101,8 @@ public class PriceServiceImpl implements PriceService {
 
             //保存如数据库
             savePrice2DB(platformId, coinType, sellPrice, buyPrice);
-            map.put("Sell_Price", sellPrice);
             map.put("Buy_Price", buyPrice);
+            map.put("Sell_Price", sellPrice);
             return map;
         }
         return null;
@@ -117,18 +123,20 @@ public class PriceServiceImpl implements PriceService {
             List<Map<String, Object>> marginList = (List<Map<String, Object>>) subCoinMargin(newMap);
             //放入缓存
             for (Map<String, Object> m : marginList) {
-                String highPlatform = ((Map<String, Object>) m.get("high")).get("platform").toString();
-                String highDirection = ((Map<String, Object>) m.get("high")).get("direction").toString();
-                String lowPlatform = ((Map<String, Object>) m.get("low")).get("platform").toString();
-                String lowDirection = ((Map<String, Object>) m.get("low")).get("direction").toString();
+//                String highPlatform = ((Map<String, Object>) m.get("high")).get("platform").toString();
+//                String highDirection = ((Map<String, Object>) m.get("high")).get("direction").toString();
+//                String lowPlatform = ((Map<String, Object>) m.get("low")).get("platform").toString();
+//                String lowDirection = ((Map<String, Object>) m.get("low")).get("direction").toString();
+                String buy_platform = m.get("buy_platform").toString();
+                String sell_platform = m.get("sell_platform").toString();
                 String coin = m.get("coin").toString();
                 Integer deltaTime =Integer.parseInt(m.get("deltaTime").toString()) ;
                 BigDecimal margin = new BigDecimal(m.get("margin").toString());
                 //写入缓存
-                String key = Dict.Type.margin+highPlatform+highDirection+lowPlatform+lowDirection+coin;
+                String key = Dict.Type.margin+buy_platform+sell_platform+coin;
                 CacheManager.update(key,m);
                 //写入数据库
-                PriceMargin priceMargin = new PriceMargin(highPlatform, highDirection, lowPlatform, lowDirection, coin, deltaTime, margin);
+                PriceMargin priceMargin = new PriceMargin(buy_platform,sell_platform,coin, deltaTime, margin);
                 priceMarginRepository.save(priceMargin);
             }
             return marginList;
@@ -168,27 +176,30 @@ public class PriceServiceImpl implements PriceService {
             for (Map<String, Object> buyMap : buyList) {
                 if (!sellMap.get("platform").toString().equals(buyMap.get("platform").toString())) {
                     Map<String, Object> compareMap = new HashMap();
-                    BigDecimal sellPrice = new BigDecimal(Double.parseDouble(sellMap.get("price").toString()));
                     BigDecimal buyPrice = new BigDecimal(Double.parseDouble(buyMap.get("price").toString()));
-                    BigInteger sellTime = new BigInteger(sellMap.get("update_time").toString());
+                    BigDecimal sellPrice = new BigDecimal(Double.parseDouble(sellMap.get("price").toString()));
                     BigInteger buyTime = new BigInteger(buyMap.get("update_time").toString());
-                    Map<String, Object> highMap = new HashMap();
-                    Map<String, Object> lowMap = new HashMap();
-                    if (sellPrice.compareTo(buyPrice) > 0) {
-                        highMap.put("platform", sellMap.get("platform"));
-                        highMap.put("direction", sellMap.get("direction"));
-                        lowMap.put("platform", buyMap.get("platform"));
-                        lowMap.put("direction", buyMap.get("direction"));
-                    } else {
-                        highMap.put("platform", buyMap.get("platform"));
-                        highMap.put("direction", buyMap.get("direction"));
-                        lowMap.put("platform", sellMap.get("platform"));
-                        lowMap.put("direction", sellMap.get("direction"));
-                    }
-                    compareMap.put("high", highMap);
-                    compareMap.put("low", lowMap);
+                    BigInteger sellTime = new BigInteger(sellMap.get("update_time").toString());
+//                    Map<String, Object> highMap = new HashMap();
+//                    Map<String, Object> lowMap = new HashMap();
+//                    if (sellPrice.compareTo(buyPrice) > 0) {
+//                        highMap.put("platform", sellMap.get("platform"));
+//                        highMap.put("direction", sellMap.get("direction"));
+//                        lowMap.put("platform", buyMap.get("platform"));
+//                        lowMap.put("direction", buyMap.get("direction"));
+//                    } else {
+//                        highMap.put("platform", buyMap.get("platform"));
+//                        highMap.put("direction", buyMap.get("direction"));
+//                        lowMap.put("platform", sellMap.get("platform"));
+//                        lowMap.put("direction", sellMap.get("direction"));
+//                    }
+//                    compareMap.put("high", highMap);
+//                    compareMap.put("low", lowMap);
+
+                    compareMap.put("buy_platform",buyMap.get("platform"));
+                    compareMap.put("sell_platform",sellMap.get("platform"));
                     compareMap.put("deltaTime", sellTime.subtract(buyTime).abs());
-                    compareMap.put("margin", sellPrice.subtract(buyPrice).abs().setScale(2, BigDecimal.ROUND_HALF_UP));
+                    compareMap.put("margin", buyPrice.subtract(sellPrice).setScale(2, BigDecimal.ROUND_HALF_UP));
                     compareMap.put("coin", sellMap.get("coin"));
                     compareList.add(compareMap);
                 }
@@ -315,6 +326,14 @@ public class PriceServiceImpl implements PriceService {
         return null;
     }
 
-
+    @Override
+    public void broadcast() {
+        String price = priceController.getPrice();
+        String margin = priceController.getPriceMargin();
+        if (!StringUtil.isEmpty(price))
+            webSocketService.broadcast("price",price);
+        if (!StringUtil.isEmpty(margin))
+            webSocketService.broadcast("margin",margin);
+    }
 }
 

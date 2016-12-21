@@ -3,13 +3,13 @@ package com.awinson.Entity;
 /**
  * Created by winson on 2016/12/17.
  */
-public class Greeting {
+public class WebSocketMessage {
     private String content;
 
-    public Greeting() {
+    public WebSocketMessage() {
     }
 
-    public Greeting(String content) {
+    public WebSocketMessage(String content) {
         this.content = content;
     }
 

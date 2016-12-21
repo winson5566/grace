@@ -6,9 +6,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.util.Map;
-
 /**
  * Created by winson on 2016/12/5.
  */
@@ -22,7 +19,7 @@ public class PriceTimer {
     /**
      * 获取所有平台买一卖一价格
      */
-    @Scheduled(cron="0/5 * *  * * ? ")   //每5秒执行一次价格查询
+    @Scheduled(cron="0/1 * *  * * ? ")   //每5秒执行一次价格查询
     public void getPrice(){
         priceService.getAllPlatformPrice();
     }
@@ -30,11 +27,18 @@ public class PriceTimer {
     /**
      * 计算各平台价差
      */
-    @Scheduled(cron = "0/5 * *  * * ? ")
+    @Scheduled(cron = "0/1 * *  * * ? ")
     public void getPriceMargin(){
         priceService.calculationMargin();
     }
 
+    /**
+     * WebSocekt推送最新价格
+     */
+    @Scheduled(cron = "0/1 * *  * * ? ")
+    public void pushPriceAndMargin(){
+        priceService.broadcast();
+    }
 
 }
 

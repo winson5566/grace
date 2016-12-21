@@ -1,141 +1,122 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <!--公共head-->
-<head th:include="common :: head"/>
+<head th:include="common :: head">
+
+</head>
+
 <body>
 <!--公共title+bar-->
 <span th:include="common :: frame"></span>
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-sm-9 col-sm-offset-3 col-md-6 col-md-offset-3 main">
+        <div class="col-sm-9 col-sm-offset-3 col-md-6 col-md-offset-3 main"  th:with="pricedatas=${map.priceMap}">
             <!--<h2 class="page-header">Price</h2>-->
-            <table class="table table-bordered" th:with="datas=${map.priceMap}">
-                <caption>BTC</caption>
-                <tr>
-                    <th>平台</th>
-                    <th>卖一</th>
-                    <th>买一</th>
-                </tr>
-                <tr>
-                    <th>Okcoin</th>
-                    <th th:text="${datas.p00001.price}">卖一</th>
-                    <th th:text="${datas.p00000.price}">买一</th>
-                </tr>
-                <tr>
-                    <th>Bitce</th>
-                    <th th:text="${datas.p01001.price}">卖一</th>
-                    <th th:text="${datas.p01000.price}">买一</th>
-                </tr>
-            </table>
-            <table class="table table-bordered" th:with="datas=${map.priceMap}">
-                <caption>LTC</caption>
-                <tr>
-                    <th>平台</th>
-                    <th>卖一</th>
-                    <th>买一</th>
-                </tr>
-                <tr>
-                    <th>Okcoin</th>
-                    <th th:text="${datas.p00011.price}">卖一</th>
-                    <th th:text="${datas.p00010.price}">买一</th>
-                </tr>
-                <tr>
-                    <th>Bitce</th>
-                    <th th:text="${datas.p01011.price}">卖一</th>
-                    <th th:text="${datas.p01010.price}">买一</th>
-                </tr>
-            </table>
+            <!--<table class="table table-bordered">-->
+                <!--<caption>BTC</caption>-->
+                <!--<tr>-->
+                    <!--<th>平台</th>-->
+                    <!--<th>卖一</th>-->
+                    <!--<th>买一</th>-->
+                <!--</tr>-->
+                <!--<tr>-->
+                    <!--<th>Okcoin</th>-->
+                    <!--<td th:text="${pricedatas.p00001.price}" id="p00001">卖一</td>-->
+                    <!--<td th:text="${pricedatas.p00000.price}" id="p00000">买一</td>-->
+                <!--</tr>-->
+                <!--<tr>-->
+                    <!--<th>Bitce</th>-->
+                    <!--<td th:text="${pricedatas.p01001.price}" id="p01001">卖一</td>-->
+                    <!--<td th:text="${pricedatas.p01000.price}" id="p01000">买一</td>-->
+                <!--</tr>-->
+            <!--</table>-->
+            <!--<table class="table table-bordered">-->
+                <!--<caption>LTC</caption>-->
+                <!--<tr>-->
+                    <!--<th>平台</th>-->
+                    <!--<th>卖一</th>-->
+                    <!--<th>买一</th>-->
+                <!--</tr>-->
+                <!--<tr>-->
+                    <!--<th>Okcoin</th>-->
+                    <!--<td th:text="${pricedatas.p00011.price}"  id="p00011">卖一</td>-->
+                    <!--<td th:text="${pricedatas.p00010.price}"  id="p00010">买一</td>-->
+                <!--</tr>-->
+                <!--<tr>-->
+                    <!--<th>Bitce</th>-->
+                    <!--<td th:text="${pricedatas.p01011.price}"  id="p01011">卖一</td>-->
+                    <!--<td th:text="${pricedatas.p01010.price}"  id="p01010">买一</td>-->
+                <!--</tr>-->
+            <!--</table>-->
 
             <!--<h2 class="page-header">Margin</h2>-->
             <table class="table table-bordered" th:with="datas=${map.marginMap}">
                 <caption>BTC</caption>
                 <tr>
-                    <th>高价平台</th>
-                    <th>高价方向</th>
-                    <th>低价平台</th>
-                    <th>低价方向</th>
+                    <th colspan="2">Buy</th>
+                    <th colspan="2">Sell</th>
                     <th>差价</th>
                     <th>时间差</th>
                 </tr>
                 <span th:each="data:${datas}">
-                    <tr th:if="${data.value.coin}=='0'">
-                        <span th:if="${data.value.high.platform}=='00'">
+                    <span th:if="${data.value.coin}=='0'">
+                        <tr th:if="${data.value.buy_platform}=='00' and ${data.value.sell_platform}=='10'">
                             <td>Okcoin</td>
-                        </span>
-                        <span th:if="${data.value.high.platform}=='10'">
+                            <td th:text="${pricedatas.p00000.price}" id="p00000">买一</td>
                             <td>Bitvc</td>
-                        </span>
-                        <span th:if="${data.value.high.direction}=='0'">
-                            <td>买</td>
-                        </span>
-                        <span th:if="${data.value.high.direction}=='1'">
-                            <td>卖</td>
-                        </span>
-                        <span th:if="${data.value.low.platform}=='00'">
+                            <td th:text="${pricedatas.p01001.price}" id="p01001">卖一</td>
+                            <td th:text="${data.value.margin}"  id="margin_btc_00_10"></td>
+                            <td th:text="${data.value.deltaTime}" id="deltaTime_btc_00_10"></td>
+                        </tr>
+                        <tr th:if="${data.value.buy_platform}=='10' and ${data.value.sell_platform}=='00'">
+                            <td>Bitvc</td>
+                            <td th:text="${pricedatas.p01000.price}" id="p01000">买一</td>
                             <td>Okcoin</td>
-                        </span>
-                        <span th:if="${data.value.low.platform}=='10'">
-                            <td>Bitvc</td>
-                        </span>
-                        <span th:if="${data.value.low.direction}=='0'">
-                            <td>买</td>
-                        </span>
-                        <span th:if="${data.value.low.direction}=='1'">
-                            <td>卖</td>
-                        </span>
-                        <td th:text="${data.value.margin}"></td>
-                        <td th:text="${data.value.deltaTime}"></td>
+                            <td th:text="${pricedatas.p00001.price}" id="p00001">卖一</td>
+                        <td th:text="${data.value.margin}" id="margin_btc_10_00"></td>
+                        <td th:text="${data.value.deltaTime}" id="deltaTime_btc_10_00"></td>
                     </tr>
+                    </span>
                 </span>
             </table>
             <table class="table table-bordered" th:with="datas=${map.marginMap}">
                 <caption>LTC</caption>
                 <tr>
-                    <th>高价平台</th>
-                    <th>高价平台</th>
-                    <th>低价平台</th>
-                    <th>低价平台</th>
+                    <th colspan="2">Buy</th>
+                    <th colspan="2">Sell</th>
                     <th>差价</th>
                     <th>时间差</th>
                 </tr>
                 <span th:each="data:${datas}">
-                    <tr th:if="${data.value.coin}=='1'">
-                         <span th:if="${data.value.high.platform}=='00'">
-                            <td>Okcoin</td>
-                        </span>
-                        <span th:if="${data.value.high.platform}=='10'">
+                    <span th:if="${data.value.coin}=='1'">
+                        <tr th:if="${data.value.buy_platform}=='00' and ${data.value.sell_platform}=='10'">
+                          <td>Okcoin</td>
+                            <td th:text="${pricedatas.p00000.price}" id="p00010">买一</td>
                             <td>Bitvc</td>
-                        </span>
-                        <span th:if="${data.value.high.direction}=='0'">
-                            <td>买</td>
-                        </span>
-                        <span th:if="${data.value.high.direction}=='1'">
-                            <td>卖</td>
-                        </span>
-                        <span th:if="${data.value.low.platform}=='00'">
-                            <td>Okcoin</td>
-                        </span>
-                        <span th:if="${data.value.low.platform}=='10'">
+                            <td th:text="${pricedatas.p01001.price}" id="p01011">卖一</td>
+                            <td th:text="${data.value.margin}"  id="margin_ltc_00_10"></td>
+                            <td th:text="${data.value.deltaTime}" id="deltaTime_ltc_00_10"></td>
+                        </tr>
+                        <tr th:if="${data.value.buy_platform}=='10' and ${data.value.sell_platform}=='00'">
                             <td>Bitvc</td>
-                        </span>
-                        <span th:if="${data.value.low.direction}=='0'">
-                            <td>买</td>
-                        </span>
-                        <span th:if="${data.value.low.direction}=='1'">
-                            <td>卖</td>
-                        </span>
-                        <td th:text="${data.value.margin}"></td>
-                        <td th:text="${data.value.deltaTime}"></td>
+                            <td th:text="${pricedatas.p01000.price}" id="p01010">买一</td>
+                            <td>Okcoin</td>
+                            <td th:text="${pricedatas.p00001.price}" id="p00011">卖一</td>
+                        <td th:text="${data.value.margin}" id="margin_ltc_10_00"></td>
+                        <td th:text="${data.value.deltaTime}"  id="deltaTime_ltc_10_00"></td>
                     </tr>
+                    </span>
                 </span>
             </table>
         </div>
     </div>
 </div>
 
-
 <!--公共foot-->
-<span th:include="common :: foot"></span>
+<span th:include="common :: foot_ws"></span>
+
+<script src="/js/price.js"/>
+
 </body>
 </html>

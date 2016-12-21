@@ -15,10 +15,8 @@ import java.util.UUID;
 public class PriceMargin {
 
     private String id;
-    private String highPlatform;
-    private String highDirection;
-    private String lowPlatform;
-    private String lowDirection;
+    private String sellPlatform;
+    private String buyPlatform;
     private String coin;
     private Integer deltaTime;
     private BigDecimal margin;
@@ -27,11 +25,9 @@ public class PriceMargin {
     public PriceMargin() {
     }
 
-    public PriceMargin(String highPlatform, String highDirection, String lowPlatform, String lowDirection, String coin, Integer deltaTime, BigDecimal margin) {
-        this.highPlatform = highPlatform;
-        this.highDirection = highDirection;
-        this.lowPlatform = lowPlatform;
-        this.lowDirection = lowDirection;
+    public PriceMargin( String buyPlatform,String sellPlatform,String coin, Integer deltaTime, BigDecimal margin) {
+        this.sellPlatform = sellPlatform;
+        this.buyPlatform = buyPlatform;
         this.coin = coin;
         this.deltaTime = deltaTime;
         this.margin = margin;
@@ -48,36 +44,20 @@ public class PriceMargin {
         this.id = id;
     }
 
-    public String getHighPlatform() {
-        return highPlatform;
+    public String getSellPlatform() {
+        return sellPlatform;
     }
 
-    public void setHighPlatform(String highPlatform) {
-        this.highPlatform = highPlatform;
+    public void setSellPlatform(String sellPlatform) {
+        this.sellPlatform = sellPlatform;
     }
 
-    public String getHighDirection() {
-        return highDirection;
+    public String getBuyPlatform() {
+        return buyPlatform;
     }
 
-    public void setHighDirection(String highDirection) {
-        this.highDirection = highDirection;
-    }
-
-    public String getLowPlatform() {
-        return lowPlatform;
-    }
-
-    public void setLowPlatform(String lowPlatform) {
-        this.lowPlatform = lowPlatform;
-    }
-
-    public String getLowDirection() {
-        return lowDirection;
-    }
-
-    public void setLowDirection(String lowDirection) {
-        this.lowDirection = lowDirection;
+    public void setBuyPlatform(String buyPlatform) {
+        this.buyPlatform = buyPlatform;
     }
 
     public String getCoin() {

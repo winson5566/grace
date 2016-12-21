@@ -31,4 +31,10 @@ public interface PriceService {
      */
     List<Map<String,Object>> calculationMargin();
 
+    /**
+     * WebSocket推送价格和价差
+     */
+    void broadcast();
+
+
 }

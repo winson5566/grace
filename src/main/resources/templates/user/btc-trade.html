@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--公共head-->
+<head th:include="common :: head"/>
+<body>
+<!--公共title+bar-->h=
+<span th:include="common :: frame"></span>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
+            <div class="container-fluid">
+                <div class="row background-black">
+                    <div class=" col-md-2 ">
+                        <h1 class="font_white">Okcoin</h1>
+                        <span id="Okcoin_btc"></span>
+                    </div>
+                    <div class=" col-md-2 ">
+                        <form role="form" class="vertical-align">
+                            <div class="form-group">
+                                <h2 id="okcoin-btc-sell-price" class="font_white">价格</h2>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="okcoin-btc-sell-amount" placeholder="卖出量"/>
+                            </div>
+                            <button type="submit" class="btn btn-default">卖出</button>
+                        </form>
+
+                        <form role="form"  class="vertical-align">
+                            <div class="form-group">
+                                <h2 id="okcoin-btc-buy-price" class="font_white" >价格</h2>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="okcoin-btc-buy-amount" placeholder="买入量"/>
+                            </div>
+                            <button type="submit" class="btn btn-default">买入</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="row background-black">
+                    <div class=" col-md-2">
+                        <h1 class="font_white">Huobi</h1>
+                        <span id="Huobi_btc"></span>
+                    </div>
+                    <div class=" col-md-2 ">
+                        <form role="form" class="vertical-align">
+                            <div class="form-group">
+                                <h2 id="huobi-btc-sell-price" class="font_white">价格</h2>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="huobi-btc-sell-amount" placeholder="卖出量"/>
+                            </div>
+                            <button type="submit" class="btn btn-default">卖出</button>
+                        </form>
+
+                        <form role="form"  class="vertical-align">
+                            <div class="form-group">
+                                <h2 id="huobi-btc-buy-price" class="font_white" >价格</h2>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="huobi-btc-buy-amount" placeholder="买入量"/>
+                            </div>
+                            <button type="submit" class="btn btn-default">买入</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+            <!--<div id="Okcoin_ltc"></div>-->
+            <!--<div id="Huobi_ltc"></div>-->
+        </div>
+    </div>
+</div>
+
+
+<!--公共foot-->
+<span th:include="common :: foot"></span>
+
+
+<script src="/js/trade.js"/>
+<!--<script src="/js/socket.io.js"/>-->
+<!--<script src="/js/huobi-hq-push-demo.js"/>-->
+
+</body>
+</html>

@@ -1,14 +1,12 @@
 package com.awinson.controller;
 
-import com.awinson.Entity.User;
-import com.awinson.repository.UserRepository;
+
 import com.awinson.service.UserService;
 import com.awinson.valid.RegisterValid;
+import com.awinson.service.WebSocketServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,9 +17,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.validation.Valid;
 import java.util.Map;
 
 /**
@@ -33,7 +31,8 @@ public class PublicController {
 
     @Autowired
     private UserService userService;
-
+    @Autowired
+    private WebSocketServiceImpl greetingService;
     private static final Logger logger = LoggerFactory.getLogger(PublicController.class);
 
     /**
@@ -114,11 +113,5 @@ public class PublicController {
         model.setViewName("403");
         return model;
     }
-
-    @RequestMapping(value="ws")
-    public String wsTest(){
-        return "ws";
-    }
-
 
 }

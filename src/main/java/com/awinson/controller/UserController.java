@@ -47,6 +47,16 @@ public class UserController {
     }
 
     /**
+     * BTC交易頁面
+     *
+     * @return
+     */
+    @RequestMapping("btc-trade")
+    public String trade() {
+        return "/user/btc-trade";
+    }
+
+    /**
      * 设置个人参数页面
      *
      * @return
