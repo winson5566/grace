@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.*;
 
@@ -81,6 +82,28 @@ public class UserController {
         return "/user/setting";
     }
 
+    /**
+     * 获取Okcoin中国站资产信息
+     * @return
+     */
+    @RequestMapping("getOkcoinAssets")
+    @ResponseBody
+    public Map<String, Object> getOkcoinAssets() {
+        Map<String, Object> map = okcoinService.getSpotUserinfo(Dict.Platform.OKCOIN_CN);
+        return map;
+    }
+
+    /**
+     * 获取Bitvc资产信息
+     * @return
+     */
+    @RequestMapping("getBitvcAssets")
+    @ResponseBody
+    public Map<String, Object> getBitvcAssets() {
+        Map<String, Object> map = bitvcService.getSpotUserinfo(Dict.Platform.BITVC_CN);
+        return map;
+    }
+
     @RequestMapping("account")
     public String accoutInfo(Model model) {
         Map<String, Object> map = new HashMap();
@@ -100,6 +123,7 @@ public class UserController {
         map.put("10",bitvcUn);
 
         model.addAttribute("map", map);
+
         return "/user/account";
     }
 

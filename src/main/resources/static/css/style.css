@@ -35,8 +35,10 @@
 .background-black {
     background-color: black;
     opacity: 0.85;
-    margin-bottom: 20px;
+    margin-top: 1px;
+    margin-bottom: 1px;
     font-size: medium;
+    /*height: 370px;*/
     font-family: "Microsoft YaHei UI";
 }
 
@@ -73,3 +75,12 @@
 .vertical-align {
     margin-top: 40px;
 }
+.input-width-50{
+    width: 50px;
+}
+.align-left{
+    text-align: right;
+}
+.form-inline{margin:0px;display: inline}
+
+

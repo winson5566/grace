@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css"/>
     <!-- Custom styles for this template -->
     <link href="http://v3.bootcss.com/examples/dashboard/dashboard.css" rel="stylesheet"/>
-    <link rel="stylesheet"  href="/css/style.css" />
+    <link rel="stylesheet" href="/css/style.css"/>
 </head>
 
 <body>
@@ -50,13 +50,13 @@
                 <form class="navbar-form navbar-right" action="/logout" method="post">
                     <button type="submit" class="btn btn-success">Sign out</button>
                 </form>
-                <h2  class="navbar-form navbar-right" th:text="${#httpServletRequest.remoteUser}">Name</h2>
+                <h2 class="navbar-form navbar-right" th:text="${#httpServletRequest.remoteUser}">Name</h2>
             </div>
             <ul class="nav navbar-nav navbar-right">
-                <!--<li><a href="#">行情</a></li>-->
-                <!--<li><a href="#">设置</a></li>-->
-                <!--<li><a href="#">后台</a></li>-->
-                <!--<li><a href="#">帮助</a></li>-->
+                <li><a href="/u/btc-trade">行情</a></li>
+                <li><a href="/u/btc-trade">BTC交易</a></li>
+                <li><a href="/u/ltc-trade">LTC交易</a></li>
+                <li><a href="/u/setting">账户设置</a></li>
             </ul>
 
         </div>
@@ -68,7 +68,7 @@
 <span th:fragment="bar">
 <div class="container-fluid">
     <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
+        <div class=" col-md-1 sidebar">
             <ul class="nav nav-sidebar">
                 <li class="active"><a href="/u/btc-trade">BTC</a></li>
                 <li class="active"><a href="/u/ltc-trade">LTC</a></li>
