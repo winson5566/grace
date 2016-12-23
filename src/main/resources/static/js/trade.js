@@ -91,14 +91,20 @@ function updateOkcoinPrice(array) {
                             $("#okcoin-btc-buy-price").text(arr.data.buy);
                             $("#okcoin-btc-sell-price").text(arr.data.sell);
                             $("#okcoin-btc-last-price").text(arr.data.last);
+                            $("#okcoin-btc-time-price").text(arr.data.timestamp);
                             $("#margin-btc-okcoin-bitvc").text(($("#okcoin-btc-buy-price").text()*1.0 - $("#bitvc-btc-sell-price").text()*1.0).toFixed(2));
                             $("#margin-btc-bitvc-okcoin").text(($("#bitvc-btc-buy-price").text()*1.0 - $("#okcoin-btc-sell-price").text()*1.0).toFixed(2));
+                            $("#time-btc-bitvc-okcoin").text(Math.abs(new Date($("#okcoin-btc-time-price").text()*1)-new Date($("#bitvc-btc-time-price").text()*1)));
+                            $("#time-btc-okcoin-bitvc").text(Math.abs(new Date($("#okcoin-btc-time-price").text()*1)-new Date($("#bitvc-btc-time-price").text()*1)));
                         } else if (channel == 'ok_sub_spotcny_ltc_ticker') {
                             $("#okcoin-ltc-buy-price").text(arr.data.buy);
                             $("#okcoin-ltc-sell-price").text(arr.data.sell);
                             $("#okcoin-ltc-last-price").text(arr.data.last);
+                            $("#okcoin-ltc-time-price").text(arr.data.timestamp);
                             $("#margin-ltc-okcoin-bitvc").text(($("#okcoin-ltc-buy-price").text()*1.0 - $("#bitvc-ltc-sell-price").text()*1.0).toFixed(2));
                             $("#margin-ltc-bitvc-okcoin").text(($("#bitvc-ltc-buy-price").text()*1.0 - $("#okcoin-ltc-sell-price").text()*1.0).toFixed(2));
+                            $("#time-ltc-bitvc-okcoin").text(Math.abs(new Date($("#okcoin-ltc-time-price").text()*1)-new Date($("#bitvc-ltc-time-price").text()*1)));
+                            $("#time-ltc-okcoin-bitvc").text(Math.abs(new Date($("#okcoin-ltc-time-price").text()*1)-new Date($("#bitvc-ltc-time-price").text()*1)));
                         }
                     }
                 }
@@ -123,8 +129,11 @@ function bitvc_btc() {
             $("#bitvc-btc-buy-price").text(ticker.buy);
             $("#bitvc-btc-sell-price").text(ticker.sell);
             $("#bitvc-btc-last-price").text(ticker.last);
+            $("#bitvc-btc-time-price").text(result.time*1000);
             $("#margin-btc-okcoin-bitvc").text(($("#okcoin-btc-buy-price").text()*1.0 - $("#bitvc-btc-sell-price").text()*1.0).toFixed(2));
             $("#margin-btc-bitvc-okcoin").text(($("#bitvc-btc-buy-price").text()*1.0 - $("#okcoin-btc-sell-price").text()*1.0).toFixed(2));
+            $("#time-btc-bitvc-okcoin").text(Math.abs(new Date($("#okcoin-btc-time-price").text()*1)-new Date($("#bitvc-btc-time-price").text()*1)));
+            $("#time-btc-okcoin-bitvc").text(Math.abs(new Date($("#okcoin-btc-time-price").text()*1)-new Date($("#bitvc-btc-time-price").text()*1)));
         }
     });
 }
@@ -143,8 +152,11 @@ function bitvc_ltc() {
             $("#bitvc-ltc-buy-price").text(ticker.buy);
             $("#bitvc-ltc-sell-price").text(ticker.sell);
             $("#bitvc-ltc-last-price").text(ticker.last);
+            $("#bitvc-ltc-time-price").text(result.time*1000);
             $("#margin-ltc-okcoin-bitvc").text(($("#okcoin-ltc-buy-price").text()*1.0 - $("#bitvc-ltc-sell-price").text()*1.0).toFixed(2));
             $("#margin-ltc-bitvc-okcoin").text(($("#bitvc-ltc-buy-price").text()*1.0 - $("#okcoin-ltc-sell-price").text()*1.0).toFixed(2));
+            $("#time-ltc-bitvc-okcoin").text(Math.abs(new Date($("#okcoin-ltc-time-price").text()*1)-new Date($("#bitvc-ltc-time-price").text()*1)));
+            $("#time-ltc-okcoin-bitvc").text(Math.abs(new Date($("#okcoin-ltc-time-price").text()*1)-new Date($("#bitvc-ltc-time-price").text()*1)));
         }
     });
 }
