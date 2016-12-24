@@ -1,4 +1,4 @@
-package com.awinson.config;
+package com.awinson.WebSocket;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

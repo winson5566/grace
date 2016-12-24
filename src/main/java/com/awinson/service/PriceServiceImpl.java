@@ -1,5 +1,6 @@
 package com.awinson.service;
 
+import com.awinson.okcoin.WebSocketService;
 import com.awinson.cache.CacheManager;
 import com.awinson.Entity.PriceHistory;
 import com.awinson.Entity.PriceMargin;

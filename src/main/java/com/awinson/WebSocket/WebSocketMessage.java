@@ -1,4 +1,4 @@
-package com.awinson.Entity;
+package com.awinson.WebSocket;
 
 /**
  * Created by winson on 2016/12/17.

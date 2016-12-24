@@ -3,7 +3,7 @@ import com.awinson.SpringBootStart;
 import com.awinson.repository.UserApiRepository;
 import com.awinson.repository.UserRepository;
 import com.awinson.service.UserService;
-import com.awinson.service.WebSocketServiceImpl;
+import com.awinson.okcoin.WebSocketServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
