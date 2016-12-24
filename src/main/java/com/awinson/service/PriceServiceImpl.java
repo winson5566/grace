@@ -317,6 +317,7 @@ public class PriceServiceImpl implements PriceService {
         sellMap.put("price", sellPrice.setScale(2, BigDecimal.ROUND_HALF_UP));
         sellMap.put("timestamp", timestamp);
         CacheManager.update(Dict.Type.price + platformId + coinType + Dict.direction.sell, sellMap);
+
         Map<String, Object> buyMap = new HashMap();
         buyMap.put("platform", platformId);
         buyMap.put("coin", coinType);
@@ -324,12 +325,13 @@ public class PriceServiceImpl implements PriceService {
         buyMap.put("price", buyPrice.setScale(2, BigDecimal.ROUND_HALF_UP));
         buyMap.put("timestamp", timestamp);
         CacheManager.update(Dict.Type.price + platformId + coinType + Dict.direction.buy, buyMap);
+
         Map<String, Object> lastMap = new HashMap();
-        buyMap.put("platform", platformId);
-        buyMap.put("coin", coinType);
-        buyMap.put("direction", Dict.direction.last);
-        buyMap.put("price", lastPrice.setScale(2, BigDecimal.ROUND_HALF_UP));
-        buyMap.put("timestamp", timestamp);
+        lastMap.put("platform", platformId);
+        lastMap.put("coin", coinType);
+        lastMap.put("direction", Dict.direction.last);
+        lastMap.put("price", lastPrice.setScale(2, BigDecimal.ROUND_HALF_UP));
+        lastMap.put("timestamp", timestamp);
         CacheManager.update(Dict.Type.price + platformId + coinType + Dict.direction.last, lastMap);
 
     }
