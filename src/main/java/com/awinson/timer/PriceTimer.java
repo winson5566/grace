@@ -16,12 +16,28 @@ public class PriceTimer {
     @Autowired
     private PriceService priceService;
 
+//    /**
+//     * 获取所有平台买一卖一价格
+//     */
+//    @Scheduled(cron="0/1 * *  * * ? ")   //每5秒执行一次价格查询
+//    public void getPrice(){
+//        priceService.getAllPlatformPrice();
+//    }
+
+
     /**
-     * 获取所有平台买一卖一价格
+     * 获取bitvc-BTC价格
      */
-    @Scheduled(cron="0/1 * *  * * ? ")   //每5秒执行一次价格查询
-    public void getPrice(){
-        priceService.getAllPlatformPrice();
+    @Scheduled(cron="0/1 * *  * * ? ")
+    public void getBitvcBtcPrice(){
+        priceService.updatePlatformPrice("10","0");
+    }
+    /**
+     * 获取bitvc-LTC价格
+     */
+    @Scheduled(cron="0/1 * *  * * ? ")
+    public void getBitvcLtcPrice(){
+        priceService.updatePlatformPrice("10","1");
     }
 
     /**

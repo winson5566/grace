@@ -48,33 +48,86 @@ public class PriceServiceImpl implements PriceService {
     final private Double btcMin = 1.0;
     final private Double ltcMin = 100.0;
 
-    public void getAllPlatformPrice() {
-        //TODO 改线程
-        Map<String, BigDecimal> map000 = getDepth(Dict.Platform.OKCOIN_CN, Dict.Coin.BTC);
-        Map<String, BigDecimal> map001 = getDepth(Dict.Platform.OKCOIN_CN, Dict.Coin.LTC);
-        Map<String, BigDecimal> map100 = getDepth(Dict.Platform.BITVC_CN, Dict.Coin.BTC);
-        Map<String, BigDecimal> map101 = getDepth(Dict.Platform.BITVC_CN, Dict.Coin.LTC);
-    }
+//    public void getAllPlatformPrice() {
+//        //TODO 改线程
+//        //Map<String, BigDecimal> map000 = getDepth(Dict.Platform.OKCOIN_CN, Dict.Coin.BTC);
+//        //Map<String, BigDecimal> map001 = getDepth(Dict.Platform.OKCOIN_CN, Dict.Coin.LTC);
+//        Map<String, BigDecimal> map100 = getDepth(Dict.Platform.BITVC_CN, Dict.Coin.BTC);
+//        Map<String, BigDecimal> map101 = getDepth(Dict.Platform.BITVC_CN, Dict.Coin.LTC);
+//    }
+//
+//    public Map<String, BigDecimal> getDepth(String platformId, String coinType) {
+//        Map<String, BigDecimal> map = new HashMap();
+//        String url = null;
+//        Double min;
+//
+//        //判断平台和币种,查询对应的URL
+//        if (coinType.equals(Dict.Coin.BTC)) {
+//            min = btcMin;
+//            if (platformId.equals(Dict.Platform.OKCOIN_CN)) {
+//                url = okcoinChinaBtcConfig.getDepth();
+//            } else if (platformId.equals(Dict.Platform.BITVC_CN)) {
+//                url = bitvcCnBtcConfig.getDepth();
+//            }
+//        } else {
+//            min = ltcMin;
+//            if (platformId.equals(Dict.Platform.OKCOIN_CN)) {
+//                url = okcoinChinaLtcConfig.getDepth();
+//            } else if (platformId.equals(Dict.Platform.BITVC_CN)) {
+//                url = bitvcCnLtcConfig.getDepth();
+//            }
+//        }
+//
+//        //发送GET请求,返回json文本
+//        String json = null;
+//        try {
+//            json = HttpUtils.doGet(url);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        if (json != null && !"".equals(json)) {
+//            //解析返回的json文本
+//            Gson gson = new Gson();
+//            Map<String, Object> jsonMap = gson.fromJson(json, Map.class);
+//            ArrayList<ArrayList> asks = (ArrayList) jsonMap.get("asks");
+//            if (platformId.equals(Dict.Platform.OKCOIN_CN))
+//                Collections.reverse(asks);
+//            ArrayList<ArrayList> bids = (ArrayList) jsonMap.get("bids");
+//            BigDecimal sellPrice = getPriceByMin(asks, new BigDecimal(min));
+//            BigDecimal buyPrice = getPriceByMin(bids, new BigDecimal(min));
+//
+//            //写入缓存
+//            savePrice2Cache(platformId, coinType, sellPrice, buyPrice);
+//
+//            //保存如数据库
+//            savePrice2DB(platformId, coinType, sellPrice, buyPrice);
+//            map.put("Buy_Price", buyPrice);
+//            map.put("Sell_Price", sellPrice);
+//            return map;
+//        }
+//        return null;
+//    }
 
-    public Map<String, BigDecimal> getDepth(String platformId, String coinType) {
-        Map<String, BigDecimal> map = new HashMap();
-        String url = null;
-        Double min;
 
+
+
+
+    public Map<String,Object> updatePlatformPrice(String platformId,String coinType){
+        Map<String, Object> map = new HashMap();
+       String url = null;
         //判断平台和币种,查询对应的URL
         if (coinType.equals(Dict.Coin.BTC)) {
-            min = btcMin;
             if (platformId.equals(Dict.Platform.OKCOIN_CN)) {
-                url = okcoinChinaBtcConfig.getDepth();
+                url = okcoinChinaBtcConfig.getTicker();
             } else if (platformId.equals(Dict.Platform.BITVC_CN)) {
-                url = bitvcCnBtcConfig.getDepth();
+                url = bitvcCnBtcConfig.getTicker();
             }
         } else {
-            min = ltcMin;
             if (platformId.equals(Dict.Platform.OKCOIN_CN)) {
-                url = okcoinChinaLtcConfig.getDepth();
+                url = okcoinChinaLtcConfig.getTicker();
             } else if (platformId.equals(Dict.Platform.BITVC_CN)) {
-                url = bitvcCnLtcConfig.getDepth();
+                url = bitvcCnLtcConfig.getTicker();
             }
         }
 
@@ -90,24 +143,28 @@ public class PriceServiceImpl implements PriceService {
             //解析返回的json文本
             Gson gson = new Gson();
             Map<String, Object> jsonMap = gson.fromJson(json, Map.class);
-            ArrayList<ArrayList> asks = (ArrayList) jsonMap.get("asks");
-            if (platformId.equals(Dict.Platform.OKCOIN_CN))
-                Collections.reverse(asks);
-            ArrayList<ArrayList> bids = (ArrayList) jsonMap.get("bids");
-            BigDecimal sellPrice = getPriceByMin(asks, new BigDecimal(min));
-            BigDecimal buyPrice = getPriceByMin(bids, new BigDecimal(min));
+            String time = jsonMap.get("time").toString();
+            if (time.length()==10){
+                time = time+"000";
+            }
+            Map<String,Object> ticker = (Map<String,Object> )jsonMap.get("ticker");
+            String last = ticker.get("last").toString();
+            String sell = ticker.get("sell").toString();
+            String buy = ticker.get("buy").toString();
+            BigDecimal sellPrice = new BigDecimal(sell);
+            BigDecimal buyPrice = new BigDecimal(buy);
+            BigDecimal lastPrice = new BigDecimal(last);
 
             //写入缓存
-            savePrice2Cache(platformId, coinType, sellPrice, buyPrice);
+            savePrice2Cache(platformId, coinType, sellPrice, buyPrice,lastPrice,time);
 
             //保存如数据库
-            savePrice2DB(platformId, coinType, sellPrice, buyPrice);
+            savePrice2DB(platformId, coinType, sellPrice, buyPrice,lastPrice,time);
             map.put("Buy_Price", buyPrice);
             map.put("Sell_Price", sellPrice);
             return map;
         }
         return null;
-
     }
 
     /**
@@ -124,10 +181,6 @@ public class PriceServiceImpl implements PriceService {
             List<Map<String, Object>> marginList = (List<Map<String, Object>>) subCoinMargin(newMap);
             //放入缓存
             for (Map<String, Object> m : marginList) {
-//                String highPlatform = ((Map<String, Object>) m.get("high")).get("platform").toString();
-//                String highDirection = ((Map<String, Object>) m.get("high")).get("direction").toString();
-//                String lowPlatform = ((Map<String, Object>) m.get("low")).get("platform").toString();
-//                String lowDirection = ((Map<String, Object>) m.get("low")).get("direction").toString();
                 String buy_platform = m.get("buy_platform").toString();
                 String sell_platform = m.get("sell_platform").toString();
                 String coin = m.get("coin").toString();
@@ -179,23 +232,8 @@ public class PriceServiceImpl implements PriceService {
                     Map<String, Object> compareMap = new HashMap();
                     BigDecimal buyPrice = new BigDecimal(Double.parseDouble(buyMap.get("price").toString()));
                     BigDecimal sellPrice = new BigDecimal(Double.parseDouble(sellMap.get("price").toString()));
-                    BigInteger buyTime = new BigInteger(buyMap.get("update_time").toString());
-                    BigInteger sellTime = new BigInteger(sellMap.get("update_time").toString());
-//                    Map<String, Object> highMap = new HashMap();
-//                    Map<String, Object> lowMap = new HashMap();
-//                    if (sellPrice.compareTo(buyPrice) > 0) {
-//                        highMap.put("platform", sellMap.get("platform"));
-//                        highMap.put("direction", sellMap.get("direction"));
-//                        lowMap.put("platform", buyMap.get("platform"));
-//                        lowMap.put("direction", buyMap.get("direction"));
-//                    } else {
-//                        highMap.put("platform", buyMap.get("platform"));
-//                        highMap.put("direction", buyMap.get("direction"));
-//                        lowMap.put("platform", sellMap.get("platform"));
-//                        lowMap.put("direction", sellMap.get("direction"));
-//                    }
-//                    compareMap.put("high", highMap);
-//                    compareMap.put("low", lowMap);
+                    BigInteger buyTime = new BigInteger(buyMap.get("timestamp").toString());
+                    BigInteger sellTime = new BigInteger(sellMap.get("timestamp").toString());
 
                     compareMap.put("buy_platform",buyMap.get("platform"));
                     compareMap.put("sell_platform",sellMap.get("platform"));
@@ -220,7 +258,7 @@ public class PriceServiceImpl implements PriceService {
         List<Map<String, Object>> btcList = new ArrayList();
         List<Map<String, Object>> ltcList = new ArrayList();
         for (Map.Entry<String, Object> datas : cacheMap.entrySet()) {
-            if (datas.getKey().matches("^0\\d{4}")) {
+            if (datas.getKey().matches("^0\\d{4}")&&!datas.getKey().endsWith("2")) {
                 Map<String, Object> entity = (Map<String, Object>) datas.getValue();
                 String coin = entity.get("coin").toString();
                 if (Dict.Coin.BTC.equals(coin)) {
@@ -269,21 +307,31 @@ public class PriceServiceImpl implements PriceService {
      * @param sellPrice
      * @param buyPrice
      */
-    private void savePrice2Cache(String platformId, String coinType, BigDecimal sellPrice, BigDecimal buyPrice) {
+    public void savePrice2Cache(String platformId, String coinType, BigDecimal sellPrice, BigDecimal buyPrice,BigDecimal lastPrice,String timestamp) {
+
+
         Map<String, Object> sellMap = new HashMap();
         sellMap.put("platform", platformId);
         sellMap.put("coin", coinType);
         sellMap.put("direction", Dict.direction.sell);
         sellMap.put("price", sellPrice.setScale(2, BigDecimal.ROUND_HALF_UP));
-        sellMap.put("update_time", System.currentTimeMillis());
+        sellMap.put("timestamp", timestamp);
         CacheManager.update(Dict.Type.price + platformId + coinType + Dict.direction.sell, sellMap);
         Map<String, Object> buyMap = new HashMap();
         buyMap.put("platform", platformId);
         buyMap.put("coin", coinType);
         buyMap.put("direction", Dict.direction.buy);
         buyMap.put("price", buyPrice.setScale(2, BigDecimal.ROUND_HALF_UP));
-        buyMap.put("update_time", System.currentTimeMillis());
+        buyMap.put("timestamp", timestamp);
         CacheManager.update(Dict.Type.price + platformId + coinType + Dict.direction.buy, buyMap);
+        Map<String, Object> lastMap = new HashMap();
+        buyMap.put("platform", platformId);
+        buyMap.put("coin", coinType);
+        buyMap.put("direction", Dict.direction.last);
+        buyMap.put("price", lastPrice.setScale(2, BigDecimal.ROUND_HALF_UP));
+        buyMap.put("timestamp", timestamp);
+        CacheManager.update(Dict.Type.price + platformId + coinType + Dict.direction.last, lastMap);
+
     }
 
     /**
@@ -294,8 +342,8 @@ public class PriceServiceImpl implements PriceService {
      * @param sellPrice
      * @param buyPrice
      */
-    private void savePrice2DB(String platformId, String coinType, BigDecimal sellPrice, BigDecimal buyPrice) {
-        PriceHistory entity = new PriceHistory(platformId, coinType, sellPrice, buyPrice);
+    public void savePrice2DB(String platformId, String coinType, BigDecimal sellPrice, BigDecimal buyPrice,BigDecimal lastPrice,String timestamp) {
+        PriceHistory entity = new PriceHistory(platformId, coinType, sellPrice, buyPrice,lastPrice,timestamp);
         priceHistoryRepository.save(entity);
     }
 

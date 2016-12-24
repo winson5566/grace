@@ -26,13 +26,12 @@ public class WebSocketInit {
         String url = "wss://real.okcoin.cn:10440/websocket/okcoinapi";   // 国内站WebSocket地址
         WebSoketClient client = new WebSoketClient(url, webSocketService);  // WebSocket客户端
         client.start();  // 启动客户端
-
-
         // 添加订阅
         client.addChannel("ok_sub_spotcny_btc_ticker");
+        client.addChannel("ok_sub_spotcny_ltc_ticker");
 
         // 获取用户信息
-        client.getUserInfo(apiKey,secretKey);
+        //client.getUserInfo(apiKey,secretKey);
 
         // 删除定订阅
         // client.removeChannel("ok_sub_spotusd_btc_ticker");

@@ -21,6 +21,7 @@ public class Dict {
     public static class direction{
         public static final String buy = "0";     //买
         public static final String sell = "1";     //卖
+        public static final String last = "2";     //last
     }
     public static class key{
         public static final String api = "0";     //apiKey

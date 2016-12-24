@@ -1,29 +1,86 @@
-.border-bottom{
-    border-bottom:thick dotted #888888;
+.border-bottom {
+    border-bottom: thick dotted #888888;
 }
 
 .login-form-control {
     height: 45px;
 }
-.margintop300{
+
+.margintop300 {
     margin-top: 150px;
 }
+
 .login-form-signin {
     max-width: 330px;
     padding: 10px;
     margin: 0 auto;
 }
-#index{
+
+#index {
     background-image: url("../images/google-data-center.jpg");
 }
-.background-white-97{
+
+.background-white-97 {
     background-color: white;
-    opacity:0.97;
+    opacity: 0.97;
     padding: 10px 40px 40px 40px;
 }
 
-.background-white-80{
+.background-white-80 {
     background-color: white;
-    opacity:0.85;
+    opacity: 0.85;
     padding: 10px 40px 40px 40px;
 }
+
+.background-black {
+    background-color: black;
+    opacity: 0.85;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    font-size: medium;
+    /*height: 370px;*/
+    font-family: "Microsoft YaHei UI";
+}
+
+.font_white {
+    color: white;
+}
+
+.font_red {
+    color: red;
+}
+
+.font_green {
+    color: green;
+}
+
+.table-inline {
+    display: inline;
+}
+
+.width150 {
+    width: 100px;
+    text-align: center;
+}
+
+.width100 {
+    width: 60px;
+    text-align: center;
+}
+
+.div-padding {
+    margin: 30px;
+}
+
+.vertical-align {
+    margin-top: 40px;
+}
+.input-width-50{
+    width: 50px;
+}
+.align-left{
+    text-align: right;
+}
+.form-inline{margin:0px;display: inline}
+
+

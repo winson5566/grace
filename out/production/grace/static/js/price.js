@@ -18,22 +18,19 @@ function showPrice(message) {
     var obj =JSON.parse(message);
     $("#okcoin-btc-buy-price").text(obj.data['00000'].price);
     $("#okcoin-btc-sell-price").text(obj.data['00001'].price);
-    $("#okcoin-btc-last-price").text(obj.data['00002'].price);
+    $("#okcoin-btc-last-price").text((obj.data['00001'].price+obj.data['00000'].price)/2);
     $("#okcoin-btc-time-price").text(obj.data['00001'].timestamp);
 
     $("#okcoin-ltc-buy-price").text(obj.data['00010'].price);
     $("#okcoin-ltc-sell-price").text(obj.data['00011'].price);
-    $("#okcoin-ltc-last-price").text(obj.data['00012'].price);
     $("#okcoin-ltc-time-price").text(obj.data['00010'].timestamp);
 
     $("#bitvc-btc-buy-price").text(obj.data['01000'].price);
     $("#bitvc-btc-sell-price").text(obj.data['01001'].price);
-    $("#bitvc-btc-last-price").text(obj.data['01002'].price);
     $("#bitvc-btc-time-price").text(obj.data['01000'].timestamp);
 
     $("#bitvc-ltc-buy-price").text(obj.data['01010'].price);
     $("#bitvc-ltc-sell-price").text(obj.data['01011'].price);
-    $("#bitvc-ltc-last-price").text(obj.data['01012'].price);
     $("#bitvc-ltc-time-price").text(obj.data['01010'].timestamp);
 
 }

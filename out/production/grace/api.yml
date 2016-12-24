@@ -15,8 +15,8 @@ bitvc:
     userinfo: https://api.bitvc.com/api/accountInfo/get
     btc:
       ticker: http://api.huobi.com/staticmarket/ticker_btc_json.js
-      depth: http://api.huobi.com/staticmarket/depth_btc_json.js
+      depth: http://api.huobi.com/staticmarket/depth_btc_50.js
     ltc:
       ticker: http://api.huobi.com/staticmarket/ticker_ltc_json.js
-      depth: http://api.huobi.com/staticmarket/depth_ltc_json.js
+      depth: http://api.huobi.com/staticmarket/depth_ltc_50.js
 

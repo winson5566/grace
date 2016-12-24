@@ -18,18 +18,20 @@ public class PriceHistory {
     private String coin;
     private BigDecimal sellPrice;
     private BigDecimal buyPrice;
-    private Date updateTime;
+    private BigDecimal lastPrice;
+    private String timestamp;
 
     public PriceHistory() {
     }
 
-    public PriceHistory(String platform, String coin, BigDecimal buyPrice, BigDecimal sellPrice) {
+    public PriceHistory(String platform, String coin, BigDecimal sellPrice,BigDecimal buyPrice, BigDecimal lastPrice,String timestamp) {
         this.platform = platform;
         this.coin = coin;
         this.buyPrice = buyPrice;
         this.sellPrice = sellPrice;
+        this.lastPrice = lastPrice;
         this.id= UUID.randomUUID().toString();
-        this.updateTime=new Date();
+        this.timestamp=timestamp;
     }
 
     @Id
@@ -73,12 +75,21 @@ public class PriceHistory {
         this.buyPrice = buyPrice;
     }
 
-    public Date getUpdateTime() {
-        return updateTime;
+    public String getTimestamp() {
+        return timestamp;
     }
 
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
+
+    public BigDecimal getLastPrice() {
+        return lastPrice;
+    }
+
+    public void setLastPrice(BigDecimal lastPrice) {
+        this.lastPrice = lastPrice;
     }
 }
 
