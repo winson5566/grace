@@ -11,6 +11,8 @@ import com.awinson.valid.ApiKeyValid;
 import com.awinson.valid.RegisterValid;
 import org.omg.PortableServer.LIFESPAN_POLICY_ID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -86,6 +88,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+
     public Map<String, Object> updateApiKey(ApiKeyValid apiKeyValid) {
         Map<String, Object> map = new HashMap();
         UserApi userApi1 = new UserApi();

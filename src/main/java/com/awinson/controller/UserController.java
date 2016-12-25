@@ -79,7 +79,7 @@ public class UserController {
     @RequestMapping("updateApiKey")
     public String updateApiKey(@Validated ApiKeyValid apiKeyValid) {
         userService.updateApiKey(apiKeyValid);
-        return "/user/setting";
+        return "forward:/u/setting";
     }
 
     /**

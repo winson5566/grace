@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
  */
 
 @SpringBootApplication
+@EnableCaching
 public class SpringBootStart {
 
     public static void main(String[] args) throws Exception {
