@@ -44,4 +44,8 @@ public interface UserService {
      */
     UserApi getUserApiWithPlatformAndApiType(String platform,String apiType);
 
+    /**
+     * 获取有所可用用户的资产信息，并放进缓存
+     */
+    void getAllUserAssetsInfo2Cache();
 }

@@ -31,13 +31,13 @@ public class WebSocketInit {
 
     @PostConstruct
     public void init() {
-//        try {
-//            huobiInit();
-//        } catch (URISyntaxException e) {
-//            e.printStackTrace();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            huobiInit();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         okcoinInit();
     }
 
@@ -79,7 +79,7 @@ public class WebSocketInit {
     }
 
     private void huobiInit() throws URISyntaxException, InterruptedException {
-        final BlockingQueue<Object> values = new LinkedBlockingQueue<Object>();
+        //final BlockingQueue<Object> values = new LinkedBlockingQueue<Object>();
         IO.Options opts = new IO.Options();
         opts.forceNew = true;
         opts.reconnection = true;
@@ -89,19 +89,22 @@ public class WebSocketInit {
             @Override
             public void call(Object... args) {
                 logger.info("EVENT_CONNECT");
-                String strMsg = "{\"symbolId\":\"btccny\",\"version\":1,\"msgType\":\"reqMarketDepthTop\",\"requestIndex\":"+datetime+"}";
+                String strMsg = "{\"symbolId\":\"btccny\",\"version\":1,\"msgType\":\"reqMarketDepthTop\",\"requestIndex\":" + datetime + "}";
                 JSONObject jsonObject = new JSONObject(strMsg);
-                socket.emit("request",jsonObject);
+                socket.emit("request", jsonObject);
             }
-        }).on(Socket.EVENT_MESSAGE, new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                values.offer(args);
-            }
-        });
+        })
+                .on(Socket.EVENT_MESSAGE, new Emitter.Listener() {
+                    @Override
+                    public void call(Object... args) {
+                        logger.info("EVENT_MESSAGE");
+                        //values.offer(args);
+                    }
+                })
+        ;
         socket.connect();
 
-        Object[] object = (Object[])values.take();
-        logger.info(object.toString());
+        // Object[] object = (Object[])values.take();
+        //logger.info(object.toString());
     }
 }

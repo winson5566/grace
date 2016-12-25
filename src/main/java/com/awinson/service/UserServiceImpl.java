@@ -3,13 +3,21 @@ package com.awinson.service;
 import com.awinson.Entity.UserApi;
 import com.awinson.Entity.User;
 import com.awinson.Entity.UserRole;
+import com.awinson.cache.CacheManager;
+import com.awinson.config.BitvcCnConfig;
+import com.awinson.config.OkcoinCnConfig;
+import com.awinson.config.OkcoinUnConfig;
 import com.awinson.dictionary.Dict;
 import com.awinson.repository.UserApiRepository;
 import com.awinson.repository.UserRepository;
 import com.awinson.repository.UserRoleRepository;
+import com.awinson.utils.StringUtil;
 import com.awinson.valid.ApiKeyValid;
 import com.awinson.valid.RegisterValid;
+import com.google.gson.Gson;
 import org.omg.PortableServer.LIFESPAN_POLICY_ID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -29,7 +37,7 @@ import java.util.*;
 @Transactional
 public class UserServiceImpl implements UserService {
 
-
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     @Autowired
     private UserRepository userRepository;
 
@@ -38,6 +46,17 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserApiRepository userApiRepository;
+
+    @Autowired
+    private OkcoinCnConfig okcoinCnConfig;
+    @Autowired
+    private OkcoinUnConfig okcoinUnConfig;
+    @Autowired
+    private BitvcCnConfig bitvcCnConfig;
+    @Autowired
+    private OkcoinService okcoinService;
+    @Autowired
+    private BitvcService bitvcService;
 
     @Override
     public Map<String, Object> register(RegisterValid registerValid) {
@@ -176,6 +195,89 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserApi getUserApiWithPlatformAndApiType(String platform, String apiType) {
-         return userApiRepository.findByUserIdAndPlatformAndApiType(getUserId(),platform,apiType);
+        return userApiRepository.findByUserIdAndPlatformAndApiType(getUserId(), platform, apiType);
+    }
+
+    @Override
+    public void getAllUserAssetsInfo2Cache() {
+        // 获取所有可用的用户
+        List<User> list = userRepository.findByEnable(Dict.Enable.YES);
+        Map<String, Object> userApiMap = new HashMap();
+        //遍历用户查询是否有符合条件的key对
+        for (User user : list) {
+
+            //获取用户所有的api记录
+            List<UserApi> apiList = userApiRepository.findByUserId(user.getId());
+            if (apiList != null && apiList.size() > 0) {
+                Map<String, Object> oneUserApiMap = new HashMap();
+                //分平台
+                for (UserApi userApi : apiList) {
+                    //每一个用户,整理key
+                    String platform = userApi.getPlatform();
+                    Map<String, String> tempMap;
+                    if (oneUserApiMap.containsKey(platform)) {
+                        tempMap = (Map<String, String>) oneUserApiMap.get(platform);
+                    } else {
+                        tempMap = new HashMap();
+                    }
+                    String apiType = userApi.getApiType();
+                    String api = userApi.getApi();
+                    tempMap.put(apiType, api);
+                    oneUserApiMap.put(platform, tempMap);
+                }
+                userApiMap.put(user.getId(), oneUserApiMap);
+                getInfo2CacheByUserApiMap(userApiMap);
+            }
+        }
+    }
+
+    /**
+     * 获取URL请求用户信息
+     *
+     * @param userApiMap
+     */
+    private void getInfo2CacheByUserApiMap(Map<String, Object> userApiMap) {
+        for (Map.Entry<String, Object> entry : userApiMap.entrySet()) {
+            String userId = entry.getKey();
+            Map<String, Object> userApi = (Map<String, Object>) entry.getValue();
+            for (Map.Entry<String, Object> platformEntry : userApi.entrySet()) {
+                String platform = platformEntry.getKey();
+                Map<String, String> apiMap = (Map<String, String>) platformEntry.getValue();
+                String apiKey = apiMap.get(Dict.key.api);
+                String secretKey = apiMap.get(Dict.key.secret);
+                String url = null;
+                switch (platform) {
+                    case Dict.Platform.OKCOIN_CN:
+                        url = okcoinCnConfig.getUserinfo();
+                        break;
+                    case Dict.Platform.OKCOIN_UN:
+                        url = okcoinUnConfig.getUserinfo();
+                        break;
+                    case Dict.Platform.BITVC_CN:
+                        url = bitvcCnConfig.getUserinfo();
+                        break;
+                    default:
+                        break;
+                }
+                if (!StringUtil.isEmpty(apiKey) && !StringUtil.isEmpty(secretKey) && !StringUtil.isEmpty(url)) {
+                    getUserInfo2Cache(userId, platform, apiKey, secretKey);
+                }
+            }
+        }
+    }
+
+    private void getUserInfo2Cache(String userId, String platform, String apiKey, String secretKey) {
+        Map<String, Object> map = new HashMap();
+        if (Dict.Platform.OKCOIN_CN.equals(platform) || Dict.Platform.OKCOIN_UN.equals(platform)) {
+            map = okcoinService.getSpotUserinfo(platform, apiKey, secretKey);
+        } else if (Dict.Platform.BITVC_CN.equals(platform) || Dict.Platform.BITVC_UN.equals(platform)) {
+            map = bitvcService.getSpotUserinfo(platform, apiKey, secretKey);
+        }
+        //Gson gson = new Gson();
+        //logger.info(gson.toJson(map));
+        if (map != null && map.size() > 0) {
+            map.put("timestamp",String.valueOf(System.currentTimeMillis()));
+            CacheManager.update(Dict.Type.ASSETS + platform +"_"+userId, map);
+        }
     }
 }

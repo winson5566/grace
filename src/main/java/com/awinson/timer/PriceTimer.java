@@ -1,6 +1,7 @@
 package com.awinson.timer;
 
 import com.awinson.service.PriceService;
+import com.awinson.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,7 +16,8 @@ public class PriceTimer {
 
     @Autowired
     private PriceService priceService;
-
+@Autowired
+private UserService userService;
 //    /**
 //     * 获取所有平台买一卖一价格
 //     */
@@ -56,5 +58,12 @@ public class PriceTimer {
         priceService.broadcast();
     }
 
+    /**
+     * 获取所有可用用户的资产，放进缓存
+     */
+    @Scheduled(cron = "0/1 * *  * * ? ")
+    public void getAllUserAssetsInfo2Cache(){
+        userService.getAllUserAssetsInfo2Cache();
+    }
 }
 

@@ -35,33 +35,39 @@ public class BitvcServiceImpl implements BitvcService{
             String accessKey = userApi1.getApi();
             String secretKey = userApi2.getApi();
             if (!StringUtil.isEmpty(accessKey)&&!StringUtil.isEmpty(secretKey)){
-                // 构造参数签名
-                Map<String, String> params = new HashMap();
-                params.put("access_key", accessKey);
-                params.put("created", String.valueOf(System.currentTimeMillis()).toString().substring(0,10));
-                String sign = MD5Util.buildMysignV1(params, secretKey);
-                params.put("sign", sign.toLowerCase());
-                // 发送post请求
-                try {
-                    String url ;
-                    if (platform.equals(Dict.Platform.BITVC_CN)){
-                        url =bitvcCnConfig.getUserinfo();
-                    }else {
-                        url =bitvcCnConfig.getUserinfo();
-                    }
-                    String result = HttpUtils.doPost(url,params);
-                    map.put("code","1");
-                    map.put("msg","OK");
-                    Gson gson = new Gson();
-                    map.put("result",gson.fromJson(result,Map.class));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return map;
+                map=getSpotUserinfo(platform,accessKey,secretKey);
             }
         }
         map.put("code","0");
         map.put("msg","Bitvc的key不完整，请检查！");
+        return map;
+    }
+
+    @Override
+    public Map<String, Object> getSpotUserinfo(String platform, String accessKey, String secretKey) {
+        Map<String,Object> map  = new HashMap();
+        // 构造参数签名
+        Map<String, String> params = new HashMap();
+        params.put("access_key", accessKey);
+        params.put("created", String.valueOf(System.currentTimeMillis()).toString().substring(0,10));
+        String sign = MD5Util.buildMysignV1(params, secretKey);
+        params.put("sign", sign.toLowerCase());
+        // 发送post请求
+        try {
+            String url ;
+            if (platform.equals(Dict.Platform.BITVC_CN)){
+                url =bitvcCnConfig.getUserinfo();
+            }else {
+                url =bitvcCnConfig.getUserinfo();
+            }
+            String result = HttpUtils.doPost(url,params);
+            map.put("code","1");
+            map.put("msg","OK");
+            Gson gson = new Gson();
+            map.put("result",gson.fromJson(result,Map.class));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return map;
     }
 }

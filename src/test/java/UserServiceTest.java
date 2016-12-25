@@ -44,6 +44,11 @@ public class UserServiceTest {
         userApiRepository.save(userApi);
     }
 
+    @Test
+    public void getAllUserAssetsInfo2Cache(){
+        userService.getAllUserAssetsInfo2Cache();
+    }
+
 //    @Test
 //    public void getUserAllApiTest(){
 //        List<UserApi> list = userService.getUserAllApi();

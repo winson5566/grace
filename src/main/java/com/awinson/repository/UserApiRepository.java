@@ -21,13 +21,13 @@ import java.util.List;
 @RepositoryDefinition(domainClass = UserApi.class, idClass = String.class)
 public interface UserApiRepository{
 
-       @Cacheable(value="byUserId",key="#userId")
+       @Cacheable(value="userApi", key="#p0")
        List<UserApi> findByUserId(String userId);
 
        UserApi findByPlatformAndApiType(String platform,String apiType);
 
        UserApi findByUserIdAndPlatformAndApiType(String userId,String Platform,String apiType);
 
-       @CacheEvict(value="byUserId",key="#userApi.userId")
+       @CacheEvict(value="userApi", key="#p0.userId")
        void save(UserApi userApi);
 }

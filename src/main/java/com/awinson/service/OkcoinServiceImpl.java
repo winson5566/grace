@@ -24,9 +24,9 @@ import java.util.Map;
  */
 @Service
 @Transactional
-public class OkcoinServiceImpl  implements OkcoinService{
+public class OkcoinServiceImpl implements OkcoinService {
 
-    private static final Logger logger  = LoggerFactory.getLogger(OkcoinServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(OkcoinServiceImpl.class);
 
     @Autowired
     private OkcoinCnConfig okcoinCnConfig;
@@ -36,42 +36,50 @@ public class OkcoinServiceImpl  implements OkcoinService{
     private UserService userService;
 
     @Override
-    public Map<String,Object> getSpotUserinfo(String platform) {
-        Map<String,Object> map  = new HashMap();
+    public Map<String, Object> getSpotUserinfo(String platform) {
+        Map<String, Object> map = new HashMap();
         //获取API
         UserApi userApi1 = userService.getUserApiWithPlatformAndApiType(platform, Dict.key.api);
         UserApi userApi2 = userService.getUserApiWithPlatformAndApiType(platform, Dict.key.secret);
-        if (userApi1!=null&&userApi2!=null){
+        if (userApi1 != null && userApi2 != null) {
             String apiKey = userApi1.getApi();
             String secretKey = userApi2.getApi();
-            if (!StringUtil.isEmpty(apiKey)&&!StringUtil.isEmpty(secretKey)){
-                // 构造参数签名
-                Map<String, String> params = new HashMap();
-                params.put("api_key", apiKey);
-                String sign = MD5Util.buildMysignV1(params, secretKey);
-                params.put("sign", sign);
-                // 发送post请求
-                try {
-                    String url ;
-                    if (platform.equals(Dict.Platform.OKCOIN_CN)){
-                        url =okcoinCnConfig.getUserinfo();
-                    }else {
-                        url =okcoinUnConfig.getUserinfo();
-                    }
-                    String result = HttpUtils.doPost(url,params);
-                    map.put("code","1");
-                    map.put("msg","OK");
-                    Gson gson = new Gson();
-                    map.put("result",gson.fromJson(result,Map.class));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return map;
-            }
+            return getSpotUserinfo(platform, apiKey, secretKey);
         }
-        map.put("code","0");
-        map.put("msg","Okcoind的key不完整，请检查！");
+        map.put("code", "0");
+        map.put("msg", "Okcoind的key不完整，请检查！");
         return map;
     }
 
+    @Override
+    public Map<String, Object> getSpotUserinfo(String platform, String apiKey, String secretKey) {
+        Map<String, Object> map = new HashMap();
+        if (!StringUtil.isEmpty(apiKey) && !StringUtil.isEmpty(secretKey)) {
+            // 构造参数签名
+            Map<String, String> params = new HashMap();
+            params.put("api_key", apiKey);
+            String sign = MD5Util.buildMysignV1(params, secretKey);
+            params.put("sign", sign);
+            // 发送post请求
+            try {
+                String url;
+                if (platform.equals(Dict.Platform.OKCOIN_CN)) {
+                    url = okcoinCnConfig.getUserinfo();
+                } else {
+                    url = okcoinUnConfig.getUserinfo();
+                }
+                String result = HttpUtils.doPost(url, params);
+                map.put("code", "1");
+                map.put("msg", "OK");
+                Gson gson = new Gson();
+                map.put("result", gson.fromJson(result, Map.class));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return map;
+        }
+        map.put("code", "0");
+        map.put("msg", "Okcoind的key不完整，请检查！");
+        return map;
+    }
 }

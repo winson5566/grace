@@ -47,7 +47,7 @@ public class CacheManager {
         Map<String,Object> cloneMap = new HashMap();
         if (allMap!=null&&allMap.size()>0){
             for (Map.Entry<String,Object> map:allMap.entrySet()) {
-                if (map.getKey().matches("^"+type+"\\d+")){
+                if (map.getKey().matches("^"+type+".+")){
                     cloneMap.put(map.getKey(),map.getValue());
                 }
             }

@@ -14,5 +14,13 @@ public interface BitvcService {
      */
     Map<String,Object> getSpotUserinfo(String platform);
 
-
+    /**
+     * 获取中国站或国际站现货账户信息
+     * @param platform 10 中国站    11国际站
+     * @param platform
+     * @param apiKey
+     * @param secretKey
+     * @return
+     */
+    Map<String,Object> getSpotUserinfo(String platform,String accessKey,String secretKey);
 }
