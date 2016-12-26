@@ -3,6 +3,7 @@ package com.awinson.service;
 import com.awinson.Entity.UserApi;
 import com.awinson.Entity.User;
 import com.awinson.Entity.UserRole;
+import com.awinson.Entity.UserTradeSetting;
 import com.awinson.cache.CacheManager;
 import com.awinson.config.BitvcCnConfig;
 import com.awinson.config.OkcoinCnConfig;
@@ -11,6 +12,7 @@ import com.awinson.dictionary.Dict;
 import com.awinson.repository.UserApiRepository;
 import com.awinson.repository.UserRepository;
 import com.awinson.repository.UserRoleRepository;
+import com.awinson.repository.UserTradeSettingRepository;
 import com.awinson.utils.StringUtil;
 import com.awinson.valid.ApiKeyValid;
 import com.awinson.valid.RegisterValid;
@@ -46,6 +48,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserApiRepository userApiRepository;
+
+    @Autowired
+    private UserTradeSettingRepository userTradeSettingRepository;
 
     @Autowired
     private OkcoinCnConfig okcoinCnConfig;
@@ -117,8 +122,8 @@ public class UserServiceImpl implements UserService {
             userApi1.setPlatform(apiKeyValid.getPlatform());
             userApi1.setUserId(id);
             if (apiKeyValid.getApiKey() != null && apiKeyValid.getApiKey() != "") {
-                if (userApiRepository.findByPlatformAndApiType(apiKeyValid.getPlatform(), Dict.key.api) != null) {
-                    userApi1 = userApiRepository.findByPlatformAndApiType(apiKeyValid.getPlatform(), Dict.key.api);
+                if (userApiRepository.findByUserIdAndPlatformAndApiType(id,apiKeyValid.getPlatform(), Dict.key.api) != null) {
+                    userApi1 = userApiRepository.findByUserIdAndPlatformAndApiType(id,apiKeyValid.getPlatform(), Dict.key.api);
                 } else {
                     userApi1.setId(UUID.randomUUID().toString());
                 }
@@ -130,8 +135,8 @@ public class UserServiceImpl implements UserService {
             userApi2.setPlatform(apiKeyValid.getPlatform());
             userApi2.setUserId(id);
             if (apiKeyValid.getSecretKey() != null && apiKeyValid.getSecretKey() != "") {
-                if (userApiRepository.findByPlatformAndApiType(apiKeyValid.getPlatform(), Dict.key.secret) != null) {
-                    userApi2 = userApiRepository.findByPlatformAndApiType(apiKeyValid.getPlatform(), Dict.key.secret);
+                if (userApiRepository.findByUserIdAndPlatformAndApiType(id,apiKeyValid.getPlatform(), Dict.key.secret) != null) {
+                    userApi2 = userApiRepository.findByUserIdAndPlatformAndApiType(id,apiKeyValid.getPlatform(), Dict.key.secret);
                 } else {
                     userApi2.setId(UUID.randomUUID().toString());
                 }
@@ -273,11 +278,67 @@ public class UserServiceImpl implements UserService {
         } else if (Dict.Platform.BITVC_CN.equals(platform) || Dict.Platform.BITVC_UN.equals(platform)) {
             map = bitvcService.getSpotUserinfo(platform, apiKey, secretKey);
         }
-        //Gson gson = new Gson();
-        //logger.info(gson.toJson(map));
         if (map != null && map.size() > 0) {
             map.put("timestamp",String.valueOf(System.currentTimeMillis()));
             CacheManager.update(Dict.Type.ASSETS + platform +"_"+userId, map);
         }
+    }
+
+    @Override
+    public UserTradeSetting getUserTradeSetting() {
+        String userId = getUserId();
+        UserTradeSetting userTradeSetting = userTradeSettingRepository.findByUserId(userId);
+        return userTradeSetting;
+    }
+
+    @Override
+    public String updateUserTradeSetting(String buyPlatform,String sellPlatform,String coin,String margin){
+        String userId = getUserId();
+        UserTradeSetting userTradeSetting;
+        userTradeSetting = userTradeSettingRepository.findByUserId(userId);
+        //如果用户交易设置就新增
+        if (userTradeSetting==null){
+            userTradeSetting =new UserTradeSetting();
+            userTradeSetting.setId(UUID.randomUUID().toString());
+            userTradeSetting.setUserId(userId);
+            userTradeSetting.setAutoTrade("0");
+            userTradeSetting.setAutoTradeBtc("0");
+            userTradeSetting.setAutoTradeLtc("0");
+        }
+        //获取用户交易的json格式
+        String marginJson = userTradeSetting.getMarginJson();
+        Map marginMap;
+        Gson gson = new Gson();
+        if (marginJson!=null&&!"".equals(marginJson)){
+            marginMap = gson.fromJson(marginJson,Map.class);    //如果margin_json字段为空
+        }else {
+            marginMap = new HashMap();
+        }
+        marginMap.put(Dict.Type.SETTING+buyPlatform+sellPlatform+coin,margin);
+        userTradeSetting.setMarginJson(gson.toJson(marginMap));
+        userTradeSettingRepository.save(userTradeSetting);
+        return  getUserTradeSetting().getMarginJson();
+    }
+    @Override
+    public String updateUserTradeSettingAutoTrade(String autoTrade,String autoTradeBtc,String autoTradeLtc){
+        String userId = getUserId();
+        UserTradeSetting userTradeSetting;
+        userTradeSetting = userTradeSettingRepository.findByUserId(userId);
+        //如果用户交易设置就新增
+        if (userTradeSetting==null){
+            userTradeSetting =new UserTradeSetting();
+            userTradeSetting.setId(UUID.randomUUID().toString());
+            userTradeSetting.setUserId(userId);
+        }
+        userTradeSetting.setAutoTrade(autoTrade);
+        userTradeSetting.setAutoTradeBtc(autoTradeBtc);
+        userTradeSetting.setAutoTradeLtc(autoTradeLtc);
+        userTradeSettingRepository.save(userTradeSetting);
+        Map<String,String> result = new HashMap();
+        result.put("autoTrade",autoTrade);
+        result.put("autoTradeBtc",autoTradeBtc);
+        result.put("autoTradeLtc",autoTradeLtc);
+        Gson gson = new Gson();
+        return  gson.toJson(result);
     }
 }

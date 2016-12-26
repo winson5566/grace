@@ -1,6 +1,7 @@
 package com.awinson.controller;
 
 import com.awinson.Entity.UserApi;
+import com.awinson.Entity.UserTradeSetting;
 import com.awinson.cache.CacheManager;
 import com.awinson.dictionary.Dict;
 import com.awinson.repository.UserApiRepository;
@@ -44,17 +45,17 @@ public class UserController {
      */
     @RequestMapping("")
     public String index() {
-        return "/user/index";
+        return "/user/trade";
     }
 
     /**
-     * BTC交易頁面
+     * 交易頁面
      *
      * @return
      */
-    @RequestMapping("btc-trade")
+    @RequestMapping("trade")
     public String trade() {
-        return "/user/btc-trade";
+        return "/user/trade";
     }
 
     /**
@@ -89,7 +90,10 @@ public class UserController {
     @RequestMapping("getOkcoinAssets")
     @ResponseBody
     public Map<String, Object> getOkcoinAssets() {
-        Map<String, Object> map = okcoinService.getSpotUserinfo(Dict.Platform.OKCOIN_CN);
+        //API获取
+        //Map<String, Object> map = okcoinService.getSpotUserinfo(Dict.Platform.OKCOIN_CN);
+        //从缓存获取
+        Map<String, Object> map =(Map<String, Object>)CacheManager.get(Dict.Type.ASSETS+Dict.Platform.OKCOIN_CN+"_"+userService.getUserId());
         return map;
     }
 
@@ -100,7 +104,10 @@ public class UserController {
     @RequestMapping("getBitvcAssets")
     @ResponseBody
     public Map<String, Object> getBitvcAssets() {
-        Map<String, Object> map = bitvcService.getSpotUserinfo(Dict.Platform.BITVC_CN);
+        //API获取
+        //Map<String, Object> map = bitvcService.getSpotUserinfo(Dict.Platform.BITVC_CN);
+        //从缓存获取
+        Map<String, Object> map =(Map<String, Object>)CacheManager.get(Dict.Type.ASSETS+Dict.Platform.BITVC_CN+"_"+userService.getUserId());
         return map;
     }
 
@@ -149,4 +156,42 @@ public class UserController {
         return "/user/price";
     }
 
+
+    /**
+     * 获取用户交易设置
+     * @return
+     */
+    @RequestMapping("getUserTradeSetting")
+    @ResponseBody
+    public String getUserTradeSetting(){
+        UserTradeSetting userTradeSetting =userService.getUserTradeSetting();
+        return userTradeSetting.getMarginJson();
+    }
+
+    /**
+     * 更新用户交易设置
+     * @param buyPlatform
+     * @param sellPlatform
+     * @param coin
+     * @param margin
+     * @return
+     */
+    @RequestMapping("updateUserTradeSetting")
+    @ResponseBody
+    public String updateUserTradeSetting(String buyPlatform,String sellPlatform,String coin,String margin){
+        return userService.updateUserTradeSetting(buyPlatform,sellPlatform,coin,margin);
+    }
+
+    /**
+     * 更新用户交易设置
+     * @param autoTrade
+     * @param autoTradeBtc
+     * @param autoTradeLtc
+     * @return
+     */
+    @RequestMapping("updateUserTradeSettingAutoTrade")
+    @ResponseBody
+    public String updateUserTradeSettingAutoTrade(String autoTrade,String autoTradeBtc,String autoTradeLtc){
+        return userService.updateUserTradeSettingAutoTrade(autoTrade,autoTradeBtc,autoTradeLtc);
+    }
 }

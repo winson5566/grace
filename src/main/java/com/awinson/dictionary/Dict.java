@@ -22,6 +22,7 @@ public class Dict {
         public static final String price = "0";     //价格
         public static final String margin = "1";     //价差
         public static final String ASSETS = "2";     //账户信息
+        public static final String SETTING = "s";     //交易设置
 
     }
     public static class direction{

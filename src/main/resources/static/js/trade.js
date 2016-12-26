@@ -162,3 +162,4 @@ function bitvc_ltc() {
 }
 window.onload = okCoinWebSocket.init("wss://real.okcoin.cn:10440/websocket/okcoinapi");
 window.onload = bitvcWebSocket.init();
+

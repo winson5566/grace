@@ -1,7 +1,7 @@
 var assets = {};
 assets.init = function () {
     setInterval(okcoinAssets,1000);
-    // setInterval(bitvcAssets, 1000);
+    setInterval(bitvcAssets, 1000);
 }
 function okcoinAssets() {
     $.ajax({

@@ -1,6 +1,7 @@
 package com.awinson.service;
 
 import com.awinson.Entity.UserApi;
+import com.awinson.Entity.UserTradeSetting;
 import com.awinson.valid.ApiKeyValid;
 import com.awinson.valid.RegisterValid;
 
@@ -48,4 +49,28 @@ public interface UserService {
      * 获取有所可用用户的资产信息，并放进缓存
      */
     void getAllUserAssetsInfo2Cache();
+
+    /**
+     * 获取用户的设置
+     */
+    UserTradeSetting getUserTradeSetting();
+
+    /**
+     * 更新用户的设置
+     * @param buyPlatform
+     * @param sellPlatform
+     * @param coin
+     * @param margin
+     * @return
+     */
+    String updateUserTradeSetting(String buyPlatform,String sellPlatform,String coin,String margin);
+
+    /**
+     * 更新用户的设置(自动交易)
+     * @param autoTrade
+     * @param autoTradeBtc
+     * @param autoTradeLtc
+     * @return
+     */
+    String updateUserTradeSettingAutoTrade(String autoTrade,String autoTradeBtc,String autoTradeLtc);
 }

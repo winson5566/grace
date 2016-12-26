@@ -40,6 +40,7 @@ function showPrice(message) {
 
 function showMargin(message) {
     var obj =JSON.parse(message);
+
     $("#margin-btc-okcoin-bitvc").text(obj.data['100100'].margin);
     $("#margin-ltc-okcoin-bitvc").text(obj.data['100101'].margin);
     $("#margin-btc-bitvc-okcoin").text(obj.data['110000'].margin);
@@ -48,6 +49,9 @@ function showMargin(message) {
     $("#time-ltc-okcoin-bitvc").text(obj.data['100101'].deltaTime);
     $("#time-btc-bitvc-okcoin").text(obj.data['110000'].deltaTime);
     $("#time-ltc-bitvc-okcoin").text(obj.data['110001'].deltaTime);
+    if(obj.data['100100'].margin>0){
+
+    }
 }
 
 window.onload = connect;

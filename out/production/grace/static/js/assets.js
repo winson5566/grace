@@ -1,6 +1,6 @@
 var assets = {};
 assets.init = function () {
-    setInterval(okcoinAssets,1000);
+    setInterval(okcoinAssets, 1000);
     // setInterval(bitvcAssets, 1000);
 }
 function okcoinAssets() {
@@ -14,19 +14,21 @@ function okcoinAssets() {
             console.log('/u/getOkcoinAssets请求异常');
         },
         success: function (result) {
-            $("#assets-okcoin-btc-free").text(result.result.info.funds.free.btc);
-            $("#assets-okcoin-ltc-free").text(result.result.info.funds.free.ltc);
-            $("#assets-okcoin-cny-free").text(result.result.info.funds.free.cny);
-            if (result.result.info.funds.borrow != null) {
-                $("#assets-okcoin-btc-borrow").text(result.result.info.funds.borrow.btc);
-                $("#assets-okcoin-ltc-borrow").text(result.result.info.funds.borrow.ltc);
-                $("#assets-okcoin-cny-borrow").text(result.result.info.funds.borrow.cny);
+            if (result.result.info != null) {
+                $("#assets-okcoin-btc-free").text(result.result.info.funds.free.btc);
+                $("#assets-okcoin-ltc-free").text(result.result.info.funds.free.ltc);
+                $("#assets-okcoin-cny-free").text(result.result.info.funds.free.cny);
+                if (result.result.info.funds.borrow != null) {
+                    $("#assets-okcoin-btc-borrow").text(result.result.info.funds.borrow.btc);
+                    $("#assets-okcoin-ltc-borrow").text(result.result.info.funds.borrow.ltc);
+                    $("#assets-okcoin-cny-borrow").text(result.result.info.funds.borrow.cny);
+                }
+                $("#assets-okcoin-btc-freezed").text(result.result.info.funds.freezed.btc);
+                $("#assets-okcoin-ltc-freezed").text(result.result.info.funds.freezed.ltc);
+                $("#assets-okcoin-cny-freezed").text(result.result.info.funds.freezed.cny);
+                $("#assets-okcoin-net-asset").text(result.result.info.funds.asset.net);
+                $("#assets-okcoin-total-asset").text(result.result.info.funds.asset.total);
             }
-            $("#assets-okcoin-btc-freezed").text(result.result.info.funds.freezed.btc);
-            $("#assets-okcoin-ltc-freezed").text(result.result.info.funds.freezed.ltc);
-            $("#assets-okcoin-cny-freezed").text(result.result.info.funds.freezed.cny);
-            $("#assets-okcoin-net-asset").text(result.result.info.funds.asset.net);
-            $("#assets-okcoin-total-asset").text(result.result.info.funds.asset.total);
         }
     });
 }
