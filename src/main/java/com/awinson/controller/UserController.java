@@ -192,6 +192,6 @@ public class UserController {
     @RequestMapping("updateUserTradeSettingAutoTrade")
     @ResponseBody
     public String updateUserTradeSettingAutoTrade(String autoTrade,String autoTradeBtc,String autoTradeLtc){
-        return userService.updateUserTradeSettingAutoTrade(autoTrade,autoTradeBtc,autoTradeLtc);
+            return userService.updateUserTradeSettingAutoTrade(autoTrade,autoTradeBtc,autoTradeLtc);
     }
 }
