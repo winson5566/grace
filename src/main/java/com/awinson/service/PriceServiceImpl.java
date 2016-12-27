@@ -346,7 +346,7 @@ public class PriceServiceImpl implements PriceService {
      */
     public void savePrice2DB(String platformId, String coinType, BigDecimal sellPrice, BigDecimal buyPrice,BigDecimal lastPrice,String timestamp) {
         PriceHistory entity = new PriceHistory(platformId, coinType, sellPrice, buyPrice,lastPrice,timestamp);
-        priceHistoryRepository.save(entity);
+       //priceHistoryRepository.save(entity);
     }
 
 

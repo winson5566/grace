@@ -301,9 +301,10 @@ public class UserServiceImpl implements UserService {
             userTradeSetting =new UserTradeSetting();
             userTradeSetting.setId(UUID.randomUUID().toString());
             userTradeSetting.setUserId(userId);
-            userTradeSetting.setAutoTrade("0");
             userTradeSetting.setAutoTradeBtc("0");
             userTradeSetting.setAutoTradeLtc("0");
+            userTradeSetting.setAutoThresholdBtc("0");
+            userTradeSetting.setAutoThresholdLtc("0");
         }
         //获取用户交易的json格式
         String marginJson = userTradeSetting.getMarginJson();
@@ -320,7 +321,7 @@ public class UserServiceImpl implements UserService {
         return  getUserTradeSetting().getMarginJson();
     }
     @Override
-    public String updateUserTradeSettingAutoTrade(String autoTrade,String autoTradeBtc,String autoTradeLtc){
+    public String updateUserTradeSettingAuto(String autoTradeBtc,String autoTradeLtc,String autoThresholdBtc,String autoThresholdLtc){
         String userId = getUserId();
         UserTradeSetting userTradeSetting;
         userTradeSetting = userTradeSettingRepository.findByUserId(userId);
@@ -330,14 +331,16 @@ public class UserServiceImpl implements UserService {
             userTradeSetting.setId(UUID.randomUUID().toString());
             userTradeSetting.setUserId(userId);
         }
-        userTradeSetting.setAutoTrade(autoTrade);
         userTradeSetting.setAutoTradeBtc(autoTradeBtc);
         userTradeSetting.setAutoTradeLtc(autoTradeLtc);
+        userTradeSetting.setAutoThresholdBtc(autoThresholdBtc);
+        userTradeSetting.setAutoThresholdLtc(autoThresholdLtc);
         userTradeSettingRepository.save(userTradeSetting);
         Map<String,String> result = new HashMap();
-        result.put("autoTrade",autoTrade);
         result.put("autoTradeBtc",autoTradeBtc);
         result.put("autoTradeLtc",autoTradeLtc);
+        result.put("autoThresholdBtc",autoThresholdBtc);
+        result.put("autoThresholdLtc",autoThresholdLtc);
         Gson gson = new Gson();
         return  gson.toJson(result);
     }

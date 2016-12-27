@@ -21,8 +21,8 @@ spring:
     password: w5566
     driver-class-name: com.mysql.cj.jdbc.Driver
     tomcat:
-      max-wait: 100
-      max-active: 10
+      max-wait: 10000
+      max-active: 100
       test-on-borrow: true
 
 # Server settings
@@ -40,7 +40,7 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/grace
     username: root
     password: w5566
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
     tomcat:
       max-wait: 10000
       max-active: 50

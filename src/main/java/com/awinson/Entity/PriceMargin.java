@@ -20,7 +20,7 @@ public class PriceMargin {
     private String coin;
     private Integer deltaTime;
     private BigDecimal margin;
-    private Date updateTime;
+    private String updateTime;
 
     public PriceMargin() {
     }
@@ -32,7 +32,7 @@ public class PriceMargin {
         this.deltaTime = deltaTime;
         this.margin = margin;
         this.id= UUID.randomUUID().toString();
-        this.updateTime=new Date();
+        this.updateTime=String.valueOf(System.currentTimeMillis());
     }
 
     @Id
@@ -84,11 +84,11 @@ public class PriceMargin {
         this.margin = margin;
     }
 
-    public Date getUpdateTime() {
+    public String getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Date updateTime) {
+    public void setUpdateTime(String updateTime) {
         this.updateTime = updateTime;
     }
 }

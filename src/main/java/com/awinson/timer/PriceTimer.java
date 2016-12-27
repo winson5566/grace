@@ -1,6 +1,7 @@
 package com.awinson.timer;
 
 import com.awinson.service.PriceService;
+import com.awinson.service.TradeService;
 import com.awinson.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -16,54 +17,50 @@ public class PriceTimer {
 
     @Autowired
     private PriceService priceService;
-@Autowired
-private UserService userService;
-//    /**
-//     * 获取所有平台买一卖一价格
-//     */
-//    @Scheduled(cron="0/1 * *  * * ? ")   //每5秒执行一次价格查询
-//    public void getPrice(){
-//        priceService.getAllPlatformPrice();
-//    }
-
+    @Autowired
+    private UserService userService;
 
     /**
      * 获取bitvc-BTC价格
      */
-    @Scheduled(cron="0/1 * *  * * ? ")
-    public void getBitvcBtcPrice(){
-        priceService.updatePlatformPrice("10","0");
+//    @Scheduled(cron = "0/1 * *  * * ? ")
+    @Scheduled(initialDelay=1000, fixedDelay=1000)
+    public void getBitvcBtcPrice() {
+        priceService.updatePlatformPrice("10", "0");
     }
+
     /**
      * 获取bitvc-LTC价格
      */
-    @Scheduled(cron="0/1 * *  * * ? ")
-    public void getBitvcLtcPrice(){
-        priceService.updatePlatformPrice("10","1");
+    @Scheduled(initialDelay=1000, fixedDelay=1000)
+    public void getBitvcLtcPrice() {
+        priceService.updatePlatformPrice("10", "1");
     }
 
     /**
      * 计算各平台价差
      */
-    @Scheduled(cron = "0/1 * *  * * ? ")
-    public void getPriceMargin(){
+    @Scheduled(initialDelay=3000, fixedDelay=500)
+    public void getPriceMargin() {
         priceService.calculationMargin();
     }
 
     /**
      * WebSocekt推送最新价格
      */
-    @Scheduled(cron = "0/1 * *  * * ? ")
-    public void pushPriceAndMargin(){
+    @Scheduled(initialDelay=3000, fixedDelay=1000)
+    public void pushPriceAndMargin() {
         priceService.broadcast();
     }
 
     /**
      * 获取所有可用用户的资产，放进缓存
      */
-    @Scheduled(cron = "0/1 * *  * * ? ")
-    public void getAllUserAssetsInfo2Cache(){
+    @Scheduled(initialDelay=3000, fixedDelay=1000)
+    public void getAllUserAssetsInfo2Cache() {
         userService.getAllUserAssetsInfo2Cache();
     }
+
+
 }
 

@@ -14,7 +14,8 @@ import javax.persistence.Table;
 public class UserTradeSetting {
     private String id;
     private String userId;
-    private String autoTrade;
+    private String autoThresholdBtc;
+    private String autoThresholdLtc;
     private String autoTradeBtc;
     private String autoTradeLtc;
     private String marginJson;
@@ -34,14 +35,6 @@ public class UserTradeSetting {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public String getAutoTrade() {
-        return autoTrade;
-    }
-
-    public void setAutoTrade(String autoTrade) {
-        this.autoTrade = autoTrade;
     }
 
     public String getAutoTradeBtc() {
@@ -66,5 +59,21 @@ public class UserTradeSetting {
 
     public void setMarginJson(String marginJson) {
         this.marginJson = marginJson;
+    }
+
+    public String getAutoThresholdBtc() {
+        return autoThresholdBtc;
+    }
+
+    public void setAutoThresholdBtc(String autoThresholdBtc) {
+        this.autoThresholdBtc = autoThresholdBtc;
+    }
+
+    public String getAutoThresholdLtc() {
+        return autoThresholdLtc;
+    }
+
+    public void setAutoThresholdLtc(String autoThresholdLtc) {
+        this.autoThresholdLtc = autoThresholdLtc;
     }
 }

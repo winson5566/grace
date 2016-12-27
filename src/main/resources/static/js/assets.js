@@ -1,7 +1,9 @@
 var assets = {};
+var setting = {};
 assets.init = function () {
-    setInterval(okcoinAssets,1000);
+    setInterval(okcoinAssets, 1000);
     setInterval(bitvcAssets, 1000);
+    setInterval(getUserTradeSetting,1000);
 }
 function okcoinAssets() {
     $.ajax({
@@ -56,6 +58,55 @@ function bitvcAssets() {
             $("#assets-bitvc-usd-freezed").text(result.result.frozen_usd);
             $("#assets-bitvc-net-asset").text(result.result.net_asset);
             $("#assets-bitvc-total-asset").text(result.result.total);
+        }
+    });
+}
+
+
+function getUserTradeSetting() {
+    $.ajax({
+        url: '/u/getUserTradeSetting',
+        data: {},
+        type: 'GET',
+        dataType: 'json',
+        timeout: 1000,
+        error: function () {
+            console.log('/u/getUserTradeSetting');
+        },
+        success: function (result) {
+            if (result != null && result.marginJson != null) {
+                var marginJson = JSON.parse(result.marginJson);
+                if (marginJson.s00100 != null)
+                    $("#threshold-btc-okcoin-bitvc").text(marginJson.s00100);
+                if (marginJson.s10000 != null)
+                    $("#threshold-btc-bitvc-okcoin").text(marginJson.s10000);
+                if (marginJson.s00101 != null)
+                    $("#threshold-ltc-okcoin-bitvc").text(marginJson.s00101);
+                if (marginJson.s10001 != null)
+                    $("#threshold-ltc-bitvc-okcoin").text(marginJson.s10001);
+            }
+            if(result.autoTradeBtc=="1"){
+                $("#btc-trade").removeClass('btn-danger').addClass('btn-success').val("1").text("BTC自动交易");
+            }else if(result.autoTradeBtc=="0"){
+                $("#btc-trade").removeClass('btn-success').addClass('btn-danger').val("0").text("BTC手动交易");
+            }
+            if(result.autoTradeLtc=="1"){
+                $("#ltc-trade").removeClass('btn-danger').addClass('btn-success').val("1").text("LTC自动交易");
+            }else if(result.autoTradeLtc=="0"){
+                $("#ltc-trade").removeClass('btn-success').addClass('btn-danger').val("0").text("LTC手动交易");
+            }
+
+            if(result.autoThresholdBtc=="1"){
+                $("#btc-threshold").removeClass('btn-danger').addClass('btn-success').val("1").text("BTC自动阀值");
+            }else if(result.autoThresholdBtc=="0"){
+                $("#btc-threshold").removeClass('btn-success').addClass('btn-danger').val("0").text("BTC手动阀值");
+            }
+
+            if(result.autoThresholdLtc=="1"){
+                $("#ltc-threshold").removeClass('btn-danger').addClass('btn-success').val("1").text("LTC自动阀值");
+            }else if(result.autoThresholdLtc=="0"){
+                $("#ltc-threshold").removeClass('btn-success').addClass('btn-danger').val("0").text("LTC手动阀值");
+            }
         }
     });
 }

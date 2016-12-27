@@ -6,7 +6,10 @@ import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomi
 import org.springframework.boot.web.servlet.ErrorPage;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
  * Created by winson on 16/11/9.
@@ -14,10 +17,20 @@ import org.springframework.http.HttpStatus;
 
 @SpringBootApplication
 @EnableCaching
+@EnableAsync
 public class SpringBootStart {
 
     public static void main(String[] args) throws Exception {
         SpringApplication.run(SpringBootStart.class, args);
+    }
+
+    @Bean
+    public TaskExecutor taskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(5);    //核心线程数
+        executor.setMaxPoolSize(10);    //最大线程数
+        executor.setQueueCapacity(25);  //队列最大长度
+        return executor;
     }
 
     /**
@@ -34,6 +47,8 @@ public class SpringBootStart {
             container.addErrorPages(error401Page,error404Page, error500Page);
         });
     }
+
+
 
 
 }

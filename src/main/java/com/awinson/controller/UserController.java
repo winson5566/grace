@@ -165,7 +165,8 @@ public class UserController {
     @ResponseBody
     public String getUserTradeSetting(){
         UserTradeSetting userTradeSetting =userService.getUserTradeSetting();
-        return userTradeSetting.getMarginJson();
+        Gson gson  = new Gson();
+        return gson.toJson(userTradeSetting);
     }
 
     /**
@@ -183,15 +184,16 @@ public class UserController {
     }
 
     /**
-     * 更新用户交易设置
-     * @param autoTrade
+     * 更新用户交易设置(自动交易和阀值)
      * @param autoTradeBtc
      * @param autoTradeLtc
      * @return
      */
-    @RequestMapping("updateUserTradeSettingAutoTrade")
+    @RequestMapping("updateUserTradeSettingAuto")
     @ResponseBody
-    public String updateUserTradeSettingAutoTrade(String autoTrade,String autoTradeBtc,String autoTradeLtc){
-            return userService.updateUserTradeSettingAutoTrade(autoTrade,autoTradeBtc,autoTradeLtc);
+    public String updateUserTradeSettingAuto(String autoTradeBtc,String autoTradeLtc,String autoThresholdBtc,String autoThresholdLtc){
+            return userService.updateUserTradeSettingAuto(autoTradeBtc,autoTradeLtc,autoThresholdBtc,autoThresholdLtc);
     }
+
+
 }
