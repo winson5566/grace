@@ -35,13 +35,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .permitAll();
     }
 
-//    @Autowired
-//    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-//        auth
-//                .inMemoryAuthentication()
-//                .withUser("winson").password("w5566").roles("USER");
-//    }
-
     @Autowired
     public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
         auth.jdbcAuthentication().dataSource(dataSource)
@@ -56,5 +49,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .rolePrefix("ROLE_");
     }
 
-
+//    @Autowired
+//    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+//        auth
+//                .inMemoryAuthentication()
+//                .withUser("winson").password("w5566").roles("USER");
+//    }
 }

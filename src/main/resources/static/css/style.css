@@ -58,7 +58,10 @@
     font-size: small;
 }
 .font-size-95em{
-    font-size: 0.95em;
+     font-size: 0.95em;
+ }
+.font-size-1em{
+    font-size: 0.5em;
 }
 .table-inline {
     display: inline;
@@ -95,5 +98,10 @@
 }
 .form-inline{margin:0px;display: inline}
 
-.
+.not-display{
+     display:none;
+ }
+.is-display{
+    display:block;
+}
 

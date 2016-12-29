@@ -1,6 +1,7 @@
 package com.awinson.controller;
 
 import com.awinson.Entity.UserApi;
+import com.awinson.Entity.UserLog;
 import com.awinson.Entity.UserTradeSetting;
 import com.awinson.cache.CacheManager;
 import com.awinson.dictionary.Dict;
@@ -194,6 +195,52 @@ public class UserController {
     public String updateUserTradeSettingAuto(String autoTradeBtc,String autoTradeLtc,String autoThresholdBtc,String autoThresholdLtc){
             return userService.updateUserTradeSettingAuto(autoTradeBtc,autoTradeLtc,autoThresholdBtc,autoThresholdLtc);
     }
+    /**
+     * 更新用户交易设置(最小交易量)
+     * @param eachAmountBtc
+     * @param eachAmountLtc
+     * @return
+     */
+    @RequestMapping("updateUserTradeSettingEachAmount")
+    @ResponseBody
+    public String updateUserTradeSettingEachAmount(String eachAmountBtc,String eachAmountLtc){
+        return userService.updateUserTradeSettingEachAmount(eachAmountBtc,eachAmountLtc);
+    }
 
+    /**
+     * 获取监控日志
+     * @return
+     */
+    @RequestMapping("getThresholdLog")
+    @ResponseBody
+    public String getThresholdLog(){
+        List<UserLog> thresholdList  = userService.getUserLog(Dict.LOGTYPE.THRESHOLD);
+        Gson gson  = new Gson();
+        return gson.toJson(thresholdList);
+    }
+
+    /**
+     * 获取交易实时日志
+     * @return
+     */
+    @RequestMapping("getTradeLog")
+    @ResponseBody
+    public String getTradeLog(){
+        List<UserLog> tradeList  = userService.getUserLog(Dict.LOGTYPE.TRADE);
+        Gson gson  = new Gson();
+        return gson.toJson(tradeList);
+    }
+
+    /**
+     * 获取交易成功日志
+     * @return
+     */
+    @RequestMapping("getTradeSuccessLog")
+    @ResponseBody
+    public String getTradeSuccessLog(){
+        List<UserLog> tradeList  = userService.getTradeSuccessLog(Dict.LOGTYPE.TRADE);
+        Gson gson  = new Gson();
+        return gson.toJson(tradeList);
+    }
 
 }

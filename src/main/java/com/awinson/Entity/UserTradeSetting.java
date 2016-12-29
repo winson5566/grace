@@ -18,6 +18,8 @@ public class UserTradeSetting {
     private String autoThresholdLtc;
     private String autoTradeBtc;
     private String autoTradeLtc;
+    private String eachAmountBtc;
+    private String eachAmountLtc;
     private String marginJson;
 
     @Id
@@ -75,5 +77,21 @@ public class UserTradeSetting {
 
     public void setAutoThresholdLtc(String autoThresholdLtc) {
         this.autoThresholdLtc = autoThresholdLtc;
+    }
+
+    public String getEachAmountBtc() {
+        return eachAmountBtc;
+    }
+
+    public void setEachAmountBtc(String eachAmountBtc) {
+        this.eachAmountBtc = eachAmountBtc;
+    }
+
+    public String getEachAmountLtc() {
+        return eachAmountLtc;
+    }
+
+    public void setEachAmountLtc(String eachAmountLtc) {
+        this.eachAmountLtc = eachAmountLtc;
     }
 }

@@ -30,7 +30,6 @@ dependencies {
     compile ("com.google.code.gson:gson:2.8.0")
     compile ("org.slf4j:slf4j-api:1.7.21")
 
-
     compile("org.springframework.boot:spring-boot-starter-websocket:1.4.2.RELEASE")
     compile("org.webjars:webjars-locator")
     compile("org.webjars:sockjs-client:1.0.2")

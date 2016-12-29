@@ -1,18 +1,12 @@
 package com.awinson.service;
 
-import com.awinson.Entity.UserApi;
-import com.awinson.Entity.User;
-import com.awinson.Entity.UserRole;
-import com.awinson.Entity.UserTradeSetting;
+import com.awinson.Entity.*;
 import com.awinson.cache.CacheManager;
 import com.awinson.config.BitvcCnConfig;
 import com.awinson.config.OkcoinCnConfig;
 import com.awinson.config.OkcoinUnConfig;
 import com.awinson.dictionary.Dict;
-import com.awinson.repository.UserApiRepository;
-import com.awinson.repository.UserRepository;
-import com.awinson.repository.UserRoleRepository;
-import com.awinson.repository.UserTradeSettingRepository;
+import com.awinson.repository.*;
 import com.awinson.utils.StringUtil;
 import com.awinson.valid.ApiKeyValid;
 import com.awinson.valid.RegisterValid;
@@ -30,6 +24,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
+import java.sql.Timestamp;
 import java.util.*;
 
 /**
@@ -51,6 +47,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserTradeSettingRepository userTradeSettingRepository;
+
+    @Autowired
+    private UserLogRepository userLogRepository;
 
     @Autowired
     private OkcoinCnConfig okcoinCnConfig;
@@ -112,6 +111,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (!(auth instanceof AnonymousAuthenticationToken)) {
+            UserDetails userDetail = (UserDetails) auth.getPrincipal();
+            String username = userDetail.getUsername();
+            User user = userRepository.findByUsername(username);
+            if (user != null) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    @Override
 
     public Map<String, Object> updateApiKey(ApiKeyValid apiKeyValid) {
         Map<String, Object> map = new HashMap();
@@ -122,8 +135,8 @@ public class UserServiceImpl implements UserService {
             userApi1.setPlatform(apiKeyValid.getPlatform());
             userApi1.setUserId(id);
             if (apiKeyValid.getApiKey() != null && apiKeyValid.getApiKey() != "") {
-                if (userApiRepository.findByUserIdAndPlatformAndApiType(id,apiKeyValid.getPlatform(), Dict.key.api) != null) {
-                    userApi1 = userApiRepository.findByUserIdAndPlatformAndApiType(id,apiKeyValid.getPlatform(), Dict.key.api);
+                if (userApiRepository.findByUserIdAndPlatformAndApiType(id, apiKeyValid.getPlatform(), Dict.key.api) != null) {
+                    userApi1 = userApiRepository.findByUserIdAndPlatformAndApiType(id, apiKeyValid.getPlatform(), Dict.key.api);
                 } else {
                     userApi1.setId(UUID.randomUUID().toString());
                 }
@@ -135,8 +148,8 @@ public class UserServiceImpl implements UserService {
             userApi2.setPlatform(apiKeyValid.getPlatform());
             userApi2.setUserId(id);
             if (apiKeyValid.getSecretKey() != null && apiKeyValid.getSecretKey() != "") {
-                if (userApiRepository.findByUserIdAndPlatformAndApiType(id,apiKeyValid.getPlatform(), Dict.key.secret) != null) {
-                    userApi2 = userApiRepository.findByUserIdAndPlatformAndApiType(id,apiKeyValid.getPlatform(), Dict.key.secret);
+                if (userApiRepository.findByUserIdAndPlatformAndApiType(id, apiKeyValid.getPlatform(), Dict.key.secret) != null) {
+                    userApi2 = userApiRepository.findByUserIdAndPlatformAndApiType(id, apiKeyValid.getPlatform(), Dict.key.secret);
                 } else {
                     userApi2.setId(UUID.randomUUID().toString());
                 }
@@ -279,8 +292,8 @@ public class UserServiceImpl implements UserService {
             map = bitvcService.getSpotUserinfo(platform, apiKey, secretKey);
         }
         if (map != null && map.size() > 0) {
-            map.put("timestamp",String.valueOf(System.currentTimeMillis()));
-            CacheManager.update(Dict.Type.ASSETS + platform +"_"+userId, map);
+            map.put("timestamp", String.valueOf(System.currentTimeMillis()));
+            CacheManager.update(Dict.Type.ASSETS + platform + "_" + userId, map);
         }
     }
 
@@ -292,42 +305,47 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String updateUserTradeSetting(String buyPlatform,String sellPlatform,String coin,String margin){
+    public String updateUserTradeSetting(String buyPlatform, String sellPlatform, String coin, String margin) {
         String userId = getUserId();
         UserTradeSetting userTradeSetting;
         userTradeSetting = userTradeSettingRepository.findByUserId(userId);
         //如果用户交易设置就新增
-        if (userTradeSetting==null){
-            userTradeSetting =new UserTradeSetting();
+        if (userTradeSetting == null) {
+
+            userTradeSetting = new UserTradeSetting();
             userTradeSetting.setId(UUID.randomUUID().toString());
             userTradeSetting.setUserId(userId);
             userTradeSetting.setAutoTradeBtc("0");
             userTradeSetting.setAutoTradeLtc("0");
             userTradeSetting.setAutoThresholdBtc("0");
             userTradeSetting.setAutoThresholdLtc("0");
+            userTradeSetting.setEachAmountBtc("0");
+            userTradeSetting.setEachAmountLtc("0");
         }
         //获取用户交易的json格式
         String marginJson = userTradeSetting.getMarginJson();
         Map marginMap;
         Gson gson = new Gson();
-        if (marginJson!=null&&!"".equals(marginJson)){
-            marginMap = gson.fromJson(marginJson,Map.class);    //如果margin_json字段为空
-        }else {
+        if (marginJson != null && !"".equals(marginJson)) {
+            marginMap = gson.fromJson(marginJson, Map.class);    //如果margin_json字段为空
+        } else {
             marginMap = new HashMap();
         }
-        marginMap.put(Dict.Type.SETTING+buyPlatform+sellPlatform+coin,margin);
+        marginMap.put(Dict.Type.SETTING + buyPlatform + sellPlatform + coin, margin);
         userTradeSetting.setMarginJson(gson.toJson(marginMap));
         userTradeSettingRepository.save(userTradeSetting);
-        return  getUserTradeSetting().getMarginJson();
+        addUserLog(getUser(), Dict.LOGTYPE.USER, "更改阀值,[币种]:" + coin + "  [买平台]:" + buyPlatform + "  [卖平台]:" + sellPlatform + "  [阀值]:" + margin);
+        return getUserTradeSetting().getMarginJson();
     }
+
     @Override
-    public String updateUserTradeSettingAuto(String autoTradeBtc,String autoTradeLtc,String autoThresholdBtc,String autoThresholdLtc){
+    public String updateUserTradeSettingAuto(String autoTradeBtc, String autoTradeLtc, String autoThresholdBtc, String autoThresholdLtc) {
         String userId = getUserId();
         UserTradeSetting userTradeSetting;
         userTradeSetting = userTradeSettingRepository.findByUserId(userId);
         //如果用户交易设置就新增
-        if (userTradeSetting==null){
-            userTradeSetting =new UserTradeSetting();
+        if (userTradeSetting == null) {
+            userTradeSetting = new UserTradeSetting();
             userTradeSetting.setId(UUID.randomUUID().toString());
             userTradeSetting.setUserId(userId);
         }
@@ -336,12 +354,80 @@ public class UserServiceImpl implements UserService {
         userTradeSetting.setAutoThresholdBtc(autoThresholdBtc);
         userTradeSetting.setAutoThresholdLtc(autoThresholdLtc);
         userTradeSettingRepository.save(userTradeSetting);
-        Map<String,String> result = new HashMap();
-        result.put("autoTradeBtc",autoTradeBtc);
-        result.put("autoTradeLtc",autoTradeLtc);
-        result.put("autoThresholdBtc",autoThresholdBtc);
-        result.put("autoThresholdLtc",autoThresholdLtc);
+        Map<String, String> result = new HashMap();
+        result.put("autoTradeBtc", autoTradeBtc);
+        result.put("autoTradeLtc", autoTradeLtc);
+        result.put("autoThresholdBtc", autoThresholdBtc);
+        result.put("autoThresholdLtc", autoThresholdLtc);
+        addUserLog(getUser(), Dict.LOGTYPE.USER, "更改自动设置,[BTC自动交易]:" + autoTradeBtc + "  [LTC自动交易]:" + autoTradeLtc + "  [BTC自动阀值]:" + autoThresholdBtc + "  [LTC自动阀值]:" + autoThresholdLtc);
         Gson gson = new Gson();
-        return  gson.toJson(result);
+        return gson.toJson(result);
     }
+
+    @Override
+    public String updateUserTradeSettingEachAmount(String eachAmountBtc, String eachAmountLtc) {
+        String userId = getUserId();
+        UserTradeSetting userTradeSetting;
+        userTradeSetting = userTradeSettingRepository.findByUserId(userId);
+        //如果用户交易设置就新增
+        if (userTradeSetting == null) {
+            userTradeSetting = new UserTradeSetting();
+            userTradeSetting.setId(UUID.randomUUID().toString());
+            userTradeSetting.setUserId(userId);
+        }
+        if (eachAmountBtc != null && !"".equals(eachAmountBtc)) {
+            userTradeSetting.setEachAmountBtc(eachAmountBtc);
+        }
+        if (eachAmountLtc != null && !"".equals(eachAmountLtc)) {
+            userTradeSetting.setEachAmountLtc(eachAmountLtc);
+        }
+        userTradeSettingRepository.save(userTradeSetting);
+        Map<String, String> result = new HashMap();
+        result.put("eachAmountBtc", eachAmountBtc);
+        result.put("eachAmountLtc", eachAmountLtc);
+        addUserLog(getUser(), Dict.LOGTYPE.USER, "更改单位交易量,[BTC]:" + eachAmountBtc + "  [LTC]:" + eachAmountLtc);
+
+        Gson gson = new Gson();
+        return gson.toJson(result);
+    }
+
+    @Override
+    public void addUserLog(User user, String type, String context) {
+         UserLog userLog = new UserLog(user.getId(), type, context);
+         userLogRepository.save(userLog);
+
+//        //写入缓存
+//        List<UserLog> userLogList = (List<UserLog>) CacheManager.get(Dict.Type.LOG + type + user.getId());
+//        if (userLogList == null || userLogList.size() <= 0) {  //如果缓存中不存在
+//            userLogList = new ArrayList();
+//        }
+//        userLogList.add(userLog);
+//        CacheManager.update((Dict.Type.LOG + type + user.getId()), userLogList);
+    }
+    @Override
+    public void addTradeLog(User user, String type, String context,String tradeSuccess) {
+        UserLog userLog = new UserLog(user.getId(), type, context,tradeSuccess);
+        userLogRepository.save(userLog);
+    }
+    @Override
+    public List<UserLog> getUserLog(String type) {
+        return userLogRepository.findTop20ByUserIdAndTypeOrderByCreateTimestampDesc(getUserId(), type);
+    }
+
+    @Override
+    public List<UserLog> getTradeSuccessLog(String type) {
+        return userLogRepository.findTop20ByUserIdAndTypeAndTradeSuccessOrderByCreateTimestampDesc(getUserId(), type,"1");
+    }
+//    /**
+//     * 初始化用户的日志到缓存
+//     */
+//    @PostConstruct
+//    public void init() {
+//        List<User> userList = userRepository.findByEnable(Dict.Enable.YES);
+//        for (User user : userList) {
+//            List<UserLog> userLogList = userLogRepository.findTop100ByUserIdAndTypeOrderByStartTimestampDesc(user.getId(), Dict.LOGTYPE.USER);
+//            List<UserLog> thresholdLogList = userLogRepository.findTop100ByUserIdAndTypeOrderByStartTimestampDesc(user.getId(), Dict.LOGTYPE.THRESHOLD);
+//            List<UserLog> tradeLogList = userLogRepository.findTop100ByUserIdAndTypeOrderByStartTimestampDesc(user.getId(), Dict.LOGTYPE.TRADE);
+//        }
+//    }
 }

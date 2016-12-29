@@ -1,5 +1,7 @@
+import com.awinson.Entity.User;
 import com.awinson.Entity.UserApi;
 import com.awinson.SpringBootStart;
+import com.awinson.dictionary.Dict;
 import com.awinson.repository.UserApiRepository;
 import com.awinson.repository.UserRepository;
 import com.awinson.service.UserService;
@@ -29,12 +31,13 @@ public class UserServiceTest {
     private UserApiRepository userApiRepository;
 
     @Autowired
-    private  UserService userService;
+    private UserService userService;
 
     @Autowired
     private WebSocketServiceImpl greetingService;
+
     @Test
-    public void savaApiKeyTest(){
+    public void savaApiKeyTest() {
         UserApi userApi = new UserApi();
         userApi.setId(UUID.randomUUID().toString());
         userApi.setApi("123");
@@ -45,16 +48,20 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getAllUserAssetsInfo2Cache(){
+    public void getAllUserAssetsInfo2Cache() {
         userService.getAllUserAssetsInfo2Cache();
     }
 
-//    @Test
+    //    @Test
 //    public void getUserAllApiTest(){
 //        List<UserApi> list = userService.getUserAllApi();
 //        for (UserApi userApi: list) {
 //            System.out.println(userApi.getApi());
 //        }
 //    }
-
+    @Test
+    public void addUserLog() {
+        User user = userRepository.findByUsername("winson");
+        userService.addUserLog(user, Dict.LOGTYPE.USER,"111邱琦雯对对对");
+    }
 }

@@ -16,27 +16,27 @@
                 <tr>
                     <th>可用</th>
                     <td class="align-left" id="assets-okcoin-btc-free">0</td>
-                    <td>฿</td>
+                    <td>B</td>
                     <td class="align-left" id="assets-okcoin-ltc-free">0</td>
-                    <td>฿</td>
+                    <td>L</td>
                     <td class="align-left" id="assets-okcoin-cny-free">0</td>
                     <td>￥</td>
                 </tr>
                 <tr>
                     <th>借贷</th>
                     <td class="align-left" id="assets-okcoin-btc-borrow">0</td>
-                    <td>฿</td>
+                    <td>B</td>
                     <td class="align-left" id="assets-okcoin-ltc-borrow">0</td>
-                    <td>฿</td>
+                    <td>L</td>
                     <td class="align-left" id="assets-okcoin-cny-borrow">0</td>
                     <td>￥</td>
                 </tr>
                 <tr>
                     <th>冻结</th>
                     <td class="align-left" id="assets-okcoin-btc-freezed">0</td>
-                    <td>฿</td>
+                    <td>B</td>
                     <td class="align-left" id="assets-okcoin-ltc-freezed">0</td>
-                    <td>฿</td>
+                    <td>L</td>
                     <td class="align-left" id="assets-okcoin-cny-freezed">0</td>
                     <td>￥</td>
                 </tr>
@@ -58,9 +58,9 @@
                 <tr>
                     <th>可用</th>
                     <td class="align-left" id="assets-bitvc-btc-free">0</td>
-                    <td>฿</td>
+                    <td>B</td>
                     <td class="align-left" id="assets-bitvc-ltc-free">0</td>
-                    <td>฿</td>
+                    <td>L</td>
                     <td class="align-left" id="assets-bitvc-cny-free">0</td>
                     <td>￥</td>
                     <td class="align-left" id="assets-bitvc-usd-free">0</td>
@@ -69,9 +69,9 @@
                 <tr>
                     <th>借贷</th>
                     <td class="align-left" id="assets-bitvc-btc-borrow">0</td>
-                    <td>฿</td>
+                    <td>B</td>
                     <td class="align-left" id="assets-bitvc-ltc-borrow">0</td>
-                    <td>฿</td>
+                    <td>L</td>
                     <td class="align-left" id="assets-bitvc-cny-borrow">0</td>
                     <td>￥</td>
                     <td class="align-left" id="assets-bitvc-usd-borrow">0</td>
@@ -80,9 +80,9 @@
                 <tr>
                     <th>冻结</th>
                     <td class="align-left" id="assets-bitvc-btc-freezed">0</td>
-                    <td>฿</td>
+                    <td>B</td>
                     <td class="align-left" id="assets-bitvc-ltc-freezed">0</td>
-                    <td>฿</td>
+                    <td>L</td>
                     <td class="align-left" id="assets-bitvc-cny-freezed">0</td>
                     <td>￥</td>
                     <td class="align-left" id="assets-bitvc-usd-freezed">0</td>
@@ -161,7 +161,7 @@
                         <td id="margin-btc-okcoin-bitvc">NULL</td>
                         <td id="threshold-btc-okcoin-bitvc">NULL</td>
                         <td class="font-black">
-                            <input  id="input-threshold-btc-okcoin-bitvc" type="text" class="width50" />
+                            <input id="input-threshold-btc-okcoin-bitvc" type="text" class="width50"/>
                             <button id="bn-threshold-btc-okcoin-bitvc">√</button>
                         </td>
                     </tr>
@@ -173,7 +173,7 @@
                         <td id="margin-btc-bitvc-okcoin">NULL</td>
                         <td id="threshold-btc-bitvc-okcoin">NULL</td>
                         <td class="font-black">
-                            <input  id="input-threshold-btc-bitvc-okcoin" type="text" class="width50"/>
+                            <input id="input-threshold-btc-bitvc-okcoin" type="text" class="width50"/>
                             <button id="bn-threshold-btc-bitvc-okcoin">√</button>
                         </td>
 
@@ -205,12 +205,63 @@
                 </table>
             </div>
         </div>
-        <div class="row background-black">
+        <div class="row background-black ">
             <div class="col-xs-12 col-sm-6 col-md-6">
-                <button class="btn btn-danger" id="btc-trade" value="0">BTC手动交易</button>
-                <button class="btn btn-danger" id="ltc-trade" value="0">LTC手动交易</button>
-                <button class="btn btn-danger" id="btc-threshold" value="0">BTC手动阀值</button>
-                <button class="btn btn-danger" id="ltc-threshold" value="0">LTC手动阀值</button>
+                <table class="table table-condensed font-white ">
+                    <tr>
+                        <th>币种</th>
+                        <th class="align-center" colspan="2">每次交易量</th>
+                        <th >交易模式</th>
+                        <th >阀值模式</th>
+                    </tr>
+
+                    <tr>
+                        <th>BTC</th>
+                        <td id="each-amount-btc">NULL</td>
+                        <td class="font-black">
+                            <input type="text" class="width50" id="input-each-amount-btc"/>
+                            <button id="bn-each-amount-btc">√</button>
+                        </td>
+                        <td>
+                            <button class="btn btn-danger" id="btc-trade" value="0">手动交易</button>
+                        </td>
+                        <td>
+                            <button class="btn btn-danger" id="btc-threshold" value="0">手动阀值</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>LTC</th>
+                        <td id="each-amount-ltc">NULL</td>
+                        <td class="font-black">
+                            <input type="text" class="width50" id="input-each-amount-ltc"/>
+                            <button id="bn-each-amount-ltc">√</button>
+                        </td>
+                        <td>
+                            <button class="btn btn-danger" id="ltc-trade" value="0">手动交易</button>
+                        </td>
+                        <td>
+                            <button class="btn btn-danger" id="ltc-threshold" value="0">手动阀值</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="row background-black ">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <button type="button" class="btn btn-default" id="bn-threshold-log">监控日志</button>
+                <button type="button" class="btn btn-default" id="bn-trade-log">交易实时日志</button>
+                <button type="button" class="btn btn-primary" id="bn-trade-success-log">交易成功日志</button>
+                <table class="table table-bordered font-white font-size-1em">
+                    <thead>
+                    </thead>
+                    <tbody id="threshold-log" class="not-display">
+                    </tbody>
+                    <tbody id="trade-log" class="not-display">
+                    </tbody>
+                    <tbody id="trade-success-log"  class="is-display">
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

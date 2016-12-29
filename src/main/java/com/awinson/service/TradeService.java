@@ -3,6 +3,9 @@ package com.awinson.service;
 import com.awinson.Entity.User;
 import com.awinson.Entity.UserTradeSetting;
 
+import java.io.IOException;
+import java.util.Map;
+
 /**
  * Created by 10228 on 2016/12/27.
  */
@@ -30,10 +33,38 @@ public interface TradeService {
     /**
      * 已根据策略触发用户的对冲交易
      *
-     * @param userId         用户id
+     * @param user         用户
      * @param coin           币种
      * @param doSellPlatform 执行做空的平台
      * @param doBuyPlatform  执行做多的平台
      */
-    void doTrade(String userId, String coin, String doSellPlatform, String doBuyPlatform);
+    void doTrade(User user, String coin, String doSellPlatform, String doBuyPlatform);
+
+    /**
+     * 通用的现货交易接口（现支持okcoin和bitvc）市价买入不带滑价
+     * 修正okcoin的bitvc的市价买入用的CNY数量，统一使用amount
+     * @param user  用户
+     * @param platform  平台
+     * @param coin  币种
+     * @param direction  方向
+     * @param isMarketPrice 是否是市价 0:委托价 1:市价
+     * @param amount 数量
+     * @param price 委托价格（如果是市价购买，可为空）
+     * @return
+     */
+    Map<String,Object> tradeCommon(User user,String platform,String coin,String direction,String isMarketPrice,String amount,String price) throws IOException;
+
+    /**
+     * 现货交易接口（现支持okcoin和bitvc）
+     * 注意：这个接口并不通用，例如okcoin的bitvc的市价买入用的CNY数量，okcoin使用price，bitvc是用amount
+     * @param user  用户
+     * @param platform  平台
+     * @param coin  币种
+     * @param direction  方向
+     * @param isMarketPrice 是否是市价 0:委托价 1:市价
+     * @param amount 数量
+     * @param price 委托价格（如果是市价购买，可为空）
+     * @return
+     */
+    Map<String,Object> trade(User user,String platform,String coin,String direction,String isMarketPrice,String amount,String price) throws IOException;
 }

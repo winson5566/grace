@@ -136,7 +136,7 @@ public class PriceServiceImpl implements PriceService {
         try {
             json = HttpUtils.doGet(url);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("获取bitvc价格GET请求失败");
         }
 
         if (json != null && !"".equals(json)) {

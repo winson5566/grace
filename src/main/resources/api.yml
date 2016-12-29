@@ -1,6 +1,8 @@
 okcoin:
   cn:
     userinfo: https://www.okcoin.cn/api/v1/userinfo.do
+    trade: https://www.okcoin.cn/api/v1/trade.do
+    orderInfo: https://www.okcoin.cn/api/v1/order_info.do
     btc:
       ticker: https://www.okcoin.cn/api/v1/ticker.do?symbol=btc_cny
       depth: https://www.okcoin.cn/api/v1/depth.do?symbol=btc_cny
@@ -12,6 +14,10 @@ okcoin:
 
 bitvc:
   cn:
+    buyMarket: https://api.bitvc.com/api/order/buy_market
+    buy: https://api.bitvc.com/api/order/buy
+    sellMarket: https://api.bitvc.com/api/order/sell_market
+    sell: https://api.bitvc.com/api/order/sell
     userinfo: https://api.bitvc.com/api/accountInfo/get
     btc:
       ticker: http://api.huobi.com/staticmarket/ticker_btc_json.js

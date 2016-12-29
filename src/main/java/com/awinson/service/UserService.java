@@ -1,6 +1,8 @@
 package com.awinson.service;
 
+import com.awinson.Entity.User;
 import com.awinson.Entity.UserApi;
+import com.awinson.Entity.UserLog;
 import com.awinson.Entity.UserTradeSetting;
 import com.awinson.valid.ApiKeyValid;
 import com.awinson.valid.RegisterValid;
@@ -32,6 +34,11 @@ public interface UserService {
      */
     String getUserId();
 
+    /**
+     * 根据当前用户名的id
+     * @return
+     */
+    User getUser();
     /**
      * 获取用户所有的apikey的数据
      * @return
@@ -66,10 +73,49 @@ public interface UserService {
     String updateUserTradeSetting(String buyPlatform,String sellPlatform,String coin,String margin);
 
     /**
-     * 更新用户的设置(自动交易和阀值)
+     * 更新用户的设置(自动交易、阀值)
      * @param autoTradeBtc
      * @param autoTradeLtc
      * @return
      */
     String updateUserTradeSettingAuto(String autoTradeBtc,String autoTradeLtc,String autoThresholdBtc,String autoThresholdLtc);
+
+    /**
+     * 更新用户的设置(最小交易量)
+     * @param eachAmountBtc
+     * @param eachAmountLtc
+     * @return
+     */
+    String updateUserTradeSettingEachAmount(String eachAmountBtc,String eachAmountLtc);
+
+    /**
+     *  新增日志
+     * @param user  用户对象
+     * @param type  日志类型
+     * @param context   日志内容
+     * @return
+     */
+    void addUserLog(User user,String type,String context);
+
+    /**
+     *  新增交易日志
+     * @param user  用户对象
+     * @param type  日志类型
+     * @param context   日志内容
+     * @return
+     */
+    void addTradeLog(User user, String type, String context,String tradeSuccess);
+    /**
+     * 获取日志
+     * @param type 日志类型
+     * @return
+     */
+    List<UserLog> getUserLog(String type);
+
+    /**
+     * 获取日志
+     * @param type 日志类型
+     * @return
+     */
+    List<UserLog> getTradeSuccessLog(String type);
 }
