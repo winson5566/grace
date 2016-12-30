@@ -1,6 +1,6 @@
-package com.awinson.okcoin;
+package com.awinson.WebSocket.okcoin;
 
-import com.awinson.WebSocket.WebSocketMessage;
+import com.awinson.WebSocket.web.WebSocketMessage;
 import com.awinson.service.PriceService;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
@@ -17,9 +17,9 @@ import java.util.Map;
  * Created by 10228 on 2016/12/19.
  */
 @Service
-public class WebSocketServiceImpl implements WebSocketService {
+public class OkcoinWebSocketServiceImpl implements OkcoinWebSocketService {
 
-    private static final Logger logger = LoggerFactory.getLogger(WebSocketServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(OkcoinWebSocketServiceImpl.class);
 
     @Autowired
     private SimpMessagingTemplate messaging;

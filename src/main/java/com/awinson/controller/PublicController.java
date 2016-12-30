@@ -3,7 +3,7 @@ package com.awinson.controller;
 
 import com.awinson.service.UserService;
 import com.awinson.valid.RegisterValid;
-import com.awinson.okcoin.WebSocketServiceImpl;
+import com.awinson.WebSocket.web.WebSocketBaseServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class PublicController {
     @Autowired
     private UserService userService;
     @Autowired
-    private WebSocketServiceImpl greetingService;
+    private WebSocketBaseServiceImpl greetingService;
     private static final Logger logger = LoggerFactory.getLogger(PublicController.class);
 
     /**

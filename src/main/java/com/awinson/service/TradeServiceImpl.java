@@ -102,6 +102,9 @@ public class TradeServiceImpl implements TradeService {
                     //缓存中的最新价差
                     Map<String, Object> marginCacheMapOne = (Map<String, Object>) marginCacheMap.get(marginCacheKey);
                     if (marginCacheMapOne != null && marginCacheMapOne.size() > 0) {  //缓存中是否有对应的margin
+                        String deltaTimeStr = marginCacheMapOne.get("deltaTime").toString();
+                        Integer deltaTime = Integer.valueOf(deltaTimeStr);
+
                         String marginCache = marginCacheMapOne.get("margin").toString();
                         BigDecimal cache = new BigDecimal(marginCache);
 
@@ -113,18 +116,23 @@ public class TradeServiceImpl implements TradeService {
                         if (cache.compareTo(setting) == 1 || cache.compareTo(setting) == 0) {
                             //阀值触发
                             //从KEY获取平台
-                            String buyPlatform = key.substring(1, 3);
-                            String sellPlatform = key.substring(3, 5);
+                            if (deltaTime < 3000) {
+                                String buyPlatform = key.substring(1, 3);
+                                String sellPlatform = key.substring(3, 5);
 
-                            Map<String,Object> logMap = new HashMap();
-                            logMap.put("coin",coin);
-                            logMap.put("sellPlatform",sellPlatform);
-                            logMap.put("buyPlatform",buyPlatform);
-                            logMap.put("margin",cache);
-                            userService.addUserLog(user,Dict.LOGTYPE.THRESHOLD,gson.toJson(logMap));
-                            logger.info("用户:{},阀值触发! 对冲策略: [币种]{},[做多平台]{},[做空平台]{},[margin]{}", user.getUsername(), coin, sellPlatform, buyPlatform, cache);
-                            doTrade(user, coin, buyPlatform, sellPlatform);//注意，这里平台是和价格的相反
+                                Map<String, Object> logMap = new HashMap();
+                                logMap.put("coin", coin);
+                                logMap.put("sellPlatform", sellPlatform);
+                                logMap.put("buyPlatform", buyPlatform);
+                                logMap.put("margin", cache);
+                                userService.addUserLog(user, Dict.LOGTYPE.THRESHOLD, gson.toJson(logMap));
+                                logger.info("用户:{},阀值触发! 对冲策略: [币种]{},[做多平台]{},[做空平台]{},[margin]{}", user.getUsername(), coin, sellPlatform, buyPlatform, cache);
+                                doTrade(user, coin, buyPlatform, sellPlatform);//注意，这里平台是和价格的相反
+                            } else {
+                                logger.info("用户:{},阀值触发!但延时太高:{}", user.getUsername(), deltaTimeStr);
+                            }
                         }
+
                     }
                 }
             }
@@ -144,14 +152,14 @@ public class TradeServiceImpl implements TradeService {
         if (Dict.Coin.BTC.equals(coin)) {
             if (StringUtil.isEmpty(eachAmountBtc)) {
                 //输出日志（交易中断，没有设置BTC最小交易数量）
-                userService.addUserLog(user,Dict.LOGTYPE.TRADE,"交易中断，没有设置BTC最小交易数量");
+                userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易中断，没有设置BTC最小交易数量");
                 return;
             }
             eachAmount = eachAmountBtc;
         } else if (Dict.Coin.LTC.equals(coin)) {
             if (StringUtil.isEmpty(eachAmountLtc)) {
                 //输出日志（交易中断，没有设置LTC最小交易数量）
-                userService.addUserLog(user,Dict.LOGTYPE.TRADE,"交易中断，没有设置LTC最小交易数量");
+                userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易中断，没有设置LTC最小交易数量");
                 return;
             }
             eachAmount = eachAmountLtc;
@@ -176,7 +184,7 @@ public class TradeServiceImpl implements TradeService {
             Long deltaTime = Math.abs(Long.parseLong(okcoinCnTimestamp) - System.currentTimeMillis());
             if (deltaTime > 3000) {
                 //输出日志（交易中断，okcoinCn资产滞后）
-                userService.addUserLog(user,Dict.LOGTYPE.TRADE,"交易中断，okcoinCn资产滞后");
+                userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易中断，okcoinCn资产滞后");
                 logger.info("用户:{},交易中断!OkcoinCn资产获取滞后{}", user.getUsername(), deltaTime);
                 return;
             }
@@ -189,7 +197,7 @@ public class TradeServiceImpl implements TradeService {
             okcoinCnAvailableCny = okcoinCnfree.get("cny").toString();
         } else {
             //输出日志（交易中断!okcoinCn资产无法获取）
-            userService.addUserLog(user,Dict.LOGTYPE.TRADE,"交易中断!okcoinCn资产无法获取");
+            userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易中断!okcoinCn资产无法获取");
             logger.info("用户:{},交易中断!okcoinCn资产无法获取", user.getUsername());
             return;
         }
@@ -200,7 +208,7 @@ public class TradeServiceImpl implements TradeService {
             Long deltaTime = Math.abs(Long.parseLong(bitvcCnTimestamp) - System.currentTimeMillis());
             if (deltaTime > 3000) {
                 //输出日志（交易中断，bitvcCn资产滞后）
-                userService.addUserLog(user,Dict.LOGTYPE.TRADE,"交易中断，bitvcCn资产滞后");
+                userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易中断，bitvcCn资产滞后");
                 logger.info("用户:{},交易中断!bitvcCn资产获取滞后{}", user.getUsername(), deltaTime);
                 return;
             }
@@ -210,7 +218,7 @@ public class TradeServiceImpl implements TradeService {
             bitvcCnAvailableLtc = bitvcCnResult.get("available_ltc").toString();
         } else {
             //输出日志（交易中断!bitvcCn资产无法获取）
-            userService.addUserLog(user,Dict.LOGTYPE.TRADE,"交易中断!bitvcCn资产无法获取");
+            userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易中断!bitvcCn资产无法获取");
             logger.info("用户:{},交易中断!bitvcCn资产无法获取", user.getUsername());
             return;
         }
@@ -273,7 +281,7 @@ public class TradeServiceImpl implements TradeService {
         //对冲分析完成
         if (allOk == 1) {   //交易中断
             //输出日志（对冲分析完成）
-            userService.addTradeLog(user,Dict.LOGTYPE.TRADE,"完成分析!  [做空]:"+doSellPlatformMsg+"  [做多]:"+doBuyPlatformMsg,"1");
+            userService.addTradeLog(user, Dict.LOGTYPE.TRADE, "完成分析!  [做空]:" + doSellPlatformMsg + "  [做多]:" + doBuyPlatformMsg, "1");
             logger.info("用户:{},完成分析!  [做空]:{}  [做多]:{}", user.getUsername(), doSellPlatformMsg, doBuyPlatformMsg);
             //TODO 执行对冲做多
             //TODO 执行对冲做空
@@ -281,7 +289,7 @@ public class TradeServiceImpl implements TradeService {
 
         } else if (allOk == 0) {
             // 输出日志（("交易中断!用户{},对冲分析:" + "{[做空]:" + doSellPlatformMsg + "}" + "{[做多]:" + doBuyPlatformMsg + "}");
-            userService.addUserLog(user,Dict.LOGTYPE.TRADE,"交易中断! 对冲分析: [做空]:"+doSellPlatformMsg+"  [做多]:"+doBuyPlatformMsg);
+            userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易中断! 对冲分析: [做空]:" + doSellPlatformMsg + "  [做多]:" + doBuyPlatformMsg);
             logger.info("用户:{},交易中断! 对冲分析: [做空]:{}  [做多]:{}", user.getUsername(), doSellPlatformMsg, doBuyPlatformMsg);
         }
     }
@@ -289,9 +297,9 @@ public class TradeServiceImpl implements TradeService {
     @Override
     public Map<String, Object> tradeCommon(User user, String platform, String coin, String direction, String isMarketPrice, String amount, String price) throws IOException {
         //修正okcoin的bitvc的市价买入用的CNY数量
-        if (Dict.Platform.OKCOIN_CN.equals(platform)&&Dict.TradeType.MARKET.equals(isMarketPrice)&&Dict.direction.buy.equals(direction)){
-            price=amount;
-            amount=null;
+        if (Dict.Platform.OKCOIN_CN.equals(platform) && Dict.TradeType.MARKET.equals(isMarketPrice) && Dict.direction.buy.equals(direction)) {
+            price = amount;
+            amount = null;
         }
         return trade(user, platform, coin, direction, isMarketPrice, amount, price);
     }

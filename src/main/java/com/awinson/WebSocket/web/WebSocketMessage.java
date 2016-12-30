@@ -1,4 +1,4 @@
-package com.awinson.WebSocket;
+package com.awinson.WebSocket.web;
 
 /**
  * Created by winson on 2016/12/17.

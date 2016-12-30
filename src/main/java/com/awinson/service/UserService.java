@@ -118,4 +118,9 @@ public interface UserService {
      * @return
      */
     List<UserLog> getTradeSuccessLog(String type);
+
+    /**
+     *
+     */
+    void pushAccoutInfoByWebSocket();
 }

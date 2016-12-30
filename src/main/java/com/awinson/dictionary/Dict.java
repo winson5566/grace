@@ -50,6 +50,11 @@ public class Dict {
         public static final String TRADE = "2";
     }
 
+    public static class QUEUE{
+        public static final String PRICE = "/price";
+        public static final String ASSETS = "/assets";
+    }
+
     //字典code转换Name
     public static String translateDicName(String type, String code) {
         if (Dict.DICTYPE.COIN.equals(type)) {

@@ -1,6 +1,8 @@
 package com.awinson.service;
 
 import com.awinson.Entity.*;
+import com.awinson.WebSocket.okcoin.WebSocketBase;
+import com.awinson.WebSocket.web.WebSocketBaseService;
 import com.awinson.cache.CacheManager;
 import com.awinson.config.BitvcCnConfig;
 import com.awinson.config.OkcoinCnConfig;
@@ -61,6 +63,8 @@ public class UserServiceImpl implements UserService {
     private OkcoinService okcoinService;
     @Autowired
     private BitvcService bitvcService;
+    @Autowired
+    private WebSocketBaseService webSocketBaseService;
 
     @Override
     public Map<String, Object> register(RegisterValid registerValid) {
@@ -294,6 +298,7 @@ public class UserServiceImpl implements UserService {
         if (map != null && map.size() > 0) {
             map.put("timestamp", String.valueOf(System.currentTimeMillis()));
             CacheManager.update(Dict.Type.ASSETS + platform + "_" + userId, map);
+
         }
     }
 
@@ -393,8 +398,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void addUserLog(User user, String type, String context) {
-         UserLog userLog = new UserLog(user.getId(), type, context);
-         userLogRepository.save(userLog);
+        UserLog userLog = new UserLog(user.getId(), type, context);
+        userLogRepository.save(userLog);
 
 //        //写入缓存
 //        List<UserLog> userLogList = (List<UserLog>) CacheManager.get(Dict.Type.LOG + type + user.getId());
@@ -404,11 +409,13 @@ public class UserServiceImpl implements UserService {
 //        userLogList.add(userLog);
 //        CacheManager.update((Dict.Type.LOG + type + user.getId()), userLogList);
     }
+
     @Override
-    public void addTradeLog(User user, String type, String context,String tradeSuccess) {
-        UserLog userLog = new UserLog(user.getId(), type, context,tradeSuccess);
+    public void addTradeLog(User user, String type, String context, String tradeSuccess) {
+        UserLog userLog = new UserLog(user.getId(), type, context, tradeSuccess);
         userLogRepository.save(userLog);
     }
+
     @Override
     public List<UserLog> getUserLog(String type) {
         return userLogRepository.findTop20ByUserIdAndTypeOrderByCreateTimestampDesc(getUserId(), type);
@@ -416,7 +423,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserLog> getTradeSuccessLog(String type) {
-        return userLogRepository.findTop20ByUserIdAndTypeAndTradeSuccessOrderByCreateTimestampDesc(getUserId(), type,"1");
+        return userLogRepository.findTop20ByUserIdAndTypeAndTradeSuccessOrderByCreateTimestampDesc(getUserId(), type, "1");
     }
 //    /**
 //     * 初始化用户的日志到缓存
@@ -430,4 +437,24 @@ public class UserServiceImpl implements UserService {
 //            List<UserLog> tradeLogList = userLogRepository.findTop100ByUserIdAndTypeOrderByStartTimestampDesc(user.getId(), Dict.LOGTYPE.TRADE);
 //        }
 //    }
+
+
+    @Override
+    public void pushAccoutInfoByWebSocket() {
+        List<User> list = userRepository.findByEnable("1");
+        Gson gson = new Gson();
+        for (User user : list) {
+            Map<String, Object> map = new HashMap();
+            Map<String, Object> okcoinCnMap = (Map<String, Object>) CacheManager.get(Dict.Type.ASSETS + Dict.Platform.OKCOIN_CN + "_" + user.getId());
+            Map<String, Object> bitvcCnMap = (Map<String, Object>) CacheManager.get(Dict.Type.ASSETS + Dict.Platform.BITVC_CN + "_" + user.getId());
+            if (okcoinCnMap != null && okcoinCnMap.size() > 0)
+                map.put("p"+Dict.Platform.OKCOIN_CN, okcoinCnMap);
+            if (bitvcCnMap != null && bitvcCnMap.size() > 0)
+                map.put("p"+Dict.Platform.BITVC_CN, bitvcCnMap);
+            if (map.size() > 0) {
+                String json = gson.toJson(map);
+                webSocketBaseService.broadcastToUser(user.getUsername(),Dict.QUEUE.ASSETS,json);
+            }
+        }
+    }
 }

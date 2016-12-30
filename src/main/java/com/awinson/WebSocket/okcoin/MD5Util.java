@@ -1,4 +1,4 @@
-package com.awinson.okcoin;
+package com.awinson.WebSocket.okcoin;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

@@ -1,6 +1,6 @@
 package com.awinson.service;
 
-import com.awinson.okcoin.WebSocketService;
+import com.awinson.WebSocket.web.WebSocketBaseService;
 import com.awinson.cache.CacheManager;
 import com.awinson.Entity.PriceHistory;
 import com.awinson.Entity.PriceMargin;
@@ -42,7 +42,7 @@ public class PriceServiceImpl implements PriceService {
     @Autowired
     private PriceMarginRepository priceMarginRepository;
     @Autowired
-    private WebSocketService webSocketService;
+    private WebSocketBaseService webSocketService;
     @Autowired
     private PriceController priceController;
     final private Double btcMin = 1.0;

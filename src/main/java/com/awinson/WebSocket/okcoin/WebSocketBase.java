@@ -1,4 +1,4 @@
-package com.awinson.okcoin;
+package com.awinson.WebSocket.okcoin;
 
 /**
  * Created by 10228 on 2016/12/24.
@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
 public abstract class WebSocketBase {
 
     private Logger log = Logger.getLogger(WebSocketBase.class);
-    private WebSocketService service = null;
+    private OkcoinWebSocketService  service = null;
     private Timer timerTask = null;
     private MoniterTask moniter = null;
     private EventLoopGroup group = null;
@@ -49,7 +49,7 @@ public abstract class WebSocketBase {
     private int siteFlag = 0;
     private Set<String> subscribChannel = new HashSet<String>();
 
-    public WebSocketBase(String url, WebSocketService serivce) {
+    public WebSocketBase(String url, OkcoinWebSocketService serivce) {
         this.url = url;
         this.service = serivce;
     }

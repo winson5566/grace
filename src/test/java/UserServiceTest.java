@@ -5,7 +5,7 @@ import com.awinson.dictionary.Dict;
 import com.awinson.repository.UserApiRepository;
 import com.awinson.repository.UserRepository;
 import com.awinson.service.UserService;
-import com.awinson.okcoin.WebSocketServiceImpl;
+import com.awinson.WebSocket.web.WebSocketBaseServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class UserServiceTest {
     private UserService userService;
 
     @Autowired
-    private WebSocketServiceImpl greetingService;
+    private WebSocketBaseServiceImpl greetingService;
 
     @Test
     public void savaApiKeyTest() {

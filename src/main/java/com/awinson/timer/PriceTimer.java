@@ -61,6 +61,13 @@ public class PriceTimer {
         userService.getAllUserAssetsInfo2Cache();
     }
 
+    /**
+     * 推送所有用户的资产信息
+     */
+    @Scheduled(initialDelay=3000, fixedDelay=1000)
+    public void pushAccoutInfoByWebSocket() {
+        userService.pushAccoutInfoByWebSocket();
+    }
 
 }
 

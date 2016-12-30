@@ -1,9 +1,5 @@
-package com.awinson.WebSocket;
+package com.awinson.WebSocket.okcoin;
 
-import com.awinson.okcoin.WebSocketService;
-import com.awinson.okcoin.WebSoketClient;
-import com.google.gson.Gson;
-import io.socket.client.Ack;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -15,8 +11,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.net.URISyntaxException;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by 10228 on 2016/12/24.
@@ -27,7 +21,7 @@ public class WebSocketInit {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketInit.class);
 
     @Autowired
-    private WebSocketService webSocketService;
+    private OkcoinWebSocketService webSocketService;
 
     @PostConstruct
     public void init() {
@@ -42,8 +36,6 @@ public class WebSocketInit {
     }
 
     private void okcoinInit() {
-        String apiKey = "653e8232-ab6e-4523-9310-514d8f2d8f13";
-        String secretKey = "9E438027B165666CBA74DED24D6F3C9D";
         String url = "wss://real.okcoin.cn:10440/websocket/okcoinapi";   // 国内站WebSocket地址
         WebSoketClient client = new WebSoketClient(url, webSocketService);  // WebSocket客户端
         client.start();  // 启动客户端

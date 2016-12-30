@@ -1,4 +1,4 @@
-package com.awinson.okcoin;
+package com.awinson.WebSocket.okcoin;
 import java.io.IOException;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
@@ -24,9 +24,9 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
     private final WebSocketClientHandshaker handshaker;
     private ChannelPromise handshakeFuture;
     private MoniterTask moniter;
-    private WebSocketService service ;
+    private OkcoinWebSocketService service ;
 
-    public WebSocketClientHandler(WebSocketClientHandshaker handshaker,WebSocketService service,MoniterTask moniter) {
+    public WebSocketClientHandler(WebSocketClientHandshaker handshaker,OkcoinWebSocketService service,MoniterTask moniter) {
         this.handshaker = handshaker;
         this.service = service;
         this.moniter = moniter;

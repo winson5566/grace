@@ -46,7 +46,7 @@ public class UserController {
      */
     @RequestMapping("")
     public String index() {
-        return "/user/trade";
+        return "user/trade";
     }
 
     /**
@@ -56,7 +56,7 @@ public class UserController {
      */
     @RequestMapping("trade")
     public String trade() {
-        return "/user/trade";
+        return "user/trade";
     }
 
     /**
@@ -70,7 +70,7 @@ public class UserController {
         Map<String, Map<String, String>> mapTmp = userService.getUserAllApi();
         map.put("apiMap", userService.getUserAllApi());
         model.addAttribute("map", map);
-        return "/user/setting";
+        return "user/setting";
     }
 
     /**
@@ -81,36 +81,36 @@ public class UserController {
     @RequestMapping("updateApiKey")
     public String updateApiKey(@Validated ApiKeyValid apiKeyValid) {
         userService.updateApiKey(apiKeyValid);
-        return "forward:/u/setting";
+        return "forward:u/setting";
     }
 
-    /**
-     * 获取Okcoin中国站资产信息
-     * @return
-     */
-    @RequestMapping("getOkcoinAssets")
-    @ResponseBody
-    public Map<String, Object> getOkcoinAssets() {
-        //API获取
-        //Map<String, Object> map = okcoinService.getSpotUserinfo(Dict.Platform.OKCOIN_CN);
-        //从缓存获取
-        Map<String, Object> map =(Map<String, Object>)CacheManager.get(Dict.Type.ASSETS+Dict.Platform.OKCOIN_CN+"_"+userService.getUserId());
-        return map;
-    }
-
-    /**
-     * 获取Bitvc资产信息
-     * @return
-     */
-    @RequestMapping("getBitvcAssets")
-    @ResponseBody
-    public Map<String, Object> getBitvcAssets() {
-        //API获取
-        //Map<String, Object> map = bitvcService.getSpotUserinfo(Dict.Platform.BITVC_CN);
-        //从缓存获取
-        Map<String, Object> map =(Map<String, Object>)CacheManager.get(Dict.Type.ASSETS+Dict.Platform.BITVC_CN+"_"+userService.getUserId());
-        return map;
-    }
+//    /**
+//     * 获取Okcoin中国站资产信息
+//     * @return
+//     */
+//    @RequestMapping("getOkcoinAssets")
+//    @ResponseBody
+//    public Map<String, Object> getOkcoinAssets() {
+//        //API获取
+//        //Map<String, Object> map = okcoinService.getSpotUserinfo(Dict.Platform.OKCOIN_CN);
+//        //从缓存获取
+//        Map<String, Object> map =(Map<String, Object>)CacheManager.get(Dict.Type.ASSETS+Dict.Platform.OKCOIN_CN+"_"+userService.getUserId());
+//        return map;
+//    }
+//
+//    /**
+//     * 获取Bitvc资产信息
+//     * @return
+//     */
+//    @RequestMapping("getBitvcAssets")
+//    @ResponseBody
+//    public Map<String, Object> getBitvcAssets() {
+//        //API获取
+//        //Map<String, Object> map = bitvcService.getSpotUserinfo(Dict.Platform.BITVC_CN);
+//        //从缓存获取
+//        Map<String, Object> map =(Map<String, Object>)CacheManager.get(Dict.Type.ASSETS+Dict.Platform.BITVC_CN+"_"+userService.getUserId());
+//        return map;
+//    }
 
     @RequestMapping("account")
     public String accoutInfo(Model model) {
@@ -132,7 +132,7 @@ public class UserController {
 
         model.addAttribute("map", map);
 
-        return "/user/account";
+        return "user/account";
     }
 
     @RequestMapping("price")
@@ -154,7 +154,7 @@ public class UserController {
         map.put("priceMap",priceMapNew);
         map.put("marginMap",marginMapNew);
         model.addAttribute("map", map);
-        return "/user/price";
+        return "user/price";
     }
 
 

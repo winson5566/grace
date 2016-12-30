@@ -1,4 +1,4 @@
-package com.awinson.WebSocket;
+package com.awinson.WebSocket.web;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -15,8 +15,7 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {  //配置消息代理
-        config.enableSimpleBroker("/topic");    //缺省即为topic,这里消息代理将会处理前缀为"queue","/topic"的消息
-        config.setApplicationDestinationPrefixes("/app");   //应用程序的消息将会带有"/app"前缀
+        config.enableSimpleBroker("/topic","/queue");    //缺省即为topic,这里消息代理将会处理前缀为"/topic"和"/queue"的消息
     }
 
     @Override
