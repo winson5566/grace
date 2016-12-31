@@ -1,6 +1,7 @@
 package com.awinson.WebSocket.okcoin;
 
 import com.awinson.WebSocket.web.WebSocketMessage;
+import com.awinson.dictionary.Dict;
 import com.awinson.service.PriceService;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
@@ -27,17 +28,9 @@ public class OkcoinWebSocketServiceImpl implements OkcoinWebSocketService {
     @Autowired
     private PriceService priceService;
 
-    public void broadcast(String topic, String context) {
-        WebSocketMessage message = new WebSocketMessage(context);
-        messaging.convertAndSend("/topic/" + topic, message);
-    }
-
 
     @Override
     public void onReceive(String msg) {
-
-//        logger.info("WebSocket Client" +
-//                " received message: " + msg);
         Gson gson = new Gson();
         if (msg.indexOf("event")<0) {
             List<Map> list = gson.fromJson(msg, List.class);
@@ -60,10 +53,10 @@ public class OkcoinWebSocketServiceImpl implements OkcoinWebSocketService {
                         coinType = "1";
                     }
                     //写入缓存
-                    priceService.savePrice2Cache("00", coinType, sellPrice, buyPrice,lastPrice,timestamp);
+                    priceService.savePrice2Cache(Dict.PLATFORM.OKCOIN_CN, coinType, sellPrice, buyPrice,lastPrice,timestamp);
 
                     //保存如数据库
-                    priceService.savePrice2DB("00", coinType, sellPrice, buyPrice,lastPrice,timestamp);
+                    priceService.savePrice2DB(Dict.PLATFORM.OKCOIN_CN, coinType, sellPrice, buyPrice,lastPrice,timestamp);
                 }
             }
         }

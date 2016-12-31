@@ -25,20 +25,23 @@ public class WebSocketInit {
 
     @PostConstruct
     public void init() {
-        try {
-            huobiInit();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         okcoinInit();
     }
 
+    /**
+     * 订阅OkcoinCN的BTC和LTC价格
+     */
     private void okcoinInit() {
+
+        //OkcoinCN的websock注册地址
         String url = "wss://real.okcoin.cn:10440/websocket/okcoinapi";   // 国内站WebSocket地址
+
+        //注册客户端
         WebSoketClient client = new WebSoketClient(url, webSocketService);  // WebSocket客户端
-        client.start();  // 启动客户端
+
+        //启动客户端
+        client.start();
+
         // 添加订阅
         client.addChannel("ok_sub_spotcny_btc_ticker");
         client.addChannel("ok_sub_spotcny_ltc_ticker");
@@ -46,57 +49,6 @@ public class WebSocketInit {
         // 获取用户信息
         //client.getUserInfo(apiKey,secretKey);
 
-        // 删除定订阅
-        // client.removeChannel("ok_sub_spotusd_btc_ticker");
-
-        // 合约下单交易
-        // client.futureTrade(apiKey, secretKey, "btc_usd", "this_week", 2.3, 2,
-        // 1, 0, 10);
-
-        // 实时交易数据 apiKey
-        // client.futureRealtrades(apiKey, secretKey);
-
-        // 取消合约交易
-        // client.cancelFutureOrder(apiKey, secretKey, "btc_usd", 123456L,
-        // "this_week");
-
-        // 现货下单交易
-        // client.spotTrade(apiKey, secretKey, "btc_usd", 3.2, 2.3, "buy");
-
-        // 现货交易数据
-        // client.realTrades(apiKey, secretKey);
-
-        // 现货取消订单
-        // client.cancelOrder(apiKey, secretKey, "btc_usd", 123L);
     }
 
-    private void huobiInit() throws URISyntaxException, InterruptedException {
-        //final BlockingQueue<Object> values = new LinkedBlockingQueue<Object>();
-        IO.Options opts = new IO.Options();
-        opts.forceNew = true;
-        opts.reconnection = true;
-        Socket socket = IO.socket("hq.huobi.com:80", opts);
-        String datetime = String.valueOf(System.currentTimeMillis());
-        socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                logger.info("EVENT_CONNECT");
-                String strMsg = "{\"symbolId\":\"btccny\",\"version\":1,\"msgType\":\"reqMarketDepthTop\",\"requestIndex\":" + datetime + "}";
-                JSONObject jsonObject = new JSONObject(strMsg);
-                socket.emit("request", jsonObject);
-            }
-        })
-                .on(Socket.EVENT_MESSAGE, new Emitter.Listener() {
-                    @Override
-                    public void call(Object... args) {
-                        logger.info("EVENT_MESSAGE");
-                        //values.offer(args);
-                    }
-                })
-        ;
-        socket.connect();
-
-        // Object[] object = (Object[])values.take();
-        //logger.info(object.toString());
-    }
 }
