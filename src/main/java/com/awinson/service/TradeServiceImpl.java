@@ -64,11 +64,11 @@ public class TradeServiceImpl implements TradeService {
             String autoTradeBtc = userTradeSetting.getAutoTradeBtc();
             String autoTradeLtc = userTradeSetting.getAutoTradeLtc();
             if ("1".equals(autoTradeBtc)) { //BTC
-                judgeTrigger(user, userTradeSetting, Dict.Coin.BTC);
+                judgeTrigger(user, userTradeSetting, Dict.COIN.BTC);
             }
 
             if ("1".equals(autoTradeLtc)) {  //LTC
-                judgeTrigger(user, userTradeSetting, Dict.Coin.LTC);
+                judgeTrigger(user, userTradeSetting, Dict.COIN.LTC);
             }
         }
     }
@@ -87,7 +87,7 @@ public class TradeServiceImpl implements TradeService {
         String marginJson = userTradeSetting.getMarginJson();
         if (marginJson != null & marginJson != "") {
             //获取缓存中的价差
-            Map<String, Object> marginCacheMap = CacheManager.getCachesByType(Dict.Type.margin);
+            Map<String, Object> marginCacheMap = CacheManager.getCachesByType(Dict.TYPE.MARGIN);
             if (marginCacheMap != null && marginCacheMap.size() > 0) {
                 //对比价差是否能触发用户设置的阀值
                 Gson gson = new Gson();
@@ -97,7 +97,7 @@ public class TradeServiceImpl implements TradeService {
                     if (!key.endsWith(coin)) {
                         continue;
                     }
-                    String marginCacheKey = Dict.Type.margin + key.substring(1, key.length());
+                    String marginCacheKey = Dict.TYPE.MARGIN + key.substring(1, key.length());
 
                     //缓存中的最新价差
                     Map<String, Object> marginCacheMapOne = (Map<String, Object>) marginCacheMap.get(marginCacheKey);
@@ -149,17 +149,17 @@ public class TradeServiceImpl implements TradeService {
         String eachAmountLtc = userTradeSetting.getEachAmountLtc();
         String eachAmount = null;
         //判断最小对冲数策略是否可用
-        if (Dict.Coin.BTC.equals(coin)) {
+        if (Dict.COIN.BTC.equals(coin)) {
             if (StringUtil.isEmpty(eachAmountBtc)) {
                 //输出日志（交易中断，没有设置BTC最小交易数量）
-                userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易中断，没有设置BTC最小交易数量");
+                userService.addUserLog(user, Dict.LOGTYPE.ANALYSE, "交易中断，没有设置BTC最小交易数量");
                 return;
             }
             eachAmount = eachAmountBtc;
-        } else if (Dict.Coin.LTC.equals(coin)) {
+        } else if (Dict.COIN.LTC.equals(coin)) {
             if (StringUtil.isEmpty(eachAmountLtc)) {
                 //输出日志（交易中断，没有设置LTC最小交易数量）
-                userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易中断，没有设置LTC最小交易数量");
+                userService.addUserLog(user, Dict.LOGTYPE.ANALYSE, "交易中断，没有设置LTC最小交易数量");
                 return;
             }
             eachAmount = eachAmountLtc;
@@ -175,8 +175,8 @@ public class TradeServiceImpl implements TradeService {
         String bitvcCnAvailableLtc;
 
         //获取用户资产
-        Map<String, Object> okcoinCn = (Map<String, Object>) CacheManager.get(Dict.Type.ASSETS + Dict.Platform.OKCOIN_CN + "_" + user.getId());
-        Map<String, Object> bitvcCn = (Map<String, Object>) CacheManager.get(Dict.Type.ASSETS + Dict.Platform.BITVC_CN + "_" + user.getId());
+        Map<String, Object> okcoinCn = (Map<String, Object>) CacheManager.get(Dict.TYPE.ASSETS + Dict.PLATFORM.OKCOIN_CN + "_" + user.getId());
+        Map<String, Object> bitvcCn = (Map<String, Object>) CacheManager.get(Dict.TYPE.ASSETS + Dict.PLATFORM.BITVC_CN + "_" + user.getId());
 
         //解析OkcoinCN资产
         if (okcoinCn != null && okcoinCn.size() > 0) {
@@ -184,7 +184,7 @@ public class TradeServiceImpl implements TradeService {
             Long deltaTime = Math.abs(Long.parseLong(okcoinCnTimestamp) - System.currentTimeMillis());
             if (deltaTime > 3000) {
                 //输出日志（交易中断，okcoinCn资产滞后）
-                userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易中断，okcoinCn资产滞后");
+                userService.addUserLog(user, Dict.LOGTYPE.ANALYSE, "交易中断，okcoinCn资产滞后");
                 logger.info("用户:{},交易中断!OkcoinCn资产获取滞后{}", user.getUsername(), deltaTime);
                 return;
             }
@@ -197,7 +197,7 @@ public class TradeServiceImpl implements TradeService {
             okcoinCnAvailableCny = okcoinCnfree.get("cny").toString();
         } else {
             //输出日志（交易中断!okcoinCn资产无法获取）
-            userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易中断!okcoinCn资产无法获取");
+            userService.addUserLog(user, Dict.LOGTYPE.ANALYSE, "交易中断!okcoinCn资产无法获取");
             logger.info("用户:{},交易中断!okcoinCn资产无法获取", user.getUsername());
             return;
         }
@@ -208,7 +208,7 @@ public class TradeServiceImpl implements TradeService {
             Long deltaTime = Math.abs(Long.parseLong(bitvcCnTimestamp) - System.currentTimeMillis());
             if (deltaTime > 3000) {
                 //输出日志（交易中断，bitvcCn资产滞后）
-                userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易中断，bitvcCn资产滞后");
+                userService.addUserLog(user, Dict.LOGTYPE.ANALYSE, "交易中断，bitvcCn资产滞后");
                 logger.info("用户:{},交易中断!bitvcCn资产获取滞后{}", user.getUsername(), deltaTime);
                 return;
             }
@@ -218,7 +218,7 @@ public class TradeServiceImpl implements TradeService {
             bitvcCnAvailableLtc = bitvcCnResult.get("available_ltc").toString();
         } else {
             //输出日志（交易中断!bitvcCn资产无法获取）
-            userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易中断!bitvcCn资产无法获取");
+            userService.addUserLog(user, Dict.LOGTYPE.ANALYSE, "交易中断!bitvcCn资产无法获取");
             logger.info("用户:{},交易中断!bitvcCn资产无法获取", user.getUsername());
             return;
         }
@@ -227,23 +227,23 @@ public class TradeServiceImpl implements TradeService {
         String doSellPlatformCoinAmount = null;    //卖空平台的可用币数量
         String doBuyPlatformCoinAmount = null;    //买多平台的可用币数量
 
-        if (Dict.Platform.OKCOIN_CN.equals(doSellPlatform)) {
-            if (Dict.Coin.BTC.equals(coin)) {
+        if (Dict.PLATFORM.OKCOIN_CN.equals(doSellPlatform)) {
+            if (Dict.COIN.BTC.equals(coin)) {
                 doSellPlatformCoinAmount = okcoinCnAvailableBtc;
-            } else if (Dict.Coin.LTC.equals(coin)) {
+            } else if (Dict.COIN.LTC.equals(coin)) {
                 doSellPlatformCoinAmount = okcoinCnAvailableLtc;
             }
-        } else if (Dict.Platform.OKCOIN_CN.equals(doBuyPlatform)) {
+        } else if (Dict.PLATFORM.OKCOIN_CN.equals(doBuyPlatform)) {
             doBuyPlatformCoinAmount = okcoinCnAvailableCny;
         }
 
-        if (Dict.Platform.BITVC_CN.equals(doSellPlatform)) {
-            if (Dict.Coin.BTC.equals(coin)) {
+        if (Dict.PLATFORM.BITVC_CN.equals(doSellPlatform)) {
+            if (Dict.COIN.BTC.equals(coin)) {
                 doSellPlatformCoinAmount = bitvcCnAvailableBtc;
-            } else if (Dict.Coin.LTC.equals(coin)) {
+            } else if (Dict.COIN.LTC.equals(coin)) {
                 doSellPlatformCoinAmount = bitvcCnAvailableLtc;
             }
-        } else if (Dict.Platform.BITVC_CN.equals(doBuyPlatform)) {
+        } else if (Dict.PLATFORM.BITVC_CN.equals(doBuyPlatform)) {
             doBuyPlatformCoinAmount = bitvcCnAvailableCny;
         }
 
@@ -259,7 +259,7 @@ public class TradeServiceImpl implements TradeService {
 
         //准备缓存中价格数据，用于判断是否有足够的CNY买入
         Map<String, Object> priceMap = CacheManager.getCachesByType("0");
-        String buyPrice = ((Map<String, Object>) priceMap.get(Dict.Type.price + doBuyPlatform + coin + Dict.direction.sell)).get("price").toString();
+        String buyPrice = ((Map<String, Object>) priceMap.get(Dict.TYPE.PRICE + doBuyPlatform + coin + Dict.DIRECTION.SELL)).get("price").toString();
 
         //比较是否有足够的数量卖出,doSellPlatformCoinAmount(可用币数)和eachAmount(每次交易最小数量)比较
         if ((new BigDecimal(doSellPlatformCoinAmount)).compareTo(new BigDecimal(eachAmount)) <= 0) {
@@ -281,7 +281,7 @@ public class TradeServiceImpl implements TradeService {
         //对冲分析完成
         if (allOk == 1) {   //交易中断
             //输出日志（对冲分析完成）
-            userService.addTradeLog(user, Dict.LOGTYPE.TRADE, "完成分析!  [做空]:" + doSellPlatformMsg + "  [做多]:" + doBuyPlatformMsg, "1");
+            userService.addTradeLog(user, Dict.LOGTYPE.ANALYSE, "完成分析!  [做空]:" + doSellPlatformMsg + "  [做多]:" + doBuyPlatformMsg);
             logger.info("用户:{},完成分析!  [做空]:{}  [做多]:{}", user.getUsername(), doSellPlatformMsg, doBuyPlatformMsg);
             //TODO 执行对冲做多
             //TODO 执行对冲做空
@@ -289,7 +289,7 @@ public class TradeServiceImpl implements TradeService {
 
         } else if (allOk == 0) {
             // 输出日志（("交易中断!用户{},对冲分析:" + "{[做空]:" + doSellPlatformMsg + "}" + "{[做多]:" + doBuyPlatformMsg + "}");
-            userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易中断! 对冲分析: [做空]:" + doSellPlatformMsg + "  [做多]:" + doBuyPlatformMsg);
+            userService.addUserLog(user, Dict.LOGTYPE.ANALYSE, "交易中断! 对冲分析: [做空]:" + doSellPlatformMsg + "  [做多]:" + doBuyPlatformMsg);
             logger.info("用户:{},交易中断! 对冲分析: [做空]:{}  [做多]:{}", user.getUsername(), doSellPlatformMsg, doBuyPlatformMsg);
         }
     }
@@ -297,7 +297,7 @@ public class TradeServiceImpl implements TradeService {
     @Override
     public Map<String, Object> tradeCommon(User user, String platform, String coin, String direction, String isMarketPrice, String amount, String price) throws IOException {
         //修正okcoin的bitvc的市价买入用的CNY数量
-        if (Dict.Platform.OKCOIN_CN.equals(platform) && Dict.TradeType.MARKET.equals(isMarketPrice) && Dict.direction.buy.equals(direction)) {
+        if (Dict.PLATFORM.OKCOIN_CN.equals(platform) && Dict.TRADE_TYPE.MARKET.equals(isMarketPrice) && Dict.DIRECTION.BUY.equals(direction)) {
             price = amount;
             amount = null;
         }
@@ -308,17 +308,17 @@ public class TradeServiceImpl implements TradeService {
     public Map<String, Object> trade(User user, String platform, String coin, String direction, String isMarketPrice, String amount, String price) throws IOException {
         Map<String, Object> result = new HashMap();
         switch (platform) {
-            case Dict.Platform.OKCOIN_CN:
+            case Dict.PLATFORM.OKCOIN_CN:
                 result = okcoinService.trade(user, platform, coin, direction, isMarketPrice, amount, price);
                 break;
-            case Dict.Platform.OKCOIN_UN:
+            case Dict.PLATFORM.OKCOIN_UN:
                 ;
                 break;
-            case Dict.Platform.BITVC_CN:
+            case Dict.PLATFORM.BITVC_CN:
                 ;
                 result = bitvcService.trade(user, platform, coin, direction, isMarketPrice, amount, price);
                 break;
-            case Dict.Platform.BITVC_UN:
+            case Dict.PLATFORM.BITVC_UN:
                 ;
                 break;
             default:

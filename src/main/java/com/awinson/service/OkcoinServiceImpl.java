@@ -42,8 +42,8 @@ private UserApiRepository userApiRepository;
     public Map<String, Object> getSpotUserinfo(String platform) {
         Map<String, Object> map = new HashMap();
         //获取API
-        UserApi userApi1 = userService.getUserApiWithPlatformAndApiType(platform, Dict.key.api);
-        UserApi userApi2 = userService.getUserApiWithPlatformAndApiType(platform, Dict.key.secret);
+        UserApi userApi1 = userService.getUserApiWithPlatformAndApiType(platform, Dict.KEY.API);
+        UserApi userApi2 = userService.getUserApiWithPlatformAndApiType(platform, Dict.KEY.SECRET);
         if (userApi1 != null && userApi2 != null) {
             String apiKey = userApi1.getApi();
             String secretKey = userApi2.getApi();
@@ -66,7 +66,7 @@ private UserApiRepository userApiRepository;
             // 发送post请求
             try {
                 String url;
-                if (platform.equals(Dict.Platform.OKCOIN_CN)) {
+                if (platform.equals(Dict.PLATFORM.OKCOIN_CN)) {
                     url = okcoinCnConfig.getUserinfo();
                 } else {
                     url = okcoinUnConfig.getUserinfo();
@@ -91,8 +91,8 @@ private UserApiRepository userApiRepository;
     public Map<String, Object> trade(User user,String platform, String coin, String direction, String isMarketPrice, String amount, String price) throws IOException {
         Map<String, Object> result = new HashMap();
 
-        UserApi userApi1 =  userApiRepository.findByUserIdAndPlatformAndApiType(user.getId(),platform,Dict.key.api);
-        UserApi userApi2 =  userApiRepository.findByUserIdAndPlatformAndApiType(user.getId(),platform,Dict.key.secret);
+        UserApi userApi1 =  userApiRepository.findByUserIdAndPlatformAndApiType(user.getId(),platform,Dict.KEY.API);
+        UserApi userApi2 =  userApiRepository.findByUserIdAndPlatformAndApiType(user.getId(),platform,Dict.KEY.SECRET);
         if (userApi1 != null && userApi2 != null) {
             String apiKey = userApi1.getApi();
             String secretKey = userApi2.getApi();
@@ -102,20 +102,20 @@ private UserApiRepository userApiRepository;
             Map<String, String> params = new HashMap<String, String>();
             params.put("api_key", apiKey);
             if(!StringUtil.isEmpty(coin)){
-                if (Dict.Coin.BTC.equals(coin)){
+                if (Dict.COIN.BTC.equals(coin)){
                     params.put("symbol", "btc_cny");
-                }else if (Dict.Coin.LTC.equals(coin)){
+                }else if (Dict.COIN.LTC.equals(coin)){
                     params.put("symbol", "ltc_cny");
                 }
             }
             if(!StringUtil.isEmpty(isMarketPrice)||!StringUtil.isEmpty(direction)){
-                if(Dict.TradeType.TAKER.equals(isMarketPrice)&&Dict.direction.buy.equals(direction)){   //委托买
+                if(Dict.TRADE_TYPE.TAKER.equals(isMarketPrice)&&Dict.DIRECTION.BUY.equals(direction)){   //委托买
                     params.put("type", "buy");
-                }else if(Dict.TradeType.MARKET.equals(isMarketPrice)&&Dict.direction.buy.equals(direction)){  //市价买
+                }else if(Dict.TRADE_TYPE.MARKET.equals(isMarketPrice)&&Dict.DIRECTION.BUY.equals(direction)){  //市价买
                     params.put("type", "buy_market");
-                }else if(Dict.TradeType.TAKER.equals(isMarketPrice)&&Dict.direction.sell.equals(direction)){   //委托买
+                }else if(Dict.TRADE_TYPE.TAKER.equals(isMarketPrice)&&Dict.DIRECTION.SELL.equals(direction)){   //委托买
                     params.put("type", "sell");
-                }else if(Dict.TradeType.MARKET.equals(isMarketPrice)&&Dict.direction.sell.equals(direction)){  //市价买
+                }else if(Dict.TRADE_TYPE.MARKET.equals(isMarketPrice)&&Dict.DIRECTION.SELL.equals(direction)){  //市价买
                     params.put("type", "sell_market");
                 }
             }
@@ -143,8 +143,8 @@ private UserApiRepository userApiRepository;
     @Override
     public   Map<String, Object> order_info(User user,String platform, String coin, String orderId) throws HttpException, IOException {
         Map<String, Object> result = new HashMap();
-        UserApi userApi1 =  userApiRepository.findByUserIdAndPlatformAndApiType(user.getId(),platform,Dict.key.api);
-        UserApi userApi2 =  userApiRepository.findByUserIdAndPlatformAndApiType(user.getId(),platform,Dict.key.secret);
+        UserApi userApi1 =  userApiRepository.findByUserIdAndPlatformAndApiType(user.getId(),platform,Dict.KEY.API);
+        UserApi userApi2 =  userApiRepository.findByUserIdAndPlatformAndApiType(user.getId(),platform,Dict.KEY.SECRET);
         if (userApi1 != null && userApi2 != null) {
             String apiKey = userApi1.getApi();
             String secretKey = userApi2.getApi();
@@ -153,9 +153,9 @@ private UserApiRepository userApiRepository;
             Map<String, String> params = new HashMap<String, String>();
             params.put("api_key", apiKey);
             if(!StringUtil.isEmpty(coin)){
-                if (Dict.Coin.BTC.equals(coin)){
+                if (Dict.COIN.BTC.equals(coin)){
                     params.put("symbol", "btc_cny");
-                }else if (Dict.Coin.LTC.equals(coin)){
+                }else if (Dict.COIN.LTC.equals(coin)){
                     params.put("symbol", "ltc_cny");
                 }
             }

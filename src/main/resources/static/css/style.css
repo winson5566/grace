@@ -17,7 +17,8 @@
 }
 
 #index {
-    background-image: url("../images/google-data-center.jpg");
+    /*background-image: url("../images/google-data-center.jpg");*/
+    background-color: #242424;
 }
 
 .background-white-97 {

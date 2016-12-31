@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
             String password = registerValid.getPassword();
             user.setPassword(password);
 
-            user.setEnable("1");
+            user.setEnable(Dict.ENABLE.YES);
             userRepository.save(user);
 
             //保存权限
@@ -139,26 +139,26 @@ public class UserServiceImpl implements UserService {
             userApi1.setPlatform(apiKeyValid.getPlatform());
             userApi1.setUserId(id);
             if (apiKeyValid.getApiKey() != null && apiKeyValid.getApiKey() != "") {
-                if (userApiRepository.findByUserIdAndPlatformAndApiType(id, apiKeyValid.getPlatform(), Dict.key.api) != null) {
-                    userApi1 = userApiRepository.findByUserIdAndPlatformAndApiType(id, apiKeyValid.getPlatform(), Dict.key.api);
+                if (userApiRepository.findByUserIdAndPlatformAndApiType(id, apiKeyValid.getPlatform(), Dict.KEY.API) != null) {
+                    userApi1 = userApiRepository.findByUserIdAndPlatformAndApiType(id, apiKeyValid.getPlatform(), Dict.KEY.API);
                 } else {
                     userApi1.setId(UUID.randomUUID().toString());
                 }
                 userApi1.setApi(apiKeyValid.getApiKey());
-                userApi1.setApiType(Dict.key.api);
+                userApi1.setApiType(Dict.KEY.API);
                 userApiRepository.save(userApi1);
             }
 
             userApi2.setPlatform(apiKeyValid.getPlatform());
             userApi2.setUserId(id);
             if (apiKeyValid.getSecretKey() != null && apiKeyValid.getSecretKey() != "") {
-                if (userApiRepository.findByUserIdAndPlatformAndApiType(id, apiKeyValid.getPlatform(), Dict.key.secret) != null) {
-                    userApi2 = userApiRepository.findByUserIdAndPlatformAndApiType(id, apiKeyValid.getPlatform(), Dict.key.secret);
+                if (userApiRepository.findByUserIdAndPlatformAndApiType(id, apiKeyValid.getPlatform(), Dict.KEY.SECRET) != null) {
+                    userApi2 = userApiRepository.findByUserIdAndPlatformAndApiType(id, apiKeyValid.getPlatform(), Dict.KEY.SECRET);
                 } else {
                     userApi2.setId(UUID.randomUUID().toString());
                 }
                 userApi2.setApi(apiKeyValid.getSecretKey());
-                userApi2.setApiType(Dict.key.secret);
+                userApi2.setApiType(Dict.KEY.SECRET);
                 userApiRepository.save(userApi2);
             }
             map.put("code", "1");
@@ -178,26 +178,26 @@ public class UserServiceImpl implements UserService {
             String apiType = userApi.getApiType();
             String platform = userApi.getPlatform();
             switch (apiType) {
-                case Dict.key.api:
+                case Dict.KEY.API:
                     apiType = "api-key";
                     break;
-                case Dict.key.secret:
+                case Dict.KEY.SECRET:
                     apiType = "secret-key";
                     break;
                 default:
                     platform = "未知";
             }
             switch (platform) {
-                case Dict.Platform.OKCOIN_CN:
+                case Dict.PLATFORM.OKCOIN_CN:
                     platform = "OKcoin中国站";
                     break;
-                case Dict.Platform.OKCOIN_UN:
+                case Dict.PLATFORM.OKCOIN_UN:
                     platform = "OKcoin国际站";
                     break;
-                case Dict.Platform.BITVC_CN:
+                case Dict.PLATFORM.BITVC_CN:
                     platform = "BITVC中国站";
                     break;
-                case Dict.Platform.BITVC_UN:
+                case Dict.PLATFORM.BITVC_UN:
                     platform = "BITVC国际站站";
                     break;
                 default:
@@ -223,7 +223,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void getAllUserAssetsInfo2Cache() {
         // 获取所有可用的用户
-        List<User> list = userRepository.findByEnable(Dict.Enable.YES);
+        List<User> list = userRepository.findByEnable(Dict.ENABLE.YES);
         Map<String, Object> userApiMap = new HashMap();
         //遍历用户查询是否有符合条件的key对
         for (User user : list) {
@@ -265,17 +265,17 @@ public class UserServiceImpl implements UserService {
             for (Map.Entry<String, Object> platformEntry : userApi.entrySet()) {
                 String platform = platformEntry.getKey();
                 Map<String, String> apiMap = (Map<String, String>) platformEntry.getValue();
-                String apiKey = apiMap.get(Dict.key.api);
-                String secretKey = apiMap.get(Dict.key.secret);
+                String apiKey = apiMap.get(Dict.KEY.API);
+                String secretKey = apiMap.get(Dict.KEY.SECRET);
                 String url = null;
                 switch (platform) {
-                    case Dict.Platform.OKCOIN_CN:
+                    case Dict.PLATFORM.OKCOIN_CN:
                         url = okcoinCnConfig.getUserinfo();
                         break;
-                    case Dict.Platform.OKCOIN_UN:
+                    case Dict.PLATFORM.OKCOIN_UN:
                         url = okcoinUnConfig.getUserinfo();
                         break;
-                    case Dict.Platform.BITVC_CN:
+                    case Dict.PLATFORM.BITVC_CN:
                         url = bitvcCnConfig.getUserinfo();
                         break;
                     default:
@@ -290,24 +290,19 @@ public class UserServiceImpl implements UserService {
 
     private void getUserInfo2Cache(String userId, String platform, String apiKey, String secretKey) {
         Map<String, Object> map = new HashMap();
-        if (Dict.Platform.OKCOIN_CN.equals(platform) || Dict.Platform.OKCOIN_UN.equals(platform)) {
+        if (Dict.PLATFORM.OKCOIN_CN.equals(platform) || Dict.PLATFORM.OKCOIN_UN.equals(platform)) {
             map = okcoinService.getSpotUserinfo(platform, apiKey, secretKey);
-        } else if (Dict.Platform.BITVC_CN.equals(platform) || Dict.Platform.BITVC_UN.equals(platform)) {
+        } else if (Dict.PLATFORM.BITVC_CN.equals(platform) || Dict.PLATFORM.BITVC_UN.equals(platform)) {
             map = bitvcService.getSpotUserinfo(platform, apiKey, secretKey);
         }
         if (map != null && map.size() > 0) {
             map.put("timestamp", String.valueOf(System.currentTimeMillis()));
-            CacheManager.update(Dict.Type.ASSETS + platform + "_" + userId, map);
+            CacheManager.update(Dict.TYPE.ASSETS + platform + "_" + userId, map);
 
         }
     }
 
-    @Override
-    public UserTradeSetting getUserTradeSetting() {
-        String userId = getUserId();
-        UserTradeSetting userTradeSetting = userTradeSettingRepository.findByUserId(userId);
-        return userTradeSetting;
-    }
+
 
     @Override
     public String updateUserTradeSetting(String buyPlatform, String sellPlatform, String coin, String margin) {
@@ -336,7 +331,7 @@ public class UserServiceImpl implements UserService {
         } else {
             marginMap = new HashMap();
         }
-        marginMap.put(Dict.Type.SETTING + buyPlatform + sellPlatform + coin, margin);
+        marginMap.put(Dict.TYPE.SETTING + buyPlatform + sellPlatform + coin, margin);
         userTradeSetting.setMarginJson(gson.toJson(marginMap));
         userTradeSettingRepository.save(userTradeSetting);
         addUserLog(getUser(), Dict.LOGTYPE.USER, "更改阀值,[币种]:" + coin + "  [买平台]:" + buyPlatform + "  [卖平台]:" + sellPlatform + "  [阀值]:" + margin);
@@ -402,35 +397,31 @@ public class UserServiceImpl implements UserService {
         userLogRepository.save(userLog);
 
 //        //写入缓存
-//        List<UserLog> userLogList = (List<UserLog>) CacheManager.get(Dict.Type.LOG + type + user.getId());
+//        List<UserLog> userLogList = (List<UserLog>) CacheManager.get(Dict.TYPE.LOG + type + user.getId());
 //        if (userLogList == null || userLogList.size() <= 0) {  //如果缓存中不存在
 //            userLogList = new ArrayList();
 //        }
 //        userLogList.add(userLog);
-//        CacheManager.update((Dict.Type.LOG + type + user.getId()), userLogList);
+//        CacheManager.update((Dict.TYPE.LOG + type + user.getId()), userLogList);
     }
 
     @Override
-    public void addTradeLog(User user, String type, String context, String tradeSuccess) {
-        UserLog userLog = new UserLog(user.getId(), type, context, tradeSuccess);
+    public void addTradeLog(User user, String type, String context) {
+        UserLog userLog = new UserLog(user.getId(), type, context);
         userLogRepository.save(userLog);
     }
 
     @Override
-    public List<UserLog> getUserLog(String type) {
-        return userLogRepository.findTop20ByUserIdAndTypeOrderByCreateTimestampDesc(getUserId(), type);
+    public List<UserLog> getTop20UserLog(String userId,String type) {
+        return userLogRepository.findTop20ByUserIdAndTypeOrderByCreateTimestampDesc(userId, type);
     }
 
-    @Override
-    public List<UserLog> getTradeSuccessLog(String type) {
-        return userLogRepository.findTop20ByUserIdAndTypeAndTradeSuccessOrderByCreateTimestampDesc(getUserId(), type, "1");
-    }
 //    /**
 //     * 初始化用户的日志到缓存
 //     */
 //    @PostConstruct
 //    public void init() {
-//        List<User> userList = userRepository.findByEnable(Dict.Enable.YES);
+//        List<User> userList = userRepository.findByEnable(Dict.ENABLE.YES);
 //        for (User user : userList) {
 //            List<UserLog> userLogList = userLogRepository.findTop100ByUserIdAndTypeOrderByStartTimestampDesc(user.getId(), Dict.LOGTYPE.USER);
 //            List<UserLog> thresholdLogList = userLogRepository.findTop100ByUserIdAndTypeOrderByStartTimestampDesc(user.getId(), Dict.LOGTYPE.THRESHOLD);
@@ -441,20 +432,60 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void pushAccoutInfoByWebSocket() {
-        List<User> list = userRepository.findByEnable("1");
+        List<User> list = userRepository.findByEnable(Dict.ENABLE.YES);
         Gson gson = new Gson();
         for (User user : list) {
             Map<String, Object> map = new HashMap();
-            Map<String, Object> okcoinCnMap = (Map<String, Object>) CacheManager.get(Dict.Type.ASSETS + Dict.Platform.OKCOIN_CN + "_" + user.getId());
-            Map<String, Object> bitvcCnMap = (Map<String, Object>) CacheManager.get(Dict.Type.ASSETS + Dict.Platform.BITVC_CN + "_" + user.getId());
+            Map<String, Object> okcoinCnMap = (Map<String, Object>) CacheManager.get(Dict.TYPE.ASSETS + Dict.PLATFORM.OKCOIN_CN + "_" + user.getId());
+            Map<String, Object> bitvcCnMap = (Map<String, Object>) CacheManager.get(Dict.TYPE.ASSETS + Dict.PLATFORM.BITVC_CN + "_" + user.getId());
             if (okcoinCnMap != null && okcoinCnMap.size() > 0)
-                map.put("p"+Dict.Platform.OKCOIN_CN, okcoinCnMap);
+                map.put("p" + Dict.PLATFORM.OKCOIN_CN, okcoinCnMap);
             if (bitvcCnMap != null && bitvcCnMap.size() > 0)
-                map.put("p"+Dict.Platform.BITVC_CN, bitvcCnMap);
+                map.put("p" + Dict.PLATFORM.BITVC_CN, bitvcCnMap);
             if (map.size() > 0) {
                 String json = gson.toJson(map);
-                webSocketBaseService.broadcastToUser(user.getUsername(),Dict.QUEUE.ASSETS,json);
+                webSocketBaseService.broadcastToUser(user.getUsername(), Dict.QUEUE.ASSETS, json);
             }
         }
+    }
+
+    @Override
+    public void pushUserLogByWebSocket() {
+        List<User> list = userRepository.findByEnable(Dict.ENABLE.YES);
+        Gson gson = new Gson();
+        for (User user : list) {
+            Map<String, List<UserLog>> map = new HashMap();
+            List<UserLog> thresholdList = getTop20UserLog(user.getId(),Dict.LOGTYPE.THRESHOLD);
+            List<UserLog> analyseList = getTop20UserLog(user.getId(),Dict.LOGTYPE.ANALYSE);
+            List<UserLog> tradeList = getTop20UserLog(user.getId(),Dict.LOGTYPE.TRADE);
+            if (thresholdList != null && thresholdList.size() > 0)
+                map.put("thresholdList", thresholdList);
+            if (analyseList != null && analyseList.size() > 0)
+                map.put("analyseList", analyseList);
+            if (tradeList != null && tradeList.size() > 0)
+                map.put("tradeList", tradeList);
+            if (map.size() > 0) {
+                String json = gson.toJson(map);
+                webSocketBaseService.broadcastToUser(user.getUsername(), Dict.QUEUE.LOG, json);
+            }
+        }
+    }
+
+    @Override
+    public void pushUserSetting() {
+        List<User> list = userRepository.findByEnable(Dict.ENABLE.YES);
+        Gson gson = new Gson();
+        for (User user : list) {
+            UserTradeSetting userTradeSetting = userTradeSettingRepository.findByUserId(user.getId());
+            String json = gson.toJson(userTradeSetting);
+            webSocketBaseService.broadcastToUser(user.getUsername(), Dict.QUEUE.SETTING, json);
+        }
+    }
+
+    @Override
+    public UserTradeSetting getUserTradeSetting() {
+        String userId = getUserId();
+        UserTradeSetting userTradeSetting = userTradeSettingRepository.findByUserId(userId);
+        return userTradeSetting;
     }
 }

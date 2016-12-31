@@ -46,13 +46,13 @@ public class TradeServiceTest {
     public void okcoinTradeTest(){
         User user = userRepository.findByUsername("winson");
         try {
-            Map<String, Object> map = tradeService.trade(user,Dict.Platform.OKCOIN_CN,Dict.Coin.LTC,Dict.direction.buy,Dict.TradeType.MARKET,"0.1","20.56");
+            Map<String, Object> map = tradeService.trade(user,Dict.PLATFORM.OKCOIN_CN,Dict.COIN.LTC,Dict.DIRECTION.BUY,Dict.TRADE_TYPE.MARKET,"0.1","20.56");
 
             String result = map.get("result").toString();
             Gson gson = new Gson();
             Map<String, String> resultmMap =gson.fromJson(result, new TypeToken<Map<String, String>>() { }.getType());
             String orderId =resultmMap.get("order_id").toString();
-            Map<String, Object> map2=(Map<String, Object>)okcoinService.order_info(user,Dict.Platform.OKCOIN_CN,Dict.Coin.LTC,orderId.toString());
+            Map<String, Object> map2=(Map<String, Object>)okcoinService.order_info(user,Dict.PLATFORM.OKCOIN_CN,Dict.COIN.LTC,orderId.toString());
             String result2 = map2.get("result").toString();
             List<Map> orders=gson.fromJson(result2, new TypeToken<List<Map>>() { }.getType());
             String status =orders.get(0).get("status").toString();
@@ -70,23 +70,23 @@ public class TradeServiceTest {
         try {
 //            //bitvc
 //            //委托买
-//            Map<String, Object> map10 = tradeService.trade(user,Dict.Platform.BITVC_CN,Dict.Coin.LTC,Dict.direction.buy,Dict.TradeType.TAKER,"0.1","20.56");
+//            Map<String, Object> map10 = tradeService.trade(user,Dict.PLATFORM.BITVC_CN,Dict.COIN.LTC,Dict.DIRECTION.BUY,Dict.TRADE_TYPE.TAKER,"0.1","20.56");
 //            //委托卖
-//            Map<String, Object> map11 = tradeService.trade(user,Dict.Platform.BITVC_CN,Dict.Coin.LTC,Dict.direction.sell,Dict.TradeType.TAKER,"0.11","80.56");
+//            Map<String, Object> map11 = tradeService.trade(user,Dict.PLATFORM.BITVC_CN,Dict.COIN.LTC,Dict.DIRECTION.SELL,Dict.TRADE_TYPE.TAKER,"0.11","80.56");
 //            //市价买
-//            Map<String, Object> map12 = tradeService.trade(user,Dict.Platform.BITVC_CN,Dict.Coin.LTC,Dict.direction.buy,Dict.TradeType.MARKET,"1",null);
+//            Map<String, Object> map12 = tradeService.trade(user,Dict.PLATFORM.BITVC_CN,Dict.COIN.LTC,Dict.DIRECTION.BUY,Dict.TRADE_TYPE.MARKET,"1",null);
 //            //市价卖
-//            Map<String, Object> map13 = tradeService.trade(user,Dict.Platform.BITVC_CN,Dict.Coin.LTC,Dict.direction.sell,Dict.TradeType.MARKET,"0.01",null);
+//            Map<String, Object> map13 = tradeService.trade(user,Dict.PLATFORM.BITVC_CN,Dict.COIN.LTC,Dict.DIRECTION.SELL,Dict.TRADE_TYPE.MARKET,"0.01",null);
 //
 //            //okcoin
 //            //委托买
-//            Map<String, Object> map00 = tradeService.trade(user,Dict.Platform.OKCOIN_CN,Dict.Coin.LTC,Dict.direction.buy,Dict.TradeType.TAKER,"0.1","20.56");
+//            Map<String, Object> map00 = tradeService.trade(user,Dict.PLATFORM.OKCOIN_CN,Dict.COIN.LTC,Dict.DIRECTION.BUY,Dict.TRADE_TYPE.TAKER,"0.1","20.56");
 //            //委托卖
-//            Map<String, Object> map01 = tradeService.trade(user,Dict.Platform.OKCOIN_CN,Dict.Coin.LTC,Dict.direction.sell,Dict.TradeType.TAKER,"0.11","80.56");
+//            Map<String, Object> map01 = tradeService.trade(user,Dict.PLATFORM.OKCOIN_CN,Dict.COIN.LTC,Dict.DIRECTION.SELL,Dict.TRADE_TYPE.TAKER,"0.11","80.56");
 //            //市价买
-//            Map<String, Object> map02 = tradeService.trade(user,Dict.Platform.OKCOIN_CN,Dict.Coin.LTC,Dict.direction.buy,Dict.TradeType.MARKET,null,"10");
+//            Map<String, Object> map02 = tradeService.trade(user,Dict.PLATFORM.OKCOIN_CN,Dict.COIN.LTC,Dict.DIRECTION.BUY,Dict.TRADE_TYPE.MARKET,null,"10");
 //            //市价卖
-            Map<String, Object> map03 = tradeService.trade(user,Dict.Platform.OKCOIN_CN,Dict.Coin.LTC,Dict.direction.sell,Dict.TradeType.MARKET,"0.1",null);
+            Map<String, Object> map03 = tradeService.trade(user,Dict.PLATFORM.OKCOIN_CN,Dict.COIN.LTC,Dict.DIRECTION.SELL,Dict.TRADE_TYPE.MARKET,"0.1",null);
             System.out.print(map03);
         } catch (IOException e) {
             e.printStackTrace();

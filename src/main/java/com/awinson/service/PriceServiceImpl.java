@@ -50,10 +50,10 @@ public class PriceServiceImpl implements PriceService {
 
 //    public void getAllPlatformPrice() {
 //        //TODO 改线程
-//        //Map<String, BigDecimal> map000 = getDepth(Dict.Platform.OKCOIN_CN, Dict.Coin.BTC);
-//        //Map<String, BigDecimal> map001 = getDepth(Dict.Platform.OKCOIN_CN, Dict.Coin.LTC);
-//        Map<String, BigDecimal> map100 = getDepth(Dict.Platform.BITVC_CN, Dict.Coin.BTC);
-//        Map<String, BigDecimal> map101 = getDepth(Dict.Platform.BITVC_CN, Dict.Coin.LTC);
+//        //Map<String, BigDecimal> map000 = getDepth(Dict.PLATFORM.OKCOIN_CN, Dict.COIN.BTC);
+//        //Map<String, BigDecimal> map001 = getDepth(Dict.PLATFORM.OKCOIN_CN, Dict.COIN.LTC);
+//        Map<String, BigDecimal> map100 = getDepth(Dict.PLATFORM.BITVC_CN, Dict.COIN.BTC);
+//        Map<String, BigDecimal> map101 = getDepth(Dict.PLATFORM.BITVC_CN, Dict.COIN.LTC);
 //    }
 //
 //    public Map<String, BigDecimal> getDepth(String platformId, String coinType) {
@@ -62,18 +62,18 @@ public class PriceServiceImpl implements PriceService {
 //        Double min;
 //
 //        //判断平台和币种,查询对应的URL
-//        if (coinType.equals(Dict.Coin.BTC)) {
+//        if (coinType.equals(Dict.COIN.BTC)) {
 //            min = btcMin;
-//            if (platformId.equals(Dict.Platform.OKCOIN_CN)) {
+//            if (platformId.equals(Dict.PLATFORM.OKCOIN_CN)) {
 //                url = okcoinChinaBtcConfig.getDepth();
-//            } else if (platformId.equals(Dict.Platform.BITVC_CN)) {
+//            } else if (platformId.equals(Dict.PLATFORM.BITVC_CN)) {
 //                url = bitvcCnBtcConfig.getDepth();
 //            }
 //        } else {
 //            min = ltcMin;
-//            if (platformId.equals(Dict.Platform.OKCOIN_CN)) {
+//            if (platformId.equals(Dict.PLATFORM.OKCOIN_CN)) {
 //                url = okcoinChinaLtcConfig.getDepth();
-//            } else if (platformId.equals(Dict.Platform.BITVC_CN)) {
+//            } else if (platformId.equals(Dict.PLATFORM.BITVC_CN)) {
 //                url = bitvcCnLtcConfig.getDepth();
 //            }
 //        }
@@ -91,7 +91,7 @@ public class PriceServiceImpl implements PriceService {
 //            Gson gson = new Gson();
 //            Map<String, Object> jsonMap = gson.fromJson(json, Map.class);
 //            ArrayList<ArrayList> asks = (ArrayList) jsonMap.get("asks");
-//            if (platformId.equals(Dict.Platform.OKCOIN_CN))
+//            if (platformId.equals(Dict.PLATFORM.OKCOIN_CN))
 //                Collections.reverse(asks);
 //            ArrayList<ArrayList> bids = (ArrayList) jsonMap.get("bids");
 //            BigDecimal sellPrice = getPriceByMin(asks, new BigDecimal(min));
@@ -117,16 +117,16 @@ public class PriceServiceImpl implements PriceService {
         Map<String, Object> map = new HashMap();
        String url = null;
         //判断平台和币种,查询对应的URL
-        if (coinType.equals(Dict.Coin.BTC)) {
-            if (platformId.equals(Dict.Platform.OKCOIN_CN)) {
+        if (coinType.equals(Dict.COIN.BTC)) {
+            if (platformId.equals(Dict.PLATFORM.OKCOIN_CN)) {
                 url = okcoinChinaBtcConfig.getTicker();
-            } else if (platformId.equals(Dict.Platform.BITVC_CN)) {
+            } else if (platformId.equals(Dict.PLATFORM.BITVC_CN)) {
                 url = bitvcCnBtcConfig.getTicker();
             }
         } else {
-            if (platformId.equals(Dict.Platform.OKCOIN_CN)) {
+            if (platformId.equals(Dict.PLATFORM.OKCOIN_CN)) {
                 url = okcoinChinaLtcConfig.getTicker();
-            } else if (platformId.equals(Dict.Platform.BITVC_CN)) {
+            } else if (platformId.equals(Dict.PLATFORM.BITVC_CN)) {
                 url = bitvcCnLtcConfig.getTicker();
             }
         }
@@ -173,7 +173,7 @@ public class PriceServiceImpl implements PriceService {
      * @return
      */
     public List<Map<String, Object>> calculationMargin() {
-        Map<String, Object> cacheMap = CacheManager.getCachesByType("0");
+        Map<String, Object> cacheMap = CacheManager.getCachesByType(Dict.TYPE.PRICE);
         if (cacheMap != null && cacheMap.size() > 0) {
             //分类
             Map<String, Object> newMap = analyseMap(cacheMap);
@@ -187,7 +187,7 @@ public class PriceServiceImpl implements PriceService {
                 Integer deltaTime =Integer.parseInt(m.get("deltaTime").toString()) ;
                 BigDecimal margin = new BigDecimal(m.get("margin").toString());
                 //写入缓存
-                String key = Dict.Type.margin+buy_platform+sell_platform+coin;
+                String key = Dict.TYPE.MARGIN+buy_platform+sell_platform+coin;
                 CacheManager.update(key,m);
                 //写入数据库
                 PriceMargin priceMargin = new PriceMargin(buy_platform,sell_platform,coin, deltaTime, margin);
@@ -258,12 +258,12 @@ public class PriceServiceImpl implements PriceService {
         List<Map<String, Object>> btcList = new ArrayList();
         List<Map<String, Object>> ltcList = new ArrayList();
         for (Map.Entry<String, Object> datas : cacheMap.entrySet()) {
-            if (datas.getKey().matches("^0\\d{4}")&&!datas.getKey().endsWith("2")) {
+            if (datas.getKey().matches("^P\\d{4}")&&!datas.getKey().endsWith("2")) {
                 Map<String, Object> entity = (Map<String, Object>) datas.getValue();
                 String coin = entity.get("coin").toString();
-                if (Dict.Coin.BTC.equals(coin)) {
+                if (Dict.COIN.BTC.equals(coin)) {
                     btcList.add(entity);
-                } else if (Dict.Coin.LTC.equals(coin)) {
+                } else if (Dict.COIN.LTC.equals(coin)) {
                     ltcList.add(entity);
                 }
             }
@@ -286,9 +286,9 @@ public class PriceServiceImpl implements PriceService {
         List<Map<String, Object>> buyList = new ArrayList();
         for (Map<String, Object> map : list) {
             String direction = map.get("direction").toString();
-            if (Dict.direction.sell.equals(direction)) {
+            if (Dict.DIRECTION.SELL.equals(direction)) {
                 sellList.add(map);
-            } else if (Dict.direction.buy.equals(direction)) {
+            } else if (Dict.DIRECTION.BUY.equals(direction)) {
                 buyList.add(map);
             }
         }
@@ -313,26 +313,26 @@ public class PriceServiceImpl implements PriceService {
         Map<String, Object> sellMap = new HashMap();
         sellMap.put("platform", platformId);
         sellMap.put("coin", coinType);
-        sellMap.put("direction", Dict.direction.sell);
+        sellMap.put("direction", Dict.DIRECTION.SELL);
         sellMap.put("price", sellPrice.setScale(2, BigDecimal.ROUND_HALF_UP));
         sellMap.put("timestamp", timestamp);
-        CacheManager.update(Dict.Type.price + platformId + coinType + Dict.direction.sell, sellMap);
+        CacheManager.update(Dict.TYPE.PRICE + platformId + coinType + Dict.DIRECTION.SELL, sellMap);
 
         Map<String, Object> buyMap = new HashMap();
         buyMap.put("platform", platformId);
         buyMap.put("coin", coinType);
-        buyMap.put("direction", Dict.direction.buy);
+        buyMap.put("direction", Dict.DIRECTION.BUY);
         buyMap.put("price", buyPrice.setScale(2, BigDecimal.ROUND_HALF_UP));
         buyMap.put("timestamp", timestamp);
-        CacheManager.update(Dict.Type.price + platformId + coinType + Dict.direction.buy, buyMap);
+        CacheManager.update(Dict.TYPE.PRICE + platformId + coinType + Dict.DIRECTION.BUY, buyMap);
 
         Map<String, Object> lastMap = new HashMap();
         lastMap.put("platform", platformId);
         lastMap.put("coin", coinType);
-        lastMap.put("direction", Dict.direction.last);
+        lastMap.put("direction", Dict.DIRECTION.LAST);
         lastMap.put("price", lastPrice.setScale(2, BigDecimal.ROUND_HALF_UP));
         lastMap.put("timestamp", timestamp);
-        CacheManager.update(Dict.Type.price + platformId + coinType + Dict.direction.last, lastMap);
+        CacheManager.update(Dict.TYPE.PRICE + platformId + coinType + Dict.DIRECTION.LAST, lastMap);
 
     }
 
@@ -378,7 +378,7 @@ public class PriceServiceImpl implements PriceService {
     }
 
     @Override
-    public void broadcast() {
+    public void pushPriceAndMargin() {
         String price = priceController.getPrice();
         String margin = priceController.getPriceMargin();
         if (!StringUtil.isEmpty(price))

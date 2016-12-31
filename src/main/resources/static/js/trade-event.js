@@ -1,3 +1,6 @@
+/**
+ * Created by winson on 2016/12/31.
+ */
 $("#bn-threshold-btc-okcoin-bitvc").click(function () {
     var margin = $("#input-threshold-btc-okcoin-bitvc").val();
     if (margin != null&&margin != "") {

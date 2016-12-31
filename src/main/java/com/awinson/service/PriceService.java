@@ -42,7 +42,7 @@ public interface PriceService {
     /**
      * WebSocket推送价格和价差
      */
-    void broadcast();
+    void pushPriceAndMargin();
 
     /**
      * 保存买一卖一到缓存

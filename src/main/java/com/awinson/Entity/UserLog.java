@@ -17,26 +17,15 @@ public class UserLog {
     private String type;
     private Timestamp createTimestamp;
     private String context;
-    private String tradeSuccess;
     public UserLog() {
     }
 
-    public UserLog( String userId, String type,String context,String tradeSuccess) {
+    public UserLog( String userId, String type,String context) {
         this.id = UUID.randomUUID().toString();
         this.userId = userId;
         this.type = type;
         this.createTimestamp = new Timestamp(System.currentTimeMillis());
         this.context = context;
-        this.tradeSuccess=tradeSuccess;
-    }
-
-    public UserLog(String userId, String type,String context) {
-        this.id = UUID.randomUUID().toString();
-        this.userId = userId;
-        this.type = type;
-        this.createTimestamp = new Timestamp(System.currentTimeMillis());
-        this.context = context;
-        this.tradeSuccess="0";
     }
 
     @Id
@@ -80,11 +69,4 @@ public class UserLog {
         this.context = context;
     }
 
-    public String getTradeSuccess() {
-        return tradeSuccess;
-    }
-
-    public void setTradeSuccess(String tradeSuccess) {
-        this.tradeSuccess = tradeSuccess;
-    }
-}
+   }

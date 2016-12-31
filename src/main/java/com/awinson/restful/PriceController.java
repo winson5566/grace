@@ -1,6 +1,7 @@
 package com.awinson.restful;
 
 import com.awinson.cache.CacheManager;
+import com.awinson.dictionary.Dict;
 import com.awinson.service.PriceService;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class PriceController {
     @RequestMapping("price")
     public String getPrice() {
         Map<String, Object> result = new HashMap();
-        Map<String, Object> map = CacheManager.getCachesByType("0");
+        Map<String, Object> map = CacheManager.getCachesByType(Dict.TYPE.PRICE);
         if (map!=null&&map.size()>0){
             result.put("code",1);
             result.put("msg","价格获取成功");
@@ -47,7 +48,7 @@ public class PriceController {
     @RequestMapping("price_margin")
     public String getPriceMargin() {
         Map<String, Object> result = new HashMap();
-        Map<String, Object> map = CacheManager.getCachesByType("1");
+        Map<String, Object> map = CacheManager.getCachesByType(Dict.TYPE.MARGIN);
         if (map!=null&&map.size()>0){
             result.put("code",1);
             result.put("msg","价差获取成功");

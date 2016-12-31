@@ -40,8 +40,8 @@ public class BitvcServiceImpl implements BitvcService{
     public Map<String, Object> getSpotUserinfo(String platform) {
         Map<String,Object> map  = new HashMap();
         //获取API
-        UserApi userApi1 = userService.getUserApiWithPlatformAndApiType(platform, Dict.key.api);
-        UserApi userApi2 = userService.getUserApiWithPlatformAndApiType(platform, Dict.key.secret);
+        UserApi userApi1 = userService.getUserApiWithPlatformAndApiType(platform, Dict.KEY.API);
+        UserApi userApi2 = userService.getUserApiWithPlatformAndApiType(platform, Dict.KEY.SECRET);
         if (userApi1!=null&&userApi2!=null){
             String accessKey = userApi1.getApi();
             String secretKey = userApi2.getApi();
@@ -66,7 +66,7 @@ public class BitvcServiceImpl implements BitvcService{
         // 发送post请求
         try {
             String url ;
-            if (platform.equals(Dict.Platform.BITVC_CN)){
+            if (platform.equals(Dict.PLATFORM.BITVC_CN)){
                 url =bitvcCnConfig.getUserinfo();
             }else {
                 url =bitvcCnConfig.getUserinfo();
@@ -87,8 +87,8 @@ public class BitvcServiceImpl implements BitvcService{
     public Map<String, Object> trade(User user, String platform, String coin, String direction, String isMarketPrice, String amount, String price) throws IOException {
         Map<String, Object> result = new HashMap();
 
-        UserApi userApi1 =  userApiRepository.findByUserIdAndPlatformAndApiType(user.getId(),platform,Dict.key.api);
-        UserApi userApi2 =  userApiRepository.findByUserIdAndPlatformAndApiType(user.getId(),platform,Dict.key.secret);
+        UserApi userApi1 =  userApiRepository.findByUserIdAndPlatformAndApiType(user.getId(),platform,Dict.KEY.API);
+        UserApi userApi2 =  userApiRepository.findByUserIdAndPlatformAndApiType(user.getId(),platform,Dict.KEY.SECRET);
         if (userApi1 != null && userApi2 != null) {
             String apiKey = userApi1.getApi();
             String secretKey = userApi2.getApi();
@@ -99,9 +99,9 @@ public class BitvcServiceImpl implements BitvcService{
             params.put("access_key", apiKey);
             params.put("created", String.valueOf(System.currentTimeMillis()).toString().substring(0,10));
             if(!StringUtil.isEmpty(coin)){
-                if (Dict.Coin.BTC.equals(coin)){
+                if (Dict.COIN.BTC.equals(coin)){
                     params.put("coin_type", "1");
-                }else if (Dict.Coin.LTC.equals(coin)){
+                }else if (Dict.COIN.LTC.equals(coin)){
                     params.put("coin_type", "2");
                 }
             }
@@ -112,14 +112,14 @@ public class BitvcServiceImpl implements BitvcService{
                 params.put("price", price);
             }
             if(!StringUtil.isEmpty(isMarketPrice)||!StringUtil.isEmpty(direction)){
-                if(Dict.TradeType.TAKER.equals(isMarketPrice)&&Dict.direction.buy.equals(direction)){   //委托买
+                if(Dict.TRADE_TYPE.TAKER.equals(isMarketPrice)&&Dict.DIRECTION.BUY.equals(direction)){   //委托买
                     url=bitvcCnConfig.getBuy();
-                }else if(Dict.TradeType.MARKET.equals(isMarketPrice)&&Dict.direction.buy.equals(direction)){  //市价买
+                }else if(Dict.TRADE_TYPE.MARKET.equals(isMarketPrice)&&Dict.DIRECTION.BUY.equals(direction)){  //市价买
                     url=bitvcCnConfig.getBuyMarket();
-                }else if(Dict.TradeType.TAKER.equals(isMarketPrice)&&Dict.direction.sell.equals(direction)){   //委托卖
+                }else if(Dict.TRADE_TYPE.TAKER.equals(isMarketPrice)&&Dict.DIRECTION.SELL.equals(direction)){   //委托卖
                     url=bitvcCnConfig.getSell();
 
-                }else if(Dict.TradeType.MARKET.equals(isMarketPrice)&&Dict.direction.sell.equals(direction)){  //市价卖
+                }else if(Dict.TRADE_TYPE.MARKET.equals(isMarketPrice)&&Dict.DIRECTION.SELL.equals(direction)){  //市价卖
                     url=bitvcCnConfig.getSellMarket();
                 }
             }

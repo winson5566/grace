@@ -28,21 +28,10 @@ import java.util.*;
 public class UserController {
 
     @Autowired
-    private UserApiRepository apiKeyRepository;
-
-    @Autowired
     private UserService userService;
-
-    @Autowired
-    private OkcoinService okcoinService;
-
-    @Autowired
-    private BitvcService bitvcService;
 
     /**
      * 用户的主页
-     *
-     * @return
      */
     @RequestMapping("")
     public String index() {
@@ -51,8 +40,6 @@ public class UserController {
 
     /**
      * 交易頁面
-     *
-     * @return
      */
     @RequestMapping("trade")
     public String trade() {
@@ -61,8 +48,6 @@ public class UserController {
 
     /**
      * 设置个人参数页面
-     *
-     * @return
      */
     @RequestMapping("setting")
     public String setting(Model model) {
@@ -75,8 +60,6 @@ public class UserController {
 
     /**
      * 更新api-key
-     *
-     * @return
      */
     @RequestMapping("updateApiKey")
     public String updateApiKey(@Validated ApiKeyValid apiKeyValid) {
@@ -84,94 +67,23 @@ public class UserController {
         return "forward:u/setting";
     }
 
-//    /**
-//     * 获取Okcoin中国站资产信息
-//     * @return
-//     */
-//    @RequestMapping("getOkcoinAssets")
-//    @ResponseBody
-//    public Map<String, Object> getOkcoinAssets() {
-//        //API获取
-//        //Map<String, Object> map = okcoinService.getSpotUserinfo(Dict.Platform.OKCOIN_CN);
-//        //从缓存获取
-//        Map<String, Object> map =(Map<String, Object>)CacheManager.get(Dict.Type.ASSETS+Dict.Platform.OKCOIN_CN+"_"+userService.getUserId());
-//        return map;
-//    }
-//
-//    /**
-//     * 获取Bitvc资产信息
-//     * @return
-//     */
-//    @RequestMapping("getBitvcAssets")
-//    @ResponseBody
-//    public Map<String, Object> getBitvcAssets() {
-//        //API获取
-//        //Map<String, Object> map = bitvcService.getSpotUserinfo(Dict.Platform.BITVC_CN);
-//        //从缓存获取
-//        Map<String, Object> map =(Map<String, Object>)CacheManager.get(Dict.Type.ASSETS+Dict.Platform.BITVC_CN+"_"+userService.getUserId());
-//        return map;
-//    }
-
-    @RequestMapping("account")
-    public String accoutInfo(Model model) {
-        Map<String, Object> map = new HashMap();
-        //获取Okcoin中国站资产信息
-        Map<String, Object> okcoinCn = okcoinService.getSpotUserinfo(Dict.Platform.OKCOIN_CN);
-        okcoinCn.put("platform", "Okcoin中国站");
-        map.put("00",okcoinCn);
-
-        //获取Okcoin国际站资产信息
-        Map<String, Object> okcoinUn = okcoinService.getSpotUserinfo(Dict.Platform.OKCOIN_UN);
-        okcoinUn.put("platform", "Okcoin国际站");
-        map.put("01",okcoinUn);
-
-        //获取Bitvc资产信息
-        Map<String, Object> bitvcUn = bitvcService.getSpotUserinfo(Dict.Platform.BITVC_CN);
-        bitvcUn.put("platform", "Bitvc中国站");
-        map.put("10",bitvcUn);
-
-        model.addAttribute("map", map);
-
-        return "user/account";
-    }
-
-    @RequestMapping("price")
-    public String priceInfo(Model model){
-        Map<String, Object> map = new HashMap();
-        Map<String, Object> priceMap = CacheManager.getCachesByType("0");
-        Map<String, Object> marginMap = CacheManager.getCachesByType("1");
-
-        Map<String,Object> priceMapNew = new HashMap();
-        for(Map.Entry<String,Object> entry : priceMap.entrySet()){
-            priceMapNew.put("p"+entry.getKey(),entry.getValue());
-        }
-
-        Map<String,Object> marginMapNew = new HashMap();
-        for(Map.Entry<String,Object> entry : marginMap.entrySet()){
-            marginMapNew.put("m"+entry.getKey(),entry.getValue());
-        }
-
-        map.put("priceMap",priceMapNew);
-        map.put("marginMap",marginMapNew);
-        model.addAttribute("map", map);
-        return "user/price";
-    }
-
 
     /**
-     * 获取用户交易设置
+     * 获取当前用户的设置
+     *
      * @return
      */
     @RequestMapping("getUserTradeSetting")
     @ResponseBody
-    public String getUserTradeSetting(){
-        UserTradeSetting userTradeSetting =userService.getUserTradeSetting();
-        Gson gson  = new Gson();
+    public String getUserTradeSetting() {
+        UserTradeSetting userTradeSetting = userService.getUserTradeSetting();
+        Gson gson = new Gson();
         return gson.toJson(userTradeSetting);
     }
 
     /**
      * 更新用户交易设置
+     *
      * @param buyPlatform
      * @param sellPlatform
      * @param coin
@@ -180,67 +92,34 @@ public class UserController {
      */
     @RequestMapping("updateUserTradeSetting")
     @ResponseBody
-    public String updateUserTradeSetting(String buyPlatform,String sellPlatform,String coin,String margin){
-        return userService.updateUserTradeSetting(buyPlatform,sellPlatform,coin,margin);
+    public String updateUserTradeSetting(String buyPlatform, String sellPlatform, String coin, String margin) {
+        return userService.updateUserTradeSetting(buyPlatform, sellPlatform, coin, margin);
     }
 
     /**
      * 更新用户交易设置(自动交易和阀值)
+     *
      * @param autoTradeBtc
      * @param autoTradeLtc
      * @return
      */
     @RequestMapping("updateUserTradeSettingAuto")
     @ResponseBody
-    public String updateUserTradeSettingAuto(String autoTradeBtc,String autoTradeLtc,String autoThresholdBtc,String autoThresholdLtc){
-            return userService.updateUserTradeSettingAuto(autoTradeBtc,autoTradeLtc,autoThresholdBtc,autoThresholdLtc);
+    public String updateUserTradeSettingAuto(String autoTradeBtc, String autoTradeLtc, String autoThresholdBtc, String autoThresholdLtc) {
+        return userService.updateUserTradeSettingAuto(autoTradeBtc, autoTradeLtc, autoThresholdBtc, autoThresholdLtc);
     }
+
     /**
      * 更新用户交易设置(最小交易量)
+     *
      * @param eachAmountBtc
      * @param eachAmountLtc
      * @return
      */
     @RequestMapping("updateUserTradeSettingEachAmount")
     @ResponseBody
-    public String updateUserTradeSettingEachAmount(String eachAmountBtc,String eachAmountLtc){
-        return userService.updateUserTradeSettingEachAmount(eachAmountBtc,eachAmountLtc);
-    }
-
-    /**
-     * 获取监控日志
-     * @return
-     */
-    @RequestMapping("getThresholdLog")
-    @ResponseBody
-    public String getThresholdLog(){
-        List<UserLog> thresholdList  = userService.getUserLog(Dict.LOGTYPE.THRESHOLD);
-        Gson gson  = new Gson();
-        return gson.toJson(thresholdList);
-    }
-
-    /**
-     * 获取交易实时日志
-     * @return
-     */
-    @RequestMapping("getTradeLog")
-    @ResponseBody
-    public String getTradeLog(){
-        List<UserLog> tradeList  = userService.getUserLog(Dict.LOGTYPE.TRADE);
-        Gson gson  = new Gson();
-        return gson.toJson(tradeList);
-    }
-
-    /**
-     * 获取交易成功日志
-     * @return
-     */
-    @RequestMapping("getTradeSuccessLog")
-    @ResponseBody
-    public String getTradeSuccessLog(){
-        List<UserLog> tradeList  = userService.getTradeSuccessLog(Dict.LOGTYPE.TRADE);
-        Gson gson  = new Gson();
-        return gson.toJson(tradeList);
+    public String updateUserTradeSettingEachAmount(String eachAmountBtc, String eachAmountLtc) {
+        return userService.updateUserTradeSettingEachAmount(eachAmountBtc, eachAmountLtc);
     }
 
 }

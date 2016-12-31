@@ -57,10 +57,7 @@ public interface UserService {
      */
     void getAllUserAssetsInfo2Cache();
 
-    /**
-     * 获取用户的设置
-     */
-    UserTradeSetting getUserTradeSetting();
+
 
     /**
      * 更新用户的设置
@@ -89,6 +86,11 @@ public interface UserService {
     String updateUserTradeSettingEachAmount(String eachAmountBtc,String eachAmountLtc);
 
     /**
+     * 获取当前用户的设置
+     */
+    UserTradeSetting getUserTradeSetting();
+
+    /**
      *  新增日志
      * @param user  用户对象
      * @param type  日志类型
@@ -104,23 +106,27 @@ public interface UserService {
      * @param context   日志内容
      * @return
      */
-    void addTradeLog(User user, String type, String context,String tradeSuccess);
-    /**
-     * 获取日志
-     * @param type 日志类型
-     * @return
-     */
-    List<UserLog> getUserLog(String type);
+    void addTradeLog(User user, String type, String context);
 
     /**
      * 获取日志
      * @param type 日志类型
      * @return
      */
-    List<UserLog> getTradeSuccessLog(String type);
+    List<UserLog> getTop20UserLog(String userId,String type);
 
     /**
-     *
+     * 推送用户的账户信息
      */
     void pushAccoutInfoByWebSocket();
+
+    /**
+     * 推送用户的日志信息
+     */
+    void pushUserLogByWebSocket();
+
+    /**
+     * 推送用户的设置
+     */
+    void pushUserSetting();
 }

@@ -28,7 +28,7 @@ public class PriceServiceTest {
      */
     @Test
     public void getDepthTest000(){
-        //Map<String,BigDecimal> map = priceService.getDepth(Dict.Platform.OKCOIN_CN,Dict.Coin.BTC);
+        //Map<String,BigDecimal> map = priceService.getDepth(Dict.PLATFORM.OKCOIN_CN,Dict.COIN.BTC);
     }
 
     /**
@@ -36,7 +36,7 @@ public class PriceServiceTest {
      */
     @Test
     public void getDepthTest001(){
-        //Map<String,BigDecimal> map = priceService.getDepth(Dict.Platform.OKCOIN_CN,Dict.Coin.BTC);
+        //Map<String,BigDecimal> map = priceService.getDepth(Dict.PLATFORM.OKCOIN_CN,Dict.COIN.BTC);
     }
 
     /**
@@ -44,7 +44,7 @@ public class PriceServiceTest {
      */
     @Test
     public void getDepthTest100(){
-        //Map<String,BigDecimal> map = priceService.getDepth(Dict.Platform.OKCOIN_CN,Dict.Coin.BTC);
+        //Map<String,BigDecimal> map = priceService.getDepth(Dict.PLATFORM.OKCOIN_CN,Dict.COIN.BTC);
     }
 
     /**
@@ -52,7 +52,7 @@ public class PriceServiceTest {
      */
     @Test
     public void getDepthTest101(){
-        //Map<String,BigDecimal> map = priceService.getDepth(Dict.Platform.OKCOIN_CN,Dict.Coin.BTC);
+        //Map<String,BigDecimal> map = priceService.getDepth(Dict.PLATFORM.OKCOIN_CN,Dict.COIN.BTC);
     }
 
     /**
