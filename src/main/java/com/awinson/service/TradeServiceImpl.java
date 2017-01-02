@@ -258,7 +258,7 @@ public class TradeServiceImpl implements TradeService {
         String doBuyPlatformName = Dict.translateDicName(Dict.DICTYPE.PLATFORM, doBuyPlatform);
 
         //准备缓存中价格数据，用于判断是否有足够的CNY买入
-        Map<String, Object> priceMap = CacheManager.getCachesByType("0");
+        Map<String, Object> priceMap = CacheManager.getCachesByType(Dict.TYPE.PRICE);
         String buyPrice = ((Map<String, Object>) priceMap.get(Dict.TYPE.PRICE + doBuyPlatform + coin + Dict.DIRECTION.SELL)).get("price").toString();
 
         //比较是否有足够的数量卖出,doSellPlatformCoinAmount(可用币数)和eachAmount(每次交易最小数量)比较
