@@ -92,4 +92,17 @@ public class TradeServiceTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void tradeMarketTest(){
+        User user = userRepository.findByUsername("winson");
+        try {
+//              Map<String, Object> map0 = tradeService.tradeMarketCommon(user,Dict.PLATFORM.OKCOIN_CN,Dict.COIN.LTC,Dict.DIRECTION.BUY,"0.2");
+//            Map<String, Object> map1 = tradeService.tradeMarketCommon(user,Dict.PLATFORM.OKCOIN_CN,Dict.COIN.LTC,Dict.DIRECTION.SELL,"0.2");
+            Map<String, Object> map2 = tradeService.tradeMarketCommon(user,Dict.PLATFORM.BITVC_CN,Dict.COIN.LTC,Dict.DIRECTION.BUY,"0.2");
+            Map<String, Object> map3 = tradeService.tradeMarketCommon(user,Dict.PLATFORM.BITVC_CN,Dict.COIN.LTC,Dict.DIRECTION.SELL,"0.2");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

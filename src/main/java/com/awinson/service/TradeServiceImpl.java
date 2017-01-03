@@ -283,10 +283,48 @@ public class TradeServiceImpl implements TradeService {
             //输出日志（对冲分析完成）
             userService.addTradeLog(user, Dict.LOGTYPE.ANALYSE, "完成分析!  [做空]:" + doSellPlatformMsg + "  [做多]:" + doBuyPlatformMsg);
             logger.info("用户:{},完成分析!  [做空]:{}  [做多]:{}", user.getUsername(), doSellPlatformMsg, doBuyPlatformMsg);
-            //TODO 执行对冲做多
-            //TODO 执行对冲做空
-            //TODO 及时修改缓存
+            Map<String, Object> doBuyMap =null;
+            Map<String, Object> doSellMap =null;
+            try {
+                doBuyMap = trade(Dict.ENABLE.YES,user,doBuyPlatform,coin,Dict.DIRECTION.BUY,eachAmount);
+                doSellMap = trade(Dict.ENABLE.YES,user,doSellPlatform,coin,Dict.DIRECTION.SELL,eachAmount);
 
+                //失败则重试一遍
+                if ("0".equals(doBuyMap.get("code").toString())){
+                    doBuyMap = trade(Dict.ENABLE.YES,user,doBuyPlatform,coin,Dict.DIRECTION.BUY,eachAmount);
+                }
+                if ("0".equals(doSellMap.get("code").toString())){
+                    doSellMap = trade(Dict.ENABLE.YES,user,doBuyPlatform,coin,Dict.DIRECTION.SELL,eachAmount);
+                }
+
+                //交易成功
+                if ("1".equals(doBuyMap.get("code").toString())&&"1".equals(doSellMap.get("code").toString())){
+                    userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易完成![币种:"+coin+"],[对冲数量:"+eachAmount+"]"+"[做空平台:"+doSellPlatform+"]" +"[做多平台:"+doBuyPlatform+"]");
+                    //TODO 及时修改资产缓存
+                }else {
+                    //交易失败
+                    String doBuyResult= "交易成功";
+                    String doSellResult= "交易成功";
+                    if ("0".equals(doBuyMap.get("code").toString())){
+                        doBuyResult= "交易失败";
+                    }
+                    if ("0".equals(doSellMap.get("code").toString())){
+                        doSellResult= "交易失败";
+                    }
+                    //输出交易失败日志日志
+                    userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易失败![币种:"+coin+"],[对冲数量:"+eachAmount+"]"+"[做空平台:"+doSellPlatform+doSellResult+"]" +"[做多平台:"+doBuyPlatform+doBuyResult+"]");
+                    userService.addUserLog(user, Dict.LOGTYPE.TRADE, "暂停所有自动交易");
+
+                    //暂停所有自动交易
+                    userService.updateUserTradeSettingAuto(Dict.ENABLE.NO,Dict.ENABLE.NO);
+                }
+            } catch (IOException e) {
+                //输出异常日志
+                userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易异常![币种:"+coin+"],[对冲数量:"+eachAmount+"]"+"[做空平台:"+doSellPlatform+"]" +"[做多平台:"+doBuyPlatform+"]");
+                userService.addUserLog(user, Dict.LOGTYPE.TRADE, "暂停所有自动交易");
+                //暂停所有自动交易
+                userService.updateUserTradeSettingAuto(Dict.ENABLE.NO,Dict.ENABLE.NO);
+            }
         } else if (allOk == 0) {
             // 输出日志（("交易中断!用户{},对冲分析:" + "{[做空]:" + doSellPlatformMsg + "}" + "{[做多]:" + doBuyPlatformMsg + "}");
             userService.addUserLog(user, Dict.LOGTYPE.ANALYSE, "交易中断! 对冲分析: [做空]:" + doSellPlatformMsg + "  [做多]:" + doBuyPlatformMsg);
@@ -295,17 +333,56 @@ public class TradeServiceImpl implements TradeService {
     }
 
     @Override
+    public Map<String, Object> trade(String islippage,User user, String platform, String coin, String direction, String amount) throws IOException {
+        if (Dict.DIRECTION.SELL.equals(direction)) {
+            //如果是市价卖,则直接调用通用的tradeCommon
+            return tradeCommon(user, platform, coin, direction, Dict.TRADE_TYPE.MARKET, amount, null);
+        } else if (Dict.DIRECTION.BUY.equals(direction)) {
+            //如果是市价卖,先获取最新的价格,根据购买的数量计算需要的CNY,再调用tradeCommon接口
+            Map<String, Object> map = CacheManager.getCachesByType(Dict.TYPE.PRICE);            //获取最新价格
+            if (map != null && map.size() > 0) {
+                Map<String, Object> priceMap = (Map<String, Object>) map.get(Dict.TYPE.PRICE + platform + coin + Dict.DIRECTION.SELL);
+                if (priceMap != null & priceMap.size() > 0) {
+
+                    if(Dict.ENABLE.NO.equals(islippage)) {  //使用市价进行交易
+                        BigDecimal price = new BigDecimal(priceMap.get("price").toString());
+                        BigDecimal realAmount = price.multiply(new BigDecimal(amount));
+                        realAmount = realAmount.setScale(2, BigDecimal.ROUND_HALF_UP);//保留两位小数
+                        return tradeCommon(user, platform, coin, direction, Dict.TRADE_TYPE.MARKET, realAmount.toString(), null);
+
+                    }else if(Dict.ENABLE.YES.equals(islippage)) {   //使用滑价进行交易
+                        BigDecimal price = new BigDecimal(priceMap.get("price").toString());
+                        BigDecimal slippage = null;
+                        if (Dict.COIN.BTC.equals(coin)) {
+                            slippage = new BigDecimal(0.5);
+                        } else if (Dict.COIN.LTC.equals(coin)) {
+                            slippage = new BigDecimal(0.01);
+                        }
+                        String realPrice = price.add(slippage).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+                        return tradeCommon(user, platform, coin, direction, Dict.TRADE_TYPE.TAKER, amount, realPrice);
+                    }
+                }
+            }
+        }
+        Map result = new HashMap();
+        result.put("code", "0");
+        result.put("msg", "缓存价格为空");
+        return result;
+    }
+
+
+    @Override
     public Map<String, Object> tradeCommon(User user, String platform, String coin, String direction, String isMarketPrice, String amount, String price) throws IOException {
         //修正okcoin的bitvc的市价买入用的CNY数量
         if (Dict.PLATFORM.OKCOIN_CN.equals(platform) && Dict.TRADE_TYPE.MARKET.equals(isMarketPrice) && Dict.DIRECTION.BUY.equals(direction)) {
             price = amount;
             amount = null;
         }
-        return trade(user, platform, coin, direction, isMarketPrice, amount, price);
+        return tradeBase(user, platform, coin, direction, isMarketPrice, amount, price);
     }
 
     @Override
-    public Map<String, Object> trade(User user, String platform, String coin, String direction, String isMarketPrice, String amount, String price) throws IOException {
+    public Map<String, Object> tradeBase(User user, String platform, String coin, String direction, String isMarketPrice, String amount, String price) throws IOException {
         Map<String, Object> result = new HashMap();
         switch (platform) {
             case Dict.PLATFORM.OKCOIN_CN:

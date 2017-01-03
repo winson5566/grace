@@ -339,6 +339,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public String updateUserTradeSettingAuto(String autoTradeBtc, String autoTradeLtc) {
+        String userId = getUserId();
+        UserTradeSetting userTradeSetting;
+        userTradeSetting = userTradeSettingRepository.findByUserId(userId);
+        //如果用户交易设置就新增
+        if (userTradeSetting == null) {
+            userTradeSetting = new UserTradeSetting();
+            userTradeSetting.setId(UUID.randomUUID().toString());
+            userTradeSetting.setUserId(userId);
+        }
+        userTradeSetting.setAutoTradeBtc(autoTradeBtc);
+        userTradeSetting.setAutoTradeLtc(autoTradeLtc);
+        userTradeSettingRepository.save(userTradeSetting);
+        Map<String, String> result = new HashMap();
+        result.put("autoTradeBtc", autoTradeBtc);
+        result.put("autoTradeLtc", autoTradeLtc);
+        addUserLog(getUser(), Dict.LOGTYPE.USER, "更改自动设置,[BTC自动交易]:" + autoTradeBtc + "  [LTC自动交易]:" + autoTradeLtc );
+        Gson gson = new Gson();
+        return gson.toJson(result);
+    }
+
+    @Override
     public String updateUserTradeSettingAuto(String autoTradeBtc, String autoTradeLtc, String autoThresholdBtc, String autoThresholdLtc) {
         String userId = getUserId();
         UserTradeSetting userTradeSetting;

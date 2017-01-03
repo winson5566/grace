@@ -41,7 +41,21 @@ public interface TradeService {
     void doTrade(User user, String coin, String doSellPlatform, String doBuyPlatform);
 
     /**
-     * 通用的现货交易接口（现支持okcoin和bitvc）市价买入不带滑价
+     * 全自动的现货交易接口（现支持okcoin和bitvc）
+     * @param islippage 0市价 1滑价
+     * @param user
+     * @param platform
+     * @param coin
+     * @param direction
+     * @param amount
+     * @return
+     * @throws IOException
+     */
+    Map<String,Object> trade(String islippage,User user,String platform,String coin,String direction,String amount) throws IOException;
+
+
+    /**
+     * 通用的现货交易接口（现支持okcoin和bitvc）
      * 修正okcoin的bitvc的市价买入用的CNY数量，统一使用amount
      * @param user  用户
      * @param platform  平台
@@ -66,5 +80,5 @@ public interface TradeService {
      * @param price 委托价格（如果是市价购买，可为空）
      * @return
      */
-    Map<String,Object> trade(User user,String platform,String coin,String direction,String isMarketPrice,String amount,String price) throws IOException;
+    Map<String,Object> tradeBase(User user,String platform,String coin,String direction,String isMarketPrice,String amount,String price) throws IOException;
 }

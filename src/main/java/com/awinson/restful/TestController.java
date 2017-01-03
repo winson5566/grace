@@ -1,7 +1,10 @@
 package com.awinson.restful;
 
 import com.awinson.cache.CacheManager;
+import com.awinson.dictionary.Dict;
 import com.awinson.service.PriceService;
+import com.awinson.service.TradeService;
+import com.awinson.service.UserService;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +24,8 @@ public class TestController {
 
     @Autowired
     private PriceService priceService;
+
+
     /**
      * 获取所有缓存的测试url
      * @return
@@ -59,4 +64,6 @@ public class TestController {
         Gson gson = new Gson();
         return gson.toJson(marginList).toString();
     }
+
+
 }

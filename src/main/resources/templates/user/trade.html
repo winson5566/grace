@@ -147,8 +147,8 @@
                 <table class="table table-condensed font-white">
                     <tr>
                         <th>币种</th>
-                        <th>买</th>
-                        <th>卖</th>
+                        <th>做空</th>
+                        <th>做多</th>
                         <th>时差</th>
                         <th>差价</th>
                         <th>阀值</th>
@@ -269,9 +269,7 @@
 </div>
 
 <!--公共foot-->
-<span th:include="common :: foot"></span>
-<script src="/webjars/sockjs-client/sockjs.min.js"/>
-<script src="/webjars/stomp-websocket/stomp.min.js"/>
+<span th:include="common :: foot_ws"></span>
 <script src="/js/trade-event.js"/>
 <script src="/js/trade-show.js"/>
 </body>

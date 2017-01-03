@@ -1,5 +1,6 @@
 package com.awinson.controller;
 
+import com.awinson.Entity.User;
 import com.awinson.Entity.UserApi;
 import com.awinson.Entity.UserLog;
 import com.awinson.Entity.UserTradeSetting;
@@ -8,6 +9,7 @@ import com.awinson.dictionary.Dict;
 import com.awinson.repository.UserApiRepository;
 import com.awinson.service.BitvcService;
 import com.awinson.service.OkcoinService;
+import com.awinson.service.TradeService;
 import com.awinson.service.UserService;
 import com.awinson.valid.ApiKeyValid;
 import com.google.gson.Gson;
@@ -18,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -29,6 +32,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private TradeService tradeService;
 
     /**
      * 用户的主页
@@ -121,5 +127,20 @@ public class UserController {
     public String updateUserTradeSettingEachAmount(String eachAmountBtc, String eachAmountLtc) {
         return userService.updateUserTradeSettingEachAmount(eachAmountBtc, eachAmountLtc);
     }
+
+//    @RequestMapping("tradeTest")
+//    @ResponseBody
+//    public String tradeTest(){
+//        Map<String, Object> map = null;
+//        try {
+////            map = tradeService.tradeMarketCommon(userService.getUser(), Dict.PLATFORM.BITVC_CN,Dict.COIN.LTC,Dict.DIRECTION.BUY,"0.2");
+//            map = tradeService.tradeMarketCommon(userService.getUser(),Dict.PLATFORM.BITVC_CN,Dict.COIN.LTC,Dict.DIRECTION.SELL,"0.2");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        Gson gson = new Gson();
+//        return gson.toJson(map).toString();
+//
+//    }
 
 }

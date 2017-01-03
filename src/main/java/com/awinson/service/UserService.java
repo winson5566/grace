@@ -70,6 +70,15 @@ public interface UserService {
     String updateUserTradeSetting(String buyPlatform,String sellPlatform,String coin,String margin);
 
     /**
+     * 更新用户的设置(自动交易)
+     * @param autoTradeBtc
+     * @param autoTradeLtc
+     * @return
+     */
+    String updateUserTradeSettingAuto(String autoTradeBtc,String autoTradeLtc);
+
+
+    /**
      * 更新用户的设置(自动交易、阀值)
      * @param autoTradeBtc
      * @param autoTradeLtc
