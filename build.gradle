@@ -37,9 +37,9 @@ dependencies {
     compile("org.webjars:bootstrap:3.3.7")
     compile("org.webjars:jquery:3.1.0")
 
-    compile group: 'io.netty', name: 'netty-all', version: '4.1.6.Final'
+compile group: 'io.netty', name: 'netty-all', version: '4.1.6.Final'
 
-    compile ('io.socket:socket.io-client:0.8.3') { exclude group: 'org.json', module: 'json' }
+// compile ('io.socket:socket.io-client:0.8.3') { exclude group: 'org.json', module: 'json' }
 
 }
 

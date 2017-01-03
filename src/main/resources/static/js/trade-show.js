@@ -1,6 +1,5 @@
 var stompClient = null;
 
-
 function connect() {
     var socket = new SockJS('/gs-guide-websocket');
     stompClient = Stomp.over(socket);
@@ -178,14 +177,14 @@ function showSettings(result) {
     if (result != null && result.marginJson != null) {
         var marginJson = result.marginJson;
         marginJson = JSON.parse(marginJson);
-        if (marginJson.s00100 != null)
-            $("#threshold-btc-okcoin-bitvc").text(marginJson.s00100);
-        if (marginJson.s10000 != null)
-            $("#threshold-btc-bitvc-okcoin").text(marginJson.s10000);
-        if (marginJson.s00101 != null)
-            $("#threshold-ltc-okcoin-bitvc").text(marginJson.s00101);
-        if (marginJson.s10001 != null)
-            $("#threshold-ltc-bitvc-okcoin").text(marginJson.s10001);
+        if (marginJson.S00100 != null)
+            $("#threshold-btc-okcoin-bitvc").text(marginJson.S00100);
+        if (marginJson.S10000 != null)
+            $("#threshold-btc-bitvc-okcoin").text(marginJson.S10000);
+        if (marginJson.S00101 != null)
+            $("#threshold-ltc-okcoin-bitvc").text(marginJson.S00101);
+        if (marginJson.S10001 != null)
+            $("#threshold-ltc-bitvc-okcoin").text(marginJson.S10001);
         if (result.eachAmountBtc != null)
             $("#each-amount-btc").text(result.eachAmountBtc);
         if (result.eachAmountLtc != null)
@@ -234,18 +233,18 @@ function getUserTradeSettingInit() {
         success: function (result) {
             if (result != null && result.marginJson != null) {
                 var marginJson = JSON.parse(result.marginJson);
-                if (marginJson.s00100 != null)
-                    $("#threshold-btc-okcoin-bitvc").text(marginJson.s00100);
-                $("#input-threshold-btc-okcoin-bitvc").val(marginJson.s00100);
-                if (marginJson.s10000 != null)
-                    $("#threshold-btc-bitvc-okcoin").text(marginJson.s10000);
-                $("#input-threshold-btc-bitvc-okcoin").val(marginJson.s10000);
-                if (marginJson.s00101 != null)
-                    $("#threshold-ltc-okcoin-bitvc").text(marginJson.s00101);
-                $("#input-threshold-ltc-okcoin-bitvc").val(marginJson.s00101);
-                if (marginJson.s10001 != null)
-                    $("#threshold-ltc-bitvc-okcoin").text(marginJson.s10001);
-                $("#input-threshold-ltc-bitvc-okcoin").val(marginJson.s10001);
+                if (marginJson.S00100 != null)
+                    $("#threshold-btc-okcoin-bitvc").text(marginJson.S00100);
+                $("#input-threshold-btc-okcoin-bitvc").val(marginJson.S00100);
+                if (marginJson.S10000 != null)
+                    $("#threshold-btc-bitvc-okcoin").text(marginJson.S10000);
+                $("#input-threshold-btc-bitvc-okcoin").val(marginJson.S10000);
+                if (marginJson.S00101 != null)
+                    $("#threshold-ltc-okcoin-bitvc").text(marginJson.S00101);
+                $("#input-threshold-ltc-okcoin-bitvc").val(marginJson.S00101);
+                if (marginJson.S10001 != null)
+                    $("#threshold-ltc-bitvc-okcoin").text(marginJson.S10001);
+                $("#input-threshold-ltc-bitvc-okcoin").val(marginJson.S10001);
                 if (result.eachAmountBtc != null)
                     $("#each-amount-btc").text(result.eachAmountBtc);
                 $("#input-each-amount-btc").val(result.eachAmountBtc)

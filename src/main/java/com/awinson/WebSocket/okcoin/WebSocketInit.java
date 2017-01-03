@@ -1,16 +1,11 @@
 package com.awinson.WebSocket.okcoin;
 
-import io.socket.client.IO;
-import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.net.URISyntaxException;
 
 /**
  * Created by 10228 on 2016/12/24.

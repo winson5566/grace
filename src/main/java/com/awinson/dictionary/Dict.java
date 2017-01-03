@@ -21,9 +21,9 @@ public class Dict {
     public static class TYPE{
         public static final String PRICE = "P";     //价格
         public static final String MARGIN = "M";     //价差
-        public static final String ASSETS = "2";     //账户信息
-        public static final String SETTING = "s";     //交易设置
-        public static final String LOG = "l";     //日志
+        public static final String ASSETS = "A";     //账户信息
+        public static final String SETTING = "S";     //交易设置
+        public static final String LOG = "L";     //日志
 
     }
     public static class TRADE_TYPE{
