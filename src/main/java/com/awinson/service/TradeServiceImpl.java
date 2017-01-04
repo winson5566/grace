@@ -3,9 +3,13 @@ package com.awinson.service;
 import com.awinson.Entity.User;
 import com.awinson.Entity.UserTradeSetting;
 import com.awinson.cache.CacheManager;
+import com.awinson.config.BitvcCnBtcConfig;
+import com.awinson.config.OkcoinCnBtcConfig;
+import com.awinson.config.OkcoinCnConfig;
 import com.awinson.dictionary.Dict;
 import com.awinson.repository.UserRepository;
 import com.awinson.repository.UserTradeSettingRepository;
+import com.awinson.utils.HttpUtils;
 import com.awinson.utils.StringUtil;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
@@ -38,7 +42,10 @@ public class TradeServiceImpl implements TradeService {
     private UserService userService;
     @Autowired
     private UserTradeSettingRepository userTradeSettingRepository;
-
+    @Autowired
+    private OkcoinCnBtcConfig okcoinCnBtcConfig;
+    @Autowired
+    private BitvcCnBtcConfig bitvcCnBtcConfig;
 
     @Override
     public void tradeStart() {
@@ -262,7 +269,7 @@ public class TradeServiceImpl implements TradeService {
         String buyPrice = ((Map<String, Object>) priceMap.get(Dict.TYPE.PRICE + doBuyPlatform + coin + Dict.DIRECTION.SELL)).get("price").toString();
 
         //比较是否有足够的数量卖出,doSellPlatformCoinAmount(可用币数)和eachAmount(每次交易最小数量)比较
-        if ((new BigDecimal(doSellPlatformCoinAmount)).compareTo(new BigDecimal(eachAmount)) <= 0) {
+        if ((new BigDecimal(doSellPlatformCoinAmount)).compareTo(new BigDecimal(eachAmount)) < 0) {
             allOk = 0;
             doSellPlatformMsg = doSellPlatformName + ":没有足够的" + coinName + ",剩余:" + doSellPlatformCoinAmount + coinName + ",需要:" + eachAmount + coinName;
         } else {
@@ -271,7 +278,7 @@ public class TradeServiceImpl implements TradeService {
 
         //比较是否有足够的CNY买入,doBuyPlatformCoinAmount和eachAmount*(doBuyPlatformSellPriceOne)比较
         BigDecimal buyCny = new BigDecimal(eachAmount).multiply(new BigDecimal(buyPrice));   //购买最小单位需要的CNY
-        if ((new BigDecimal(doBuyPlatformCoinAmount)).compareTo(buyCny) <= 0) {
+        if ((new BigDecimal(doBuyPlatformCoinAmount)).compareTo(buyCny) < 0) {
             allOk = 0;
             doBuyPlatformMsg = doBuyPlatformName + ":没有足够CNY,剩余:" + doBuyPlatformCoinAmount + ",需要:" + buyCny + "CNY";
         } else {
@@ -283,47 +290,84 @@ public class TradeServiceImpl implements TradeService {
             //输出日志（对冲分析完成）
             userService.addTradeLog(user, Dict.LOGTYPE.ANALYSE, "完成分析!  [做空]:" + doSellPlatformMsg + "  [做多]:" + doBuyPlatformMsg);
             logger.info("用户:{},完成分析!  [做空]:{}  [做多]:{}", user.getUsername(), doSellPlatformMsg, doBuyPlatformMsg);
-            Map<String, Object> doBuyMap =null;
-            Map<String, Object> doSellMap =null;
+            Map<String, Object> doBuyMap = null;
+            Map<String, Object> doSellMap = null;
             try {
-                doBuyMap = trade(Dict.ENABLE.YES,user,doBuyPlatform,coin,Dict.DIRECTION.BUY,eachAmount);
-                doSellMap = trade(Dict.ENABLE.YES,user,doSellPlatform,coin,Dict.DIRECTION.SELL,eachAmount);
-
-                //失败则重试一遍
-                if ("0".equals(doBuyMap.get("code").toString())){
-                    doBuyMap = trade(Dict.ENABLE.YES,user,doBuyPlatform,coin,Dict.DIRECTION.BUY,eachAmount);
+                String buyPingUrl = null;
+                switch (doBuyPlatform) {
+                    case Dict.PLATFORM.OKCOIN_CN:
+                        buyPingUrl = okcoinCnBtcConfig.getTicker();
+                        break;
+                    case Dict.PLATFORM.BITVC_CN:
+                        buyPingUrl = bitvcCnBtcConfig.getTicker();
+                        break;
+                    default:
+                        break;
                 }
-                if ("0".equals(doSellMap.get("code").toString())){
-                    doSellMap = trade(Dict.ENABLE.YES,user,doBuyPlatform,coin,Dict.DIRECTION.SELL,eachAmount);
+
+                String sellPingUrl = null;
+                switch (doSellPlatform) {
+                    case Dict.PLATFORM.OKCOIN_CN:
+                        sellPingUrl = okcoinCnBtcConfig.getTicker();
+                        break;
+                    case Dict.PLATFORM.BITVC_CN:
+                        sellPingUrl = bitvcCnBtcConfig.getTicker();
+                        break;
+                    default:
+                        break;
                 }
 
-                //交易成功
-                if ("1".equals(doBuyMap.get("code").toString())&&"1".equals(doSellMap.get("code").toString())){
-                    userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易完成![币种:"+coin+"],[对冲数量:"+eachAmount+"]"+"[做空平台:"+doSellPlatform+"]" +"[做多平台:"+doBuyPlatform+"]");
-                    //TODO 及时修改资产缓存
-                }else {
-                    //交易失败
-                    String doBuyResult= "交易成功";
-                    String doSellResult= "交易成功";
-                    if ("0".equals(doBuyMap.get("code").toString())){
-                        doBuyResult= "交易失败";
-                    }
-                    if ("0".equals(doSellMap.get("code").toString())){
-                        doSellResult= "交易失败";
-                    }
-                    //输出交易失败日志日志
-                    userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易失败![币种:"+coin+"],[对冲数量:"+eachAmount+"]"+"[做空平台:"+doSellPlatform+doSellResult+"]" +"[做多平台:"+doBuyPlatform+doBuyResult+"]");
-                    userService.addUserLog(user, Dict.LOGTYPE.TRADE, "暂停所有自动交易");
+                if (!StringUtil.isEmpty(buyPingUrl) && !StringUtil.isEmpty(sellPingUrl)) {
+                    String buyJson = HttpUtils.doGet(buyPingUrl);
+                    String sellJson = HttpUtils.doGet(sellPingUrl);
+                    Gson gson = new Gson();
+                    Map<String, Object> buyJsonMap = gson.fromJson(buyJson, Map.class);
+                    Map<String, Object> sellJsonMap = gson.fromJson(sellJson, Map.class);
+                    if ((buyJsonMap.get("time") != null || buyJsonMap.get("date") != null) && (sellJsonMap.get("time") != null || sellJsonMap.get("date") != null)) {
+                        doBuyMap = trade(Dict.ENABLE.YES, user, doBuyPlatform, coin, Dict.DIRECTION.BUY, eachAmount);
+                        doSellMap = trade(Dict.ENABLE.YES, user, doSellPlatform, coin, Dict.DIRECTION.SELL, eachAmount);
 
-                    //暂停所有自动交易
-                    userService.updateUserTradeSettingAuto(Dict.ENABLE.NO,Dict.ENABLE.NO);
+                        //失败则重试一遍
+                        if ("0".equals(doBuyMap.get("code").toString())) {
+                            doBuyMap = trade(Dict.ENABLE.YES, user, doBuyPlatform, coin, Dict.DIRECTION.BUY, eachAmount);
+                        }
+                        if ("0".equals(doSellMap.get("code").toString())) {
+                            doSellMap = trade(Dict.ENABLE.YES, user, doSellPlatform, coin, Dict.DIRECTION.SELL, eachAmount);
+                        }
+
+                        //交易成功
+                        if ("1".equals(doBuyMap.get("code").toString()) && "1".equals(doSellMap.get("code").toString())) {
+                            userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易完成![币种:" + coin + "],[对冲数量:" + eachAmount + "]" + "[做空平台:" + doSellPlatform + "]" + "[做多平台:" + doBuyPlatform + "]");
+                            //TODO 及时修改资产缓存
+                        } else {
+                            //交易失败
+                            String doBuyResult = "交易成功";
+                            String doSellResult = "交易成功";
+                            if ("0".equals(doBuyMap.get("code").toString())) {
+                                doBuyResult = "交易失败";
+                            }
+                            if ("0".equals(doSellMap.get("code").toString())) {
+                                doSellResult = "交易失败";
+                            }
+                            //输出交易失败日志日志
+                            userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易失败![币种:" + coin + "],[对冲数量:" + eachAmount + "]" + "[做空平台:" + doSellPlatform + doSellResult + "]" + "[做多平台:" + doBuyPlatform + doBuyResult + "]");
+                            userService.addUserLog(user, Dict.LOGTYPE.TRADE, "暂停所有自动交易");
+
+                            //暂停所有自动交易
+                            userService.updateUserTradeSettingAuto(Dict.ENABLE.NO, Dict.ENABLE.NO);
+                        }
+                    } else {
+                        userService.addUserLog(user, Dict.LOGTYPE.TRADE, "平台接口测试连接异常![币种:" + coin + "],[对冲数量:" + eachAmount + "]" + "[做空平台:" + doSellPlatform + "]" + "[做多平台:" + doBuyPlatform + "]");
+                    }
+                } else {
+                    userService.addUserLog(user, Dict.LOGTYPE.TRADE, "平台接口api获取异常![币种:" + coin + "],[对冲数量:" + eachAmount + "]" + "[做空平台:" + doSellPlatform + "]" + "[做多平台:" + doBuyPlatform + "]");
                 }
             } catch (IOException e) {
                 //输出异常日志
-                userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易异常![币种:"+coin+"],[对冲数量:"+eachAmount+"]"+"[做空平台:"+doSellPlatform+"]" +"[做多平台:"+doBuyPlatform+"]");
+                userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易异常![币种:" + coin + "],[对冲数量:" + eachAmount + "]" + "[做空平台:" + doSellPlatform + "]" + "[做多平台:" + doBuyPlatform + "]");
                 userService.addUserLog(user, Dict.LOGTYPE.TRADE, "暂停所有自动交易");
                 //暂停所有自动交易
-                userService.updateUserTradeSettingAuto(Dict.ENABLE.NO,Dict.ENABLE.NO);
+                userService.updateUserTradeSettingAuto(Dict.ENABLE.NO, Dict.ENABLE.NO);
             }
         } else if (allOk == 0) {
             // 输出日志（("交易中断!用户{},对冲分析:" + "{[做空]:" + doSellPlatformMsg + "}" + "{[做多]:" + doBuyPlatformMsg + "}");
@@ -333,7 +377,7 @@ public class TradeServiceImpl implements TradeService {
     }
 
     @Override
-    public Map<String, Object> trade(String islippage,User user, String platform, String coin, String direction, String amount) throws IOException {
+    public Map<String, Object> trade(String islippage, User user, String platform, String coin, String direction, String amount) throws IOException {
         if (Dict.DIRECTION.SELL.equals(direction)) {
             //如果是市价卖,则直接调用通用的tradeCommon
             return tradeCommon(user, platform, coin, direction, Dict.TRADE_TYPE.MARKET, amount, null);
@@ -344,13 +388,13 @@ public class TradeServiceImpl implements TradeService {
                 Map<String, Object> priceMap = (Map<String, Object>) map.get(Dict.TYPE.PRICE + platform + coin + Dict.DIRECTION.SELL);
                 if (priceMap != null & priceMap.size() > 0) {
 
-                    if(Dict.ENABLE.NO.equals(islippage)) {  //使用市价进行交易
+                    if (Dict.ENABLE.NO.equals(islippage)) {  //使用市价进行交易
                         BigDecimal price = new BigDecimal(priceMap.get("price").toString());
                         BigDecimal realAmount = price.multiply(new BigDecimal(amount));
                         realAmount = realAmount.setScale(2, BigDecimal.ROUND_HALF_UP);//保留两位小数
                         return tradeCommon(user, platform, coin, direction, Dict.TRADE_TYPE.MARKET, realAmount.toString(), null);
 
-                    }else if(Dict.ENABLE.YES.equals(islippage)) {   //使用滑价进行交易
+                    } else if (Dict.ENABLE.YES.equals(islippage)) {   //使用滑价进行交易
                         BigDecimal price = new BigDecimal(priceMap.get("price").toString());
                         BigDecimal slippage = null;
                         if (Dict.COIN.BTC.equals(coin)) {

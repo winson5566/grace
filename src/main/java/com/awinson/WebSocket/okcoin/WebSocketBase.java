@@ -219,7 +219,7 @@ class MoniterTask extends TimerTask {
             client.reConnect();
         }
         client.sentPing();
-         log.info("Moniter ping data sent.... ");
+         //log.info("Moniter ping data sent.... ");
     }
 
 }
