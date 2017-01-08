@@ -1,6 +1,7 @@
 package com.awinson.service;
 
 import com.awinson.Entity.User;
+import com.awinson.Entity.UserApi;
 import com.awinson.Entity.UserTradeSetting;
 import com.awinson.cache.CacheManager;
 import com.awinson.config.BitvcCnBtcConfig;
@@ -181,6 +182,21 @@ public class TradeServiceImpl implements TradeService {
         String bitvcCnAvailableBtc;
         String bitvcCnAvailableLtc;
 
+        //获取最新的用户资产，并更新到缓存，如果获取不了中断交易
+        Map<String, Object> buyPlatfromAssets = userService.getUserAssetsInfo2CacheByPlatform(user, doBuyPlatform);
+        Map<String, Object> sellPlatfromAssets = userService.getUserAssetsInfo2CacheByPlatform(user, doSellPlatform);
+        if ("0".equals(buyPlatfromAssets.get("code")) || "0".equals(sellPlatfromAssets.get("code"))) {
+            if ("0".equals(buyPlatfromAssets.get("code"))) {
+                logger.info("用户:{},交易中断!做多平台{}访问异常", user.getUsername(), doBuyPlatform);
+                userService.addUserLog(user, Dict.LOGTYPE.ANALYSE, "交易中断!做多平台"+doBuyPlatform+"访问异常");
+            }
+            if ("0".equals(sellPlatfromAssets.get("code"))) {
+                logger.info("用户:{},交易中断!做空平台{}访问异常", user.getUsername(), doSellPlatform);
+                userService.addUserLog(user, Dict.LOGTYPE.ANALYSE, "交易中断!做空平台"+doSellPlatform+"访问异常");
+            }
+            return;
+        }
+
         //获取用户资产
         Map<String, Object> okcoinCn = (Map<String, Object>) CacheManager.get(Dict.TYPE.ASSETS + Dict.PLATFORM.OKCOIN_CN + "_" + user.getId());
         Map<String, Object> bitvcCn = (Map<String, Object>) CacheManager.get(Dict.TYPE.ASSETS + Dict.PLATFORM.BITVC_CN + "_" + user.getId());
@@ -292,79 +308,45 @@ public class TradeServiceImpl implements TradeService {
             logger.info("用户:{},完成分析!  [做空]:{}  [做多]:{}", user.getUsername(), doSellPlatformMsg, doBuyPlatformMsg);
             Map<String, Object> doBuyMap = null;
             Map<String, Object> doSellMap = null;
+
             try {
-                String buyPingUrl = null;
-                switch (doBuyPlatform) {
-                    case Dict.PLATFORM.OKCOIN_CN:
-                        buyPingUrl = okcoinCnBtcConfig.getTicker();
-                        break;
-                    case Dict.PLATFORM.BITVC_CN:
-                        buyPingUrl = bitvcCnBtcConfig.getTicker();
-                        break;
-                    default:
-                        break;
+                doBuyMap = trade(Dict.ENABLE.YES, user, doBuyPlatform, coin, Dict.DIRECTION.BUY, eachAmount);
+                doSellMap = trade(Dict.ENABLE.YES, user, doSellPlatform, coin, Dict.DIRECTION.SELL, eachAmount);
+
+                //失败则重试一遍
+                if ("0".equals(doBuyMap.get("code").toString())) {
+                    doBuyMap = trade(Dict.ENABLE.YES, user, doBuyPlatform, coin, Dict.DIRECTION.BUY, eachAmount);
                 }
 
-                String sellPingUrl = null;
-                switch (doSellPlatform) {
-                    case Dict.PLATFORM.OKCOIN_CN:
-                        sellPingUrl = okcoinCnBtcConfig.getTicker();
-                        break;
-                    case Dict.PLATFORM.BITVC_CN:
-                        sellPingUrl = bitvcCnBtcConfig.getTicker();
-                        break;
-                    default:
-                        break;
+                if ("0".equals(doSellMap.get("code").toString())) {
+                    doSellMap = trade(Dict.ENABLE.YES, user, doSellPlatform, coin, Dict.DIRECTION.SELL, eachAmount);
                 }
 
-                if (!StringUtil.isEmpty(buyPingUrl) && !StringUtil.isEmpty(sellPingUrl)) {
-                    String buyJson = HttpUtils.doGet(buyPingUrl);
-                    String sellJson = HttpUtils.doGet(sellPingUrl);
-                    Gson gson = new Gson();
-                    Map<String, Object> buyJsonMap = gson.fromJson(buyJson, Map.class);
-                    Map<String, Object> sellJsonMap = gson.fromJson(sellJson, Map.class);
-                    if ((buyJsonMap.get("time") != null || buyJsonMap.get("date") != null) && (sellJsonMap.get("time") != null || sellJsonMap.get("date") != null)) {
-                        doBuyMap = trade(Dict.ENABLE.YES, user, doBuyPlatform, coin, Dict.DIRECTION.BUY, eachAmount);
-                        doSellMap = trade(Dict.ENABLE.YES, user, doSellPlatform, coin, Dict.DIRECTION.SELL, eachAmount);
+                //交易成功
+                if ("1".equals(doBuyMap.get("code").toString()) && "1".equals(doSellMap.get("code").toString())) {
+                    userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易完成![币种:" + coin + "],[对冲数量:" + eachAmount + "]" + "[做空平台:" + doSellPlatform + "]" + "[做多平台:" + doBuyPlatform + "]");
 
-                        //失败则重试一遍
-                        if ("0".equals(doBuyMap.get("code").toString())) {
-                            doBuyMap = trade(Dict.ENABLE.YES, user, doBuyPlatform, coin, Dict.DIRECTION.BUY, eachAmount);
-                        }
-                        if ("0".equals(doSellMap.get("code").toString())) {
-                            doSellMap = trade(Dict.ENABLE.YES, user, doSellPlatform, coin, Dict.DIRECTION.SELL, eachAmount);
-                        }
-
-                        //交易成功
-                        if ("1".equals(doBuyMap.get("code").toString()) && "1".equals(doSellMap.get("code").toString())) {
-                            userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易完成![币种:" + coin + "],[对冲数量:" + eachAmount + "]" + "[做空平台:" + doSellPlatform + "]" + "[做多平台:" + doBuyPlatform + "]");
-                            //TODO 及时修改资产缓存
-                        } else {
-                            //交易失败
-                            String doBuyResult = "交易成功";
-                            String doSellResult = "交易成功";
-                            if ("0".equals(doBuyMap.get("code").toString())) {
-                                doBuyResult = "交易失败";
-                            }
-                            if ("0".equals(doSellMap.get("code").toString())) {
-                                doSellResult = "交易失败";
-                            }
-                            //输出交易失败日志日志
-                            userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易失败![币种:" + coin + "],[对冲数量:" + eachAmount + "]" + "[做空平台:" + doSellPlatform + doSellResult + "]" + "[做多平台:" + doBuyPlatform + doBuyResult + "]");
-                            userService.addUserLog(user, Dict.LOGTYPE.TRADE, "暂停所有自动交易");
-
-                            //暂停所有自动交易
-                            userService.updateUserTradeSettingAuto(Dict.ENABLE.NO, Dict.ENABLE.NO);
-                        }
-                    } else {
-                        userService.addUserLog(user, Dict.LOGTYPE.TRADE, "平台接口测试连接异常![币种:" + coin + "],[对冲数量:" + eachAmount + "]" + "[做空平台:" + doSellPlatform + "]" + "[做多平台:" + doBuyPlatform + "]");
-                    }
                 } else {
-                    userService.addUserLog(user, Dict.LOGTYPE.TRADE, "平台接口api获取异常![币种:" + coin + "],[对冲数量:" + eachAmount + "]" + "[做空平台:" + doSellPlatform + "]" + "[做多平台:" + doBuyPlatform + "]");
+                    //交易失败
+                    String doBuyResult = "交易成功";
+                    String doSellResult = "交易成功";
+                    if ("0".equals(doBuyMap.get("code").toString())) {
+                        doBuyResult = "交易失败";
+                    }
+                    if ("0".equals(doSellMap.get("code").toString())) {
+                        doSellResult = "交易失败";
+                    }
+                    //输出交易失败日志日志
+                    userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易失败![币种:" + coin + "],[对冲数量:" + eachAmount + "]" + "[做空平台:" + doSellPlatform + doSellResult + "]" + "[做多平台:" + doBuyPlatform + doBuyResult + "]");
+                    userService.addUserLog(user, Dict.LOGTYPE.TRADE, "暂停所有自动交易");
+
+                    //暂停所有自动交易
+                    userService.updateUserTradeSettingAuto(Dict.ENABLE.NO, Dict.ENABLE.NO);
                 }
             } catch (IOException e) {
                 //输出异常日志
                 userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易异常![币种:" + coin + "],[对冲数量:" + eachAmount + "]" + "[做空平台:" + doSellPlatform + "]" + "[做多平台:" + doBuyPlatform + "]");
+                userService.addUserLog(user, Dict.LOGTYPE.TRADE, e.toString());
                 userService.addUserLog(user, Dict.LOGTYPE.TRADE, "暂停所有自动交易");
                 //暂停所有自动交易
                 userService.updateUserTradeSettingAuto(Dict.ENABLE.NO, Dict.ENABLE.NO);
@@ -374,6 +356,7 @@ public class TradeServiceImpl implements TradeService {
             userService.addUserLog(user, Dict.LOGTYPE.ANALYSE, "交易中断! 对冲分析: [做空]:" + doSellPlatformMsg + "  [做多]:" + doBuyPlatformMsg);
             logger.info("用户:{},交易中断! 对冲分析: [做空]:{}  [做多]:{}", user.getUsername(), doSellPlatformMsg, doBuyPlatformMsg);
         }
+
     }
 
     @Override
@@ -449,4 +432,6 @@ public class TradeServiceImpl implements TradeService {
         //TODO 检查该订单是否完成
         return result;
     }
+
+
 }

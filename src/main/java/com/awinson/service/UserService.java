@@ -57,7 +57,10 @@ public interface UserService {
      */
     void getAllUserAssetsInfo2Cache();
 
-
+    /**
+     * 获取指定用户的资产信息，并放进缓存
+     */
+    Map<String,Object> getUserAssetsInfo2CacheByPlatform(User user,String platform);
 
     /**
      * 更新用户的设置

@@ -81,4 +81,5 @@ public interface TradeService {
      * @return
      */
     Map<String,Object> tradeBase(User user,String platform,String coin,String direction,String isMarketPrice,String amount,String price) throws IOException;
+
 }

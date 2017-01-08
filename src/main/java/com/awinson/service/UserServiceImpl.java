@@ -253,6 +253,30 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public Map<String, Object> getUserAssetsInfo2CacheByPlatform(User user,String platform) {
+        Map<String,Object> result = new HashMap();
+        //获取平台的API key
+        String apiKey = userApiRepository.findByUserIdAndPlatformAndApiType(user.getId(),platform,Dict.KEY.API).getApi();
+        String secretKey = userApiRepository.findByUserIdAndPlatformAndApiType(user.getId(),platform,Dict.KEY.SECRET).getApi();
+        Map<String, Object> map = new HashMap();
+        if (Dict.PLATFORM.OKCOIN_CN.equals(platform) || Dict.PLATFORM.OKCOIN_UN.equals(platform)) {
+            map = okcoinService.getSpotUserinfo(platform, apiKey, secretKey);
+        } else if (Dict.PLATFORM.BITVC_CN.equals(platform) || Dict.PLATFORM.BITVC_UN.equals(platform)) {
+            map = bitvcService.getSpotUserinfo(platform, apiKey, secretKey);
+        }
+        if (map != null && map.size() > 0) {
+            map.put("timestamp", String.valueOf(System.currentTimeMillis()));
+            CacheManager.update(Dict.TYPE.ASSETS + platform + "_" + user.getId(), map);
+            result.put("code","1");
+            result.put("msg","获取资产成功");
+        }else {
+            result.put("code","0");
+            result.put("msg","获取资产失败");
+        }
+        return result;
+    }
+
     /**
      * 获取URL请求用户信息
      *
@@ -298,10 +322,8 @@ public class UserServiceImpl implements UserService {
         if (map != null && map.size() > 0) {
             map.put("timestamp", String.valueOf(System.currentTimeMillis()));
             CacheManager.update(Dict.TYPE.ASSETS + platform + "_" + userId, map);
-
         }
     }
-
 
 
     @Override
@@ -355,7 +377,7 @@ public class UserServiceImpl implements UserService {
         Map<String, String> result = new HashMap();
         result.put("autoTradeBtc", autoTradeBtc);
         result.put("autoTradeLtc", autoTradeLtc);
-        addUserLog(getUser(), Dict.LOGTYPE.USER, "更改自动设置,[BTC自动交易]:" + autoTradeBtc + "  [LTC自动交易]:" + autoTradeLtc );
+        addUserLog(getUser(), Dict.LOGTYPE.USER, "更改自动设置,[BTC自动交易]:" + autoTradeBtc + "  [LTC自动交易]:" + autoTradeLtc);
         Gson gson = new Gson();
         return gson.toJson(result);
     }
@@ -434,7 +456,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserLog> getTop20UserLog(String userId,String type) {
+    public List<UserLog> getTop20UserLog(String userId, String type) {
         return userLogRepository.findTop20ByUserIdAndTypeOrderByCreateTimestampDesc(userId, type);
     }
 
@@ -477,9 +499,9 @@ public class UserServiceImpl implements UserService {
         Gson gson = new Gson();
         for (User user : list) {
             Map<String, List<UserLog>> map = new HashMap();
-            List<UserLog> thresholdList = getTop20UserLog(user.getId(),Dict.LOGTYPE.THRESHOLD);
-            List<UserLog> analyseList = getTop20UserLog(user.getId(),Dict.LOGTYPE.ANALYSE);
-            List<UserLog> tradeList = getTop20UserLog(user.getId(),Dict.LOGTYPE.TRADE);
+            List<UserLog> thresholdList = getTop20UserLog(user.getId(), Dict.LOGTYPE.THRESHOLD);
+            List<UserLog> analyseList = getTop20UserLog(user.getId(), Dict.LOGTYPE.ANALYSE);
+            List<UserLog> tradeList = getTop20UserLog(user.getId(), Dict.LOGTYPE.TRADE);
             if (thresholdList != null && thresholdList.size() > 0)
                 map.put("thresholdList", thresholdList);
             if (analyseList != null && analyseList.size() > 0)
