@@ -456,10 +456,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserLog> getTop20UserLog(String userId, String type) {
-        return userLogRepository.findTop20ByUserIdAndTypeOrderByCreateTimestampDesc(userId, type);
+    public List<UserLog> getUserLog(String userId, String type,String amount) {
+        if ("10".equals(amount)){
+             return userLogRepository.findTop10ByUserIdAndTypeOrderByCreateTimestampDesc(userId, type);
+        }
+        return userLogRepository.findTop10ByUserIdAndTypeOrderByCreateTimestampDesc(userId, type);
     }
-
+    @Override
+    public String  getLogByTypeAndAmount(String type, String amount){
+        Gson gson = new Gson();
+        List<UserLog> list;
+        if ("200".equals(amount)){
+            list =  userLogRepository.findTop200ByUserIdAndTypeOrderByCreateTimestampDesc(getUserId(), type);
+        }else {
+            list =  userLogRepository.findTop200ByUserIdAndTypeOrderByCreateTimestampDesc(getUserId(), type);
+        }
+        return gson.toJson(list);
+    }
 //    /**
 //     * 初始化用户的日志到缓存
 //     */
@@ -499,9 +512,9 @@ public class UserServiceImpl implements UserService {
         Gson gson = new Gson();
         for (User user : list) {
             Map<String, List<UserLog>> map = new HashMap();
-            List<UserLog> thresholdList = getTop20UserLog(user.getId(), Dict.LOGTYPE.THRESHOLD);
-            List<UserLog> analyseList = getTop20UserLog(user.getId(), Dict.LOGTYPE.ANALYSE);
-            List<UserLog> tradeList = getTop20UserLog(user.getId(), Dict.LOGTYPE.TRADE);
+            List<UserLog> thresholdList = getUserLog(user.getId(), Dict.LOGTYPE.THRESHOLD,"10");
+            List<UserLog> analyseList = getUserLog(user.getId(), Dict.LOGTYPE.ANALYSE,"10");
+            List<UserLog> tradeList = getUserLog(user.getId(), Dict.LOGTYPE.TRADE,"10");
             if (thresholdList != null && thresholdList.size() > 0)
                 map.put("thresholdList", thresholdList);
             if (analyseList != null && analyseList.size() > 0)

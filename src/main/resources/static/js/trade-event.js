@@ -332,4 +332,7 @@ $("#bn-trade-success-log").click(function () {
 });
 
 
+$("#bn-more-log").click(function () {
+    location.href ="/u/log";
+});
 

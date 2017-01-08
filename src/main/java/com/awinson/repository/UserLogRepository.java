@@ -25,6 +25,8 @@ public interface UserLogRepository {
 
     List<UserLog> findByUserIdAndType(String userId,String type);
 
-    List<UserLog> findTop20ByUserIdAndTypeOrderByCreateTimestampDesc(String userId,String type);
+    List<UserLog> findTop10ByUserIdAndTypeOrderByCreateTimestampDesc(String userId,String type);
+
+    List<UserLog> findTop200ByUserIdAndTypeOrderByCreateTimestampDesc(String userId,String type);
 
 }

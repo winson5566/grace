@@ -29,17 +29,20 @@ function showPrice(message) {
     $("#okcoin-btc-buy-price").text(obj.data['P0000'].price);
     $("#okcoin-btc-sell-price").text(obj.data['P0001'].price);
     $("#okcoin-btc-last-price").text(obj.data['P0002'].price);
-    $("#okcoin-btc-time-price").text(obj.data['P0001'].timestamp);
+    var okcoinDate = new Date();
+    okcoinDate.setTime(obj.data['P0001'].timestamp);
+    $("#okcoin-btc-time-price").text(okcoinDate.toLocaleTimeString());
 
     $("#okcoin-ltc-buy-price").text(obj.data['P0010'].price);
     $("#okcoin-ltc-sell-price").text(obj.data['P0011'].price);
     $("#okcoin-ltc-last-price").text(obj.data['P0012'].price);
-    $("#okcoin-ltc-time-price").text(obj.data['P0010'].timestamp);
 
     $("#bitvc-btc-buy-price").text(obj.data['P1000'].price);
     $("#bitvc-btc-sell-price").text(obj.data['P1001'].price);
     $("#bitvc-btc-last-price").text(obj.data['P1002'].price);
-    $("#bitvc-btc-time-price").text(obj.data['P1000'].timestamp);
+    var bitvcDate = new Date();
+    bitvcDate.setTime(obj.data['P1000'].timestamp);
+    $("#bitvc-btc-time-price").text(bitvcDate.toLocaleTimeString());
 
     $("#bitvc-ltc-buy-price").text(obj.data['P1010'].price);
     $("#bitvc-ltc-sell-price").text(obj.data['P1011'].price);
@@ -70,7 +73,7 @@ function showAssets(message) {
     var obj = JSON.parse(message);
     //OkcoinCN
     if (obj.p00 != null) {
-        var result =obj.p00;
+        var result = obj.p00;
         if (result.result.info.funds != null) {
             $("#assets-okcoin-btc-free").text(result.result.info.funds.free.btc);
             $("#assets-okcoin-ltc-free").text(result.result.info.funds.free.ltc);
@@ -88,8 +91,8 @@ function showAssets(message) {
         }
     }
     //BitvcCN
-    if(obj.p10 != null){
-        var result =obj.p10;
+    if (obj.p10 != null) {
+        var result = obj.p10;
         $("#assets-bitvc-btc-free").text(result.result.available_btc);
         $("#assets-bitvc-ltc-free").text(result.result.available_ltc);
         $("#assets-bitvc-cny-free").text(result.result.available_cny);
@@ -113,11 +116,11 @@ function showLogs(message) {
     var thresholdList = obj.thresholdList;
     var analyseList = obj.analyseList;
     var tradeList = obj.tradeList;
-    if(thresholdList!=null)
+    if (thresholdList != null)
         showTanalyseList(thresholdList);
-    if(analyseList!=null)
+    if (analyseList != null)
         showAnalyseList(analyseList);
-    if(tradeList!=null)
+    if (tradeList != null)
         showTradeList(tradeList);
 }
 //显示价差触发日志
@@ -126,21 +129,44 @@ function showTanalyseList(result) {
     for (var i = 0; i < result.length; i++) {
         str = str + '<tr>';
         var one = result[i];
-        var createTimestamp = one.createTimestamp;
+        var createTimestamp = new Date(one.createTimestamp);
+        var month = createTimestamp.getMonth() + 1;
+        var date = createTimestamp.getDate();
+        var hour = createTimestamp.getHours();
+        var minute = createTimestamp.getMinutes();
+        var second = createTimestamp.getSeconds();
+        var showDatetime = month + "." + date + " " + hour + ":" + minute + ":" + second;
+
         var context = one.context;
         var contextJson = JSON.parse(context)
         var margin = contextJson.margin;
         var buyPlatform = contextJson.buyPlatform;
+        if (buyPlatform == "00") {
+            buyPlatform = "Okcoin";
+        } else if (buyPlatform == "10") {
+            buyPlatform = "Bitvc";
+        }
         var sellPlatform = contextJson.sellPlatform;
+        if (sellPlatform == "00") {
+            sellPlatform = "Okcoin";
+        } else if (sellPlatform == "10") {
+            sellPlatform = "Bitvc";
+        }
         var coin = contextJson.coin;
+        if (coin == '0') {
+            coin = 'BTC';
+        } else {
+            coin = 'LTC';
+        }
         str = str + '<td>';
-        str = str + createTimestamp + '</td><td>';
+        str = str + showDatetime + '</td><td>';
         str = str + coin + '</td><td>';
         str = str + buyPlatform + '</td><td>';
         str = str + sellPlatform + '</td><td>';
         str = str + margin + '</td>';
-        $("#threshold-log").html(str);
     }
+    str = str + '</tr>';
+    $("#threshold-log").html(str);
 }
 //显示交易分析日志
 function showAnalyseList(result) {
@@ -153,11 +179,12 @@ function showAnalyseList(result) {
         str = str + '<td>';
         str = str + createTimestamp + '</td><td>';
         str = str + context + '</td>';
-        $("#trade-log").html(str);
     }
+    str = str + '</tr>';
+    $("#trade-log").html(str);
 }
 //显示交易日志
-function showTradeList (result){
+function showTradeList(result) {
     var str = '<tr><th>时间</th><th>日志</th></tr>';
     for (var i = 0; i < result.length; i++) {
         str = str + '<tr>';
@@ -167,8 +194,9 @@ function showTradeList (result){
         str = str + '<td>';
         str = str + createTimestamp + '</td><td>';
         str = str + context + '</td>';
-        $("#trade-success-log").html(str);
     }
+    str = str + '</tr>';
+    $("#trade-success-log").html(str);
 }
 
 //显示用户的设置

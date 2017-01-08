@@ -7,267 +7,318 @@
 <span th:include="common :: title"></span>
 
 <div class="container-fluid ">
-
-    <div class="row background-black font-size-small">
+    <div class="row background-black">
         <div class="col-xs-12 col-sm-6 col-md-6">
-            <!--***********************************Okcoin资产***********************************-->
-            <h5 class="font-white">Okcoin</h5>
+            <!--***********************************最新价格***********************************-->
             <table class="table table-condensed font-white">
                 <tr>
-                    <th>可用</th>
-                    <td class="align-left" id="assets-okcoin-btc-free">0</td>
-                    <td>B</td>
-                    <td class="align-left" id="assets-okcoin-ltc-free">0</td>
-                    <td>L</td>
-                    <td class="align-left" id="assets-okcoin-cny-free">0</td>
-                    <td>￥</td>
+                    <th>行情</th>
+                    <th>BTC</th>
+                    <th>LTC</th>
+                    <th>时间</th>
                 </tr>
                 <tr>
-                    <th>借贷</th>
-                    <td class="align-left" id="assets-okcoin-btc-borrow">0</td>
-                    <td>B</td>
-                    <td class="align-left" id="assets-okcoin-ltc-borrow">0</td>
-                    <td>L</td>
-                    <td class="align-left" id="assets-okcoin-cny-borrow">0</td>
-                    <td>￥</td>
+                    <th>Okcoin</th>
+                    <td id="okcoin-btc-last-price">NULL</td>
+                    <td id="okcoin-ltc-last-price">NULL</td>
+                    <th id="okcoin-btc-time-price">NULL</th>
                 </tr>
                 <tr>
-                    <th>冻结</th>
-                    <td class="align-left" id="assets-okcoin-btc-freezed">0</td>
-                    <td>B</td>
-                    <td class="align-left" id="assets-okcoin-ltc-freezed">0</td>
-                    <td>L</td>
-                    <td class="align-left" id="assets-okcoin-cny-freezed">0</td>
-                    <td>￥</td>
-                </tr>
-                <tr>
-                    <th></th>
-                    <th>净资产</th>
-                    <td class="align-left" id="assets-okcoin-net-asset">0</td>
-                    <td>￥</td>
-                    <th>总资产</th>
-                    <td class="align-left" id="assets-okcoin-total-asset">0</td>
-                    <td>￥</td>
+                    <th>Bitvc</th>
+                    <td id="bitvc-btc-last-price">NULL</td>
+                    <td id="bitvc-ltc-last-price">NULL</td>
+                    <th id="bitvc-btc-time-price">NULL</th>
                 </tr>
             </table>
         </div>
         <div class="col-xs-12 col-sm-6 col-md-6">
-            <!--***********************************Bitvc资产***********************************-->
-            <h5 class="font-white">Bitvc</h5>
-            <table class="table table-condensed font-white">
+            <table class="table table-condensed font-white font-size-small">
                 <tr>
-                    <th>可用</th>
-                    <td class="align-left" id="assets-bitvc-btc-free">0</td>
-                    <td>B</td>
-                    <td class="align-left" id="assets-bitvc-ltc-free">0</td>
-                    <td>L</td>
-                    <td class="align-left" id="assets-bitvc-cny-free">0</td>
-                    <td>￥</td>
-                    <!--<td class="align-left" id="assets-bitvc-usd-free">0</td>-->
-                    <!--<td>$</td>-->
+                    <th>资产</th>
+                    <th>BTC</th>
+                    <th>LTC</th>
+                    <th>CNY</th>
+                    <td>净资产</td>
                 </tr>
                 <tr>
-                    <th>借贷</th>
-                    <td class="align-left" id="assets-bitvc-btc-borrow">0</td>
-                    <td>B</td>
-                    <td class="align-left" id="assets-bitvc-ltc-borrow">0</td>
-                    <td>L</td>
-                    <td class="align-left" id="assets-bitvc-cny-borrow">0</td>
-                    <td>￥</td>
-                    <!--<td class="align-left" id="assets-bitvc-usd-borrow">0</td>-->
-                    <!--<td>$</td>-->
+                    <td>Okcoin</td>
+                    <td id="assets-okcoin-btc-free">000.0000</td>
+                    <td id="assets-okcoin-ltc-free">000.0000</td>
+                    <td id="assets-okcoin-cny-free">000.0000</td>
+                    <td id="assets-okcoin-net-asset">000.0000</td>
                 </tr>
                 <tr>
-                    <th>冻结</th>
-                    <td class="align-left" id="assets-bitvc-btc-freezed">0</td>
-                    <td>B</td>
-                    <td class="align-left" id="assets-bitvc-ltc-freezed">0</td>
-                    <td>L</td>
-                    <td class="align-left" id="assets-bitvc-cny-freezed">0</td>
-                    <td>￥</td>
-                    <!--<td class="align-left" id="assets-bitvc-usd-freezed">0</td>-->
-                    <!--<td>$</td>-->
-                </tr>
-                <tr>
-                    <th></th>
-                    <th>净资产</th>
-                    <td class="align-left" id="assets-bitvc-net-asset">0</td>
-                    <td>￥</td>
-                    <th>总资产</th>
-                    <td class="align-left" id="assets-bitvc-total-asset">0</td>
-                    <td>￥</td>
+                    <td>Bitvc</td>
+                    <td id="assets-bitvc-btc-free">000.0000</td>
+                    <td id="assets-bitvc-ltc-free">000.0000</td>
+                    <td id="assets-bitvc-cny-free">000.0000</td>
+                    <td id="assets-bitvc-net-asset">000.0000</td>
                 </tr>
             </table>
         </div>
 
-        <div class="row background-black">
-            <div class="col-xs-12 col-sm-6 col-md-6">
-                <!--***********************************最新价格***********************************-->
-                <table class="table table-condensed font-white">
-                    <tr>
-                        <th>平台</th>
-                        <th>卖</th>
-                        <th>买</th>
-                        <th>成交价</th>
-                        <th>时间</th>
-                    </tr>
-                    <tr>
-                        <th>Okcoin</th>
-                        <td id="okcoin-btc-sell-price" class="font-red">NULL</td>
-                        <td id="okcoin-btc-buy-price" class="font-green">NULL</td>
-                        <td id="okcoin-btc-last-price">NULL</td>
-                        <th id="okcoin-btc-time-price">NULL</th>
-                    </tr>
-                    <tr>
-                        <th>Bitvc</th>
-                        <td id="bitvc-btc-sell-price" class="font-red">NULL</td>
-                        <td id="bitvc-btc-buy-price" class="font-green">NULL</td>
-                        <td id="bitvc-btc-last-price" class="font-white">NULL</td>
-                        <th id="bitvc-btc-time-price">NULL</th>
-                    </tr>
-                    <tr>
-                        <th>Okcoin</th>
-                        <td id="okcoin-ltc-sell-price" class="font-red">NULL</td>
-                        <td id="okcoin-ltc-buy-price" class="font-green">NULL</td>
-                        <td id="okcoin-ltc-last-price" class="font-white">NULL</td>
-                        <th id="okcoin-ltc-time-price">NULL</th>
-                    </tr>
-                    <tr>
-                        <th>Bitvc</th>
-                        <td id="bitvc-ltc-sell-price" class="font-red">NULL</td>
-                        <td id="bitvc-ltc-buy-price" class="font-green">NULL</td>
-                        <td id="bitvc-ltc-last-price" class="font-white">NULL</td>
-                        <th id="bitvc-ltc-time-price">NULL</th>
-                    </tr>
-                </table>
-            </div>
 
-            <!--***********************************margin***********************************-->
-            <div class="col-xs-12 col-sm-6 col-md-6 font-size-95em">
-                <table class="table table-condensed font-white">
-                    <tr>
-                        <th>币种</th>
-                        <th>做空</th>
-                        <th>做多</th>
-                        <th>时差</th>
-                        <th>差价</th>
-                        <th>阀值</th>
-                        <th class="align-center">修改</th>
-                    </tr>
-                    <tr>
-                        <td>BTC</td>
-                        <td>Okcoin</td>
-                        <td>Bitvc</td>
-                        <td id="time-btc-okcoin-bitvc">NULL</td>
-                        <td id="margin-btc-okcoin-bitvc">NULL</td>
-                        <td id="threshold-btc-okcoin-bitvc">NULL</td>
-                        <td class="font-black">
-                            <input id="input-threshold-btc-okcoin-bitvc" type="text" class="width50"/>
-                            <button id="bn-threshold-btc-okcoin-bitvc">√</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>BTC</td>
-                        <td>Bitvc</td>
-                        <td>Okcoin</td>
-                        <td id="time-btc-bitvc-okcoin">NULL</td>
-                        <td id="margin-btc-bitvc-okcoin">NULL</td>
-                        <td id="threshold-btc-bitvc-okcoin">NULL</td>
-                        <td class="font-black">
-                            <input id="input-threshold-btc-bitvc-okcoin" type="text" class="width50"/>
-                            <button id="bn-threshold-btc-bitvc-okcoin">√</button>
-                        </td>
+    </div>
 
-                    </tr>
-                    <tr>
-                        <td>LTC</td>
-                        <td>Okcoin</td>
-                        <td>Bitvc</td>
-                        <td id="time-ltc-okcoin-bitvc">NULL</td>
-                        <td id="margin-ltc-okcoin-bitvc">NULL</td>
-                        <td id="threshold-ltc-okcoin-bitvc">NULL</td>
-                        <td class="font-black">
-                            <input type="text" class="width50" id="input-threshold-ltc-okcoin-bitvc"/>
-                            <button id="bn-threshold-ltc-okcoin-bitvc">√</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>LTC</td>
-                        <td>Bitvc</td>
-                        <td>Okcoin</td>
-                        <td id="time-ltc-bitvc-okcoin">NULL</td>
-                        <td id="margin-ltc-bitvc-okcoin">NULL</td>
-                        <td id="threshold-ltc-bitvc-okcoin">NULL</td>
-                        <td class="font-black">
-                            <input type="text" class="width50" id="input-threshold-ltc-bitvc-okcoin"/>
-                            <button id="bn-threshold-ltc-bitvc-okcoin">√</button>
-                        </td>
-                    </tr>
-                </table>
-            </div>
+    <!--<div class="col-xs-12 col-sm-6 col-md-6">-->
+    <!--&lt;!&ndash;***********************************Okcoin资产***********************************&ndash;&gt;-->
+    <!--<h5 class="font-white">Okcoin</h5>-->
+    <!--<table class="table table-condensed font-white">-->
+    <!--<tr>-->
+    <!--<th>可用</th>-->
+    <!--<td class="align-left" id="assets-okcoin-btc-free">0</td>-->
+    <!--<td>B</td>-->
+    <!--<td class="align-left" id="assets-okcoin-ltc-free">0</td>-->
+    <!--<td>L</td>-->
+    <!--<td class="align-left" id="assets-okcoin-cny-free">0</td>-->
+    <!--<td>￥</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+    <!--<th>借贷</th>-->
+    <!--<td class="align-left" id="assets-okcoin-btc-borrow">0</td>-->
+    <!--<td>B</td>-->
+    <!--<td class="align-left" id="assets-okcoin-ltc-borrow">0</td>-->
+    <!--<td>L</td>-->
+    <!--<td class="align-left" id="assets-okcoin-cny-borrow">0</td>-->
+    <!--<td>￥</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+    <!--<th>冻结</th>-->
+    <!--<td class="align-left" id="assets-okcoin-btc-freezed">0</td>-->
+    <!--<td>B</td>-->
+    <!--<td class="align-left" id="assets-okcoin-ltc-freezed">0</td>-->
+    <!--<td>L</td>-->
+    <!--<td class="align-left" id="assets-okcoin-cny-freezed">0</td>-->
+    <!--<td>￥</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+    <!--<th></th>-->
+    <!--<th>净资产</th>-->
+    <!--<td class="align-left" id="assets-okcoin-net-asset">0</td>-->
+    <!--<td>￥</td>-->
+    <!--<th>总资产</th>-->
+    <!--<td class="align-left" id="assets-okcoin-total-asset">0</td>-->
+    <!--<td>￥</td>-->
+    <!--</tr>-->
+    <!--</table>-->
+    <!--</div>-->
+    <!--<div class="col-xs-12 col-sm-6 col-md-6">-->
+    <!--&lt;!&ndash;***********************************Bitvc资产***********************************&ndash;&gt;-->
+    <!--<h5 class="font-white">Bitvc</h5>-->
+    <!--<table class="table table-condensed font-white">-->
+    <!--<tr>-->
+    <!--<th>可用</th>-->
+    <!--<td class="align-left" id="assets-bitvc-btc-free">0</td>-->
+    <!--<td>B</td>-->
+    <!--<td class="align-left" id="assets-bitvc-ltc-free">0</td>-->
+    <!--<td>L</td>-->
+    <!--<td class="align-left" id="assets-bitvc-cny-free">0</td>-->
+    <!--<td>￥</td>-->
+    <!--&lt;!&ndash;<td class="align-left" id="assets-bitvc-usd-free">0</td>&ndash;&gt;-->
+    <!--&lt;!&ndash;<td>$</td>&ndash;&gt;-->
+    <!--</tr>-->
+    <!--<tr>-->
+    <!--<th>借贷</th>-->
+    <!--<td class="align-left" id="assets-bitvc-btc-borrow">0</td>-->
+    <!--<td>B</td>-->
+    <!--<td class="align-left" id="assets-bitvc-ltc-borrow">0</td>-->
+    <!--<td>L</td>-->
+    <!--<td class="align-left" id="assets-bitvc-cny-borrow">0</td>-->
+    <!--<td>￥</td>-->
+    <!--&lt;!&ndash;<td class="align-left" id="assets-bitvc-usd-borrow">0</td>&ndash;&gt;-->
+    <!--&lt;!&ndash;<td>$</td>&ndash;&gt;-->
+    <!--</tr>-->
+    <!--<tr>-->
+    <!--<th>冻结</th>-->
+    <!--<td class="align-left" id="assets-bitvc-btc-freezed">0</td>-->
+    <!--<td>B</td>-->
+    <!--<td class="align-left" id="assets-bitvc-ltc-freezed">0</td>-->
+    <!--<td>L</td>-->
+    <!--<td class="align-left" id="assets-bitvc-cny-freezed">0</td>-->
+    <!--<td>￥</td>-->
+    <!--&lt;!&ndash;<td class="align-left" id="assets-bitvc-usd-freezed">0</td>&ndash;&gt;-->
+    <!--&lt;!&ndash;<td>$</td>&ndash;&gt;-->
+    <!--</tr>-->
+    <!--<tr>-->
+    <!--<th></th>-->
+    <!--<th>净资产</th>-->
+    <!--<td class="align-left" id="assets-bitvc-net-asset">0</td>-->
+    <!--<td>￥</td>-->
+    <!--<th>总资产</th>-->
+    <!--<td class="align-left" id="assets-bitvc-total-asset">0</td>-->
+    <!--<td>￥</td>-->
+    <!--</tr>-->
+    <!--</table>-->
+    <!--</div>-->
+
+    <!--<div class="row background-black">-->
+    <!--<div class="col-xs-12 col-sm-6 col-md-6">-->
+    <!--&lt;!&ndash;***********************************最新价格***********************************&ndash;&gt;-->
+    <!--<table class="table table-condensed font-white">-->
+    <!--<tr>-->
+    <!--<th>平台</th>-->
+    <!--<th>卖</th>-->
+    <!--<th>买</th>-->
+    <!--<th>成交价</th>-->
+    <!--<th>时间</th>-->
+    <!--</tr>-->
+    <!--<tr>-->
+    <!--<th>Okcoin</th>-->
+    <!--<td id="okcoin-btc-sell-price" class="font-red">NULL</td>-->
+    <!--<td id="okcoin-btc-buy-price" class="font-green">NULL</td>-->
+    <!--<td id="okcoin-btc-last-price">NULL</td>-->
+    <!--<th id="okcoin-btc-time-price">NULL</th>-->
+    <!--</tr>-->
+    <!--<tr>-->
+    <!--<th>Bitvc</th>-->
+    <!--<td id="bitvc-btc-sell-price" class="font-red">NULL</td>-->
+    <!--<td id="bitvc-btc-buy-price" class="font-green">NULL</td>-->
+    <!--<td id="bitvc-btc-last-price" class="font-white">NULL</td>-->
+    <!--<th id="bitvc-btc-time-price">NULL</th>-->
+    <!--</tr>-->
+    <!--<tr>-->
+    <!--<th>Okcoin</th>-->
+    <!--<td id="okcoin-ltc-sell-price" class="font-red">NULL</td>-->
+    <!--<td id="okcoin-ltc-buy-price" class="font-green">NULL</td>-->
+    <!--<td id="okcoin-ltc-last-price" class="font-white">NULL</td>-->
+    <!--<th id="okcoin-ltc-time-price">NULL</th>-->
+    <!--</tr>-->
+    <!--<tr>-->
+    <!--<th>Bitvc</th>-->
+    <!--<td id="bitvc-ltc-sell-price" class="font-red">NULL</td>-->
+    <!--<td id="bitvc-ltc-buy-price" class="font-green">NULL</td>-->
+    <!--<td id="bitvc-ltc-last-price" class="font-white">NULL</td>-->
+    <!--<th id="bitvc-ltc-time-price">NULL</th>-->
+    <!--</tr>-->
+    <!--</table>-->
+    <!--</div>-->
+    <div class="row background-black">
+        <!--***********************************margin***********************************-->
+        <div class="col-xs-12 col-sm-6 col-md-6 font-size-95em">
+            <table class="table table-condensed font-white  font-size-x-small">
+                <tr>
+                    <th>价差</th>
+                    <th>做空</th>
+                    <th>做多</th>
+                    <th>时差</th>
+                    <th>差价</th>
+                    <th>阀值</th>
+                    <th class="align-center">修改</th>
+                </tr>
+                <tr>
+                    <td rowspan="2">BTC</td>
+                    <td>Okcoin</td>
+                    <td>Bitvc</td>
+                    <td id="time-btc-okcoin-bitvc">NULL</td>
+                    <td id="margin-btc-okcoin-bitvc">NULL</td>
+                    <td id="threshold-btc-okcoin-bitvc">NULL</td>
+                    <td class="font-black">
+                        <input id="input-threshold-btc-okcoin-bitvc" type="text" class="width50"/>
+                        <button id="bn-threshold-btc-okcoin-bitvc">√</button>
+                    </td>
+                </tr>
+                <tr>
+                    <!--<td>BTC</td>-->
+                    <td>Bitvc</td>
+                    <td>Okcoin</td>
+                    <td id="time-btc-bitvc-okcoin">NULL</td>
+                    <td id="margin-btc-bitvc-okcoin">NULL</td>
+                    <td id="threshold-btc-bitvc-okcoin">NULL</td>
+                    <td class="font-black">
+                        <input id="input-threshold-btc-bitvc-okcoin" type="text" class="width50"/>
+                        <button id="bn-threshold-btc-bitvc-okcoin">√</button>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td rowspan="2">LTC</td>
+                    <td>Okcoin</td>
+                    <td>Bitvc</td>
+                    <td id="time-ltc-okcoin-bitvc">NULL</td>
+                    <td id="margin-ltc-okcoin-bitvc">NULL</td>
+                    <td id="threshold-ltc-okcoin-bitvc">NULL</td>
+                    <td class="font-black">
+                        <input type="text" class="width50" id="input-threshold-ltc-okcoin-bitvc"/>
+                        <button id="bn-threshold-ltc-okcoin-bitvc">√</button>
+                    </td>
+                </tr>
+                <tr>
+                    <!--<td>LTC</td>-->
+                    <td>Bitvc</td>
+                    <td>Okcoin</td>
+                    <td id="time-ltc-bitvc-okcoin">NULL</td>
+                    <td id="margin-ltc-bitvc-okcoin">NULL</td>
+                    <td id="threshold-ltc-bitvc-okcoin">NULL</td>
+                    <td class="font-black">
+                        <input type="text" class="width50" id="input-threshold-ltc-bitvc-okcoin"/>
+                        <button id="bn-threshold-ltc-bitvc-okcoin">√</button>
+                    </td>
+                </tr>
+            </table>
         </div>
-        <div class="row background-black ">
-            <div class="col-xs-12 col-sm-6 col-md-6">
-                <table class="table table-condensed font-white ">
-                    <tr>
-                        <th>币种</th>
-                        <th class="align-center" colspan="2">每次交易量</th>
-                        <th >交易模式</th>
-                        <th >阀值模式</th>
-                    </tr>
 
-                    <tr>
-                        <th>BTC</th>
-                        <td id="each-amount-btc">NULL</td>
-                        <td class="font-black">
-                            <input type="text" class="width50" id="input-each-amount-btc"/>
-                            <button id="bn-each-amount-btc">√</button>
-                        </td>
-                        <td>
-                            <button class="btn btn-danger" id="btc-trade" value="0">手动交易</button>
-                        </td>
-                        <td>
-                            <button class="btn btn-danger" id="btc-threshold" value="0">手动阀值</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>LTC</th>
-                        <td id="each-amount-ltc">NULL</td>
-                        <td class="font-black">
-                            <input type="text" class="width50" id="input-each-amount-ltc"/>
-                            <button id="bn-each-amount-ltc">√</button>
-                        </td>
-                        <td>
-                            <button class="btn btn-danger" id="ltc-trade" value="0">手动交易</button>
-                        </td>
-                        <td>
-                            <button class="btn btn-danger" id="ltc-threshold" value="0">手动阀值</button>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
+        <div class="col-xs-12 col-sm-6 col-md-6">
+            <table class="table table-condensed font-white  font-size-small">
+                <tr>
+                    <!--<th>币种</th>-->
+                    <th  colspan="3">每次交易量</th>
+                    <th></th>
+                    <th></th>
+                </tr>
 
-        <div class="row background-black ">
-            <div class="col-xs-12 col-sm-12 col-md-12">
-                <button type="button" class="btn btn-default" id="bn-threshold-log">监控日志</button>
-                <button type="button" class="btn btn-default" id="bn-trade-log">交易实时日志</button>
-                <button type="button" class="btn btn-primary" id="bn-trade-success-log">交易成功日志</button>
-                <table class="table table-bordered font-white font-size-1em">
-                    <thead>
-                    </thead>
-                    <tbody id="threshold-log" class="not-display">
-                    </tbody>
-                    <tbody id="trade-log" class="not-display">
-                    </tbody>
-                    <tbody id="trade-success-log"  class="is-display">
-                    </tbody>
-                </table>
-            </div>
+                <tr>
+                    <th>BTC</th>
+                    <td id="each-amount-btc">NULL</td>
+                    <td class="font-black">
+                        <input type="text" class="width50" id="input-each-amount-btc"/>
+                        <button id="bn-each-amount-btc">√</button>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger  font-size-x-small" id="btc-trade" value="0">手动交易</button>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger  font-size-x-small" id="btc-threshold" value="0">手动阀值</button>
+                    </td>
+                </tr>
+                <tr>
+                    <th>LTC</th>
+                    <td id="each-amount-ltc">NULL</td>
+                    <td class="font-black">
+                        <input type="text" class="width50" id="input-each-amount-ltc"/>
+                        <button id="bn-each-amount-ltc">√</button>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger   font-size-x-small"  id="ltc-trade" value="0">手动交易</button>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger   font-size-x-small" id="ltc-threshold" value="0">手动阀值</button>
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
-</div>
 
+    <div class="row background-black ">
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <button type="button" class="btn btn-default" id="bn-threshold-log">监控日志</button>
+            <button type="button" class="btn btn-default" id="bn-trade-log">交易实时日志</button>
+            <button type="button" class="btn btn-primary" id="bn-trade-success-log">交易成功日志</button>
+            <table class="table table-bordered font-white font-size-small">
+                <thead>
+                </thead>
+                <tbody id="threshold-log" class="not-display">
+                </tbody>
+                <tbody id="trade-log" class="not-display">
+                </tbody>
+                <tbody id="trade-success-log" class="is-display">
+                </tbody>
+            </table>
+            <button type="button" class="btn btn-primary widthFull" id="bn-more-log">更多日志</button>
+        </div>
+    </div>
+
+
+</div>
 <!--公共foot-->
 <span th:include="common :: foot_ws"></span>
 <script src="/js/trade-event.js"/>

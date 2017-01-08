@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--公共head-->
+<head th:include="common :: head"/>
+<body>
+<!--公共title-->
+<span th:include="common :: title"></span>
+
+<div class="container-fluid ">
+    <div class="row background-black ">
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <button type="button" class="btn btn-primary" id="bn-threshold-logs">监控日志</button>
+            <button type="button" class="btn btn-default" id="bn-trade-logs">交易实时日志</button>
+            <button type="button" class="btn btn-default" id="bn-trade-success-logs">交易成功日志</button>
+            <table class="table table-bordered font-white font-size-small">
+                <tbody id="show-logs" >
+                </tbody>
+            </table>
+            <button type="button" class="btn btn-primary widthFull" id="bn-back-trade">回到交易</button>
+        </div>
+    </div>
+</div>
+<!--公共foot-->
+<span th:include="common :: foot"></span>
+<script src="/js/log-event.js"/>
+</body>
+</html>

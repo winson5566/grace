@@ -45,6 +45,14 @@ public class UserController {
     }
 
     /**
+     * 日志頁面
+     */
+    @RequestMapping("log")
+    public String log() {
+        return "user/log";
+    }
+
+    /**
      * 交易頁面
      */
     @RequestMapping("trade")
@@ -142,5 +150,16 @@ public class UserController {
 //        return gson.toJson(map).toString();
 //
 //    }
-
+    /**
+     * 获取指定类型和数量的日志
+     *
+     * @param type
+     * @param amount
+     * @return
+     */
+    @RequestMapping("getLogByTypeAndAmount")
+    @ResponseBody
+    public String getLogByTypeAndAmount(String type, String amount) {
+        return userService.getLogByTypeAndAmount(type, amount);
+    }
 }

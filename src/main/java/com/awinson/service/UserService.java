@@ -125,7 +125,16 @@ public interface UserService {
      * @param type 日志类型
      * @return
      */
-    List<UserLog> getTop20UserLog(String userId,String type);
+    List<UserLog> getUserLog(String userId,String type,String amount);
+
+    /**
+     *获取当前用户的日志
+     * @param type
+     * @param amount
+     * @return
+     */
+    String  getLogByTypeAndAmount(String type, String amount);
+
 
     /**
      * 推送用户的账户信息

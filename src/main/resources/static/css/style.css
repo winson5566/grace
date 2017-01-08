@@ -58,6 +58,9 @@
 .font-size-small{
     font-size: small;
 }
+.font-size-x-small{
+    font-size: x-small;
+}
 .font-size-95em{
      font-size: 0.95em;
  }
@@ -78,9 +81,15 @@
     text-align: center;
 }
 .width50 {
-    width: 50px;
+    width: 40px;
     text-align: center;
 }
+
+.widthFull {
+    width: 100%;
+    text-align: center;
+}
+
 .div-padding {
     margin: 30px;
 }
