@@ -53,6 +53,18 @@
 
             <form action="/u/updateApiKey" class="form-horizontal" role="form">
                 <div class="form-group">
+                    <label class="col-sm-2 control-label">Okcoin 国际站期货</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="apiKey" class="form-control" placeholder="apiKey"/>
+                        <input type="text" name="secretKey" class="form-control" placeholder="secretKey"/>
+                        <input type="hidden" name="platform" value="02"/>
+                        <button type="submit" class="btn btn-default">Update</button>
+                    </div>
+                </div>
+            </form>
+
+            <form action="/u/updateApiKey" class="form-horizontal" role="form">
+                <div class="form-group">
                     <label class="col-sm-2 control-label">Bitvc中国站</label>
                     <div class="col-sm-10">
                         <input type="text" name="apiKey" class="form-control" placeholder="apiKey"/>

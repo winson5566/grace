@@ -145,7 +145,7 @@ function showAssets(message) {
             $("#assets-okcoin-future-ltc-profitUnreal").text((result.result.info.ltc.profit_unreal).toFixed(2));
         }
     }
-    var spotAssets = $("#assets-okcoin-net-asset").text()*1.0+$("#assets-bitvc-net-asset").text()*1.0;
+    var spotAssets = $("#assets-okcoin-net-asset").text()*1.0+$("#assets-bitvc-net-asset").text()*1.0+($("#assets-okcoin-un-net-asset").text()*6.9);
     var futureBtcAssets =($("#assets-okcoin-future-btc-accountRights").text()*1.0)*($("#okcoin-btc-last-price").text()*1.0);
     var futureLtcAssets =($("#assets-okcoin-future-ltc-accountRights").text()*1.0)*($("#okcoin-ltc-last-price").text()*1.0);
     var totalAssets =spotAssets*1.0+futureBtcAssets*1.0+futureLtcAssets*1.0;

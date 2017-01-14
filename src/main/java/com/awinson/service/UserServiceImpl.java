@@ -195,7 +195,10 @@ public class UserServiceImpl implements UserService {
                     platform = "OKcoin中国站";
                     break;
                 case Dict.PLATFORM.OKCOIN_UN:
-                    platform = "OKcoin国际站";
+                    platform = "OKcoin国际站现货";
+                    break;
+                case Dict.PLATFORM.OKCOIN_FUTURE:
+                    platform = "OKcoin国际站期货";
                     break;
                 case Dict.PLATFORM.BITVC_CN:
                     platform = "BITVC中国站";
