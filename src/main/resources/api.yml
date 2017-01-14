@@ -12,6 +12,10 @@ okcoin:
   un:
     userinfo: https://www.okcoin.com/api/v1/userinfo.do
 
+  future:
+    userinfo: https://www.okcoin.com/api/v1/future_userinfo.do
+    position: https://www.okcoin.com/api/v1/future_position.do
+
 bitvc:
   cn:
     buyMarket: https://api.bitvc.com/api/order/buy_market

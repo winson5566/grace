@@ -185,178 +185,207 @@ public class TradeServiceImpl implements TradeService {
         //获取最新的用户资产，并更新到缓存，如果获取不了中断交易
         Map<String, Object> buyPlatfromAssets = userService.getUserAssetsInfo2CacheByPlatform(user, doBuyPlatform);
         Map<String, Object> sellPlatfromAssets = userService.getUserAssetsInfo2CacheByPlatform(user, doSellPlatform);
+
         if ("0".equals(buyPlatfromAssets.get("code")) || "0".equals(sellPlatfromAssets.get("code"))) {
             if ("0".equals(buyPlatfromAssets.get("code"))) {
-                logger.info("用户:{},交易中断!做多平台{}访问异常", user.getUsername(), doBuyPlatform);
+                logger.info("用户:{},交易中断!做多平台{}访问异常,消息:{}", user.getUsername(), doBuyPlatform,buyPlatfromAssets.get("msg"));
                 userService.addUserLog(user, Dict.LOGTYPE.ANALYSE, "交易中断!做多平台"+doBuyPlatform+"访问异常");
             }
             if ("0".equals(sellPlatfromAssets.get("code"))) {
-                logger.info("用户:{},交易中断!做空平台{}访问异常", user.getUsername(), doSellPlatform);
+                logger.info("用户:{},交易中断!做空平台{}访问异常,消息:{}", user.getUsername(), doSellPlatform,sellPlatfromAssets.get("msg"));
                 userService.addUserLog(user, Dict.LOGTYPE.ANALYSE, "交易中断!做空平台"+doSellPlatform+"访问异常");
             }
             return;
         }
 
-        //获取用户资产
-        Map<String, Object> okcoinCn = (Map<String, Object>) CacheManager.get(Dict.TYPE.ASSETS + Dict.PLATFORM.OKCOIN_CN + "_" + user.getId());
-        Map<String, Object> bitvcCn = (Map<String, Object>) CacheManager.get(Dict.TYPE.ASSETS + Dict.PLATFORM.BITVC_CN + "_" + user.getId());
+        if ("1".equals(buyPlatfromAssets.get("code")) && "1".equals(sellPlatfromAssets.get("code"))) {
+            //获取用户资产
+            Map<String, Object> okcoinCn = (Map<String, Object>) CacheManager.get(Dict.TYPE.ASSETS + Dict.PLATFORM.OKCOIN_CN + "_" + user.getId());
+            Map<String, Object> bitvcCn = (Map<String, Object>) CacheManager.get(Dict.TYPE.ASSETS + Dict.PLATFORM.BITVC_CN + "_" + user.getId());
 
-        //解析OkcoinCN资产
-        if (okcoinCn != null && okcoinCn.size() > 0) {
-            String okcoinCnTimestamp = okcoinCn.get("timestamp").toString();
-            Long deltaTime = Math.abs(Long.parseLong(okcoinCnTimestamp) - System.currentTimeMillis());
-            if (deltaTime > 3000) {
-                //输出日志（交易中断，okcoinCn资产滞后）
-                userService.addUserLog(user, Dict.LOGTYPE.ANALYSE, "交易中断，okcoinCn资产滞后");
-                logger.info("用户:{},交易中断!OkcoinCn资产获取滞后{}", user.getUsername(), deltaTime);
+            //解析OkcoinCN资产
+            if (okcoinCn != null && okcoinCn.size() > 0) {
+                String okcoinCnTimestamp = okcoinCn.get("timestamp").toString();
+                Long deltaTime = Math.abs(Long.parseLong(okcoinCnTimestamp) - System.currentTimeMillis());
+                if (deltaTime > 3000) {
+                    //输出日志（交易中断，okcoinCn资产滞后）
+                    userService.addUserLog(user, Dict.LOGTYPE.ANALYSE, "交易中断，okcoinCn资产滞后");
+                    logger.info("用户:{},交易中断!OkcoinCn资产在缓存中获取滞后{}", user.getUsername(), deltaTime);
+                    return;
+                }
+                Map<String, Object> okcoinCnResult = (Map<String, Object>) okcoinCn.get("result");
+                Map<String, Object> okcoinCnInfo = (Map<String, Object>) okcoinCnResult.get("info");
+                Map<String, Object> okcoinCnfunds = (Map<String, Object>) okcoinCnInfo.get("funds");
+                Map<String, Object> okcoinCnfree = (Map<String, Object>) okcoinCnfunds.get("free");
+                okcoinCnAvailableBtc = okcoinCnfree.get("btc").toString();
+                okcoinCnAvailableLtc = okcoinCnfree.get("ltc").toString();
+                okcoinCnAvailableCny = okcoinCnfree.get("cny").toString();
+            } else {
+                //输出日志（交易中断!okcoinCn资产无法获取）
+                userService.addUserLog(user, Dict.LOGTYPE.ANALYSE, "交易中断!okcoinCn资产无法获取");
+                logger.info("用户:{},交易中断!okcoinCn资产在缓存中无法获取", user.getUsername());
                 return;
             }
-            Map<String, Object> okcoinCnResult = (Map<String, Object>) okcoinCn.get("result");
-            Map<String, Object> okcoinCnInfo = (Map<String, Object>) okcoinCnResult.get("info");
-            Map<String, Object> okcoinCnfunds = (Map<String, Object>) okcoinCnInfo.get("funds");
-            Map<String, Object> okcoinCnfree = (Map<String, Object>) okcoinCnfunds.get("free");
-            okcoinCnAvailableBtc = okcoinCnfree.get("btc").toString();
-            okcoinCnAvailableLtc = okcoinCnfree.get("ltc").toString();
-            okcoinCnAvailableCny = okcoinCnfree.get("cny").toString();
-        } else {
-            //输出日志（交易中断!okcoinCn资产无法获取）
-            userService.addUserLog(user, Dict.LOGTYPE.ANALYSE, "交易中断!okcoinCn资产无法获取");
-            logger.info("用户:{},交易中断!okcoinCn资产无法获取", user.getUsername());
-            return;
-        }
 
-        //解析BitvcCN资产
-        if (bitvcCn != null && bitvcCn.size() > 0) {
-            String bitvcCnTimestamp = bitvcCn.get("timestamp").toString();
-            Long deltaTime = Math.abs(Long.parseLong(bitvcCnTimestamp) - System.currentTimeMillis());
-            if (deltaTime > 3000) {
-                //输出日志（交易中断，bitvcCn资产滞后）
-                userService.addUserLog(user, Dict.LOGTYPE.ANALYSE, "交易中断，bitvcCn资产滞后");
-                logger.info("用户:{},交易中断!bitvcCn资产获取滞后{}", user.getUsername(), deltaTime);
+            //解析BitvcCN资产
+            if (bitvcCn != null && bitvcCn.size() > 0) {
+                String bitvcCnTimestamp = bitvcCn.get("timestamp").toString();
+                Long deltaTime = Math.abs(Long.parseLong(bitvcCnTimestamp) - System.currentTimeMillis());
+                if (deltaTime > 3000) {
+                    //输出日志（交易中断，bitvcCn资产滞后）
+                    userService.addUserLog(user, Dict.LOGTYPE.ANALYSE, "交易中断，bitvcCn资产在缓存中滞后");
+                    logger.info("用户:{},交易中断!bitvcCn资产在缓存中获取滞后{}", user.getUsername(), deltaTime);
+                    return;
+                }
+                Map<String, Object> bitvcCnResult = (Map<String, Object>) bitvcCn.get("result");
+                bitvcCnAvailableCny = bitvcCnResult.get("available_cny").toString();
+                bitvcCnAvailableBtc = bitvcCnResult.get("available_btc").toString();
+                bitvcCnAvailableLtc = bitvcCnResult.get("available_ltc").toString();
+            } else {
+                userService.addUserLog(user, Dict.LOGTYPE.ANALYSE, "交易中断!bitvcCn资产在缓存中无法获取");
+                logger.info("用户:{},交易中断!bitvcCn资产在缓存中无法获取", user.getUsername());
                 return;
             }
-            Map<String, Object> bitvcCnResult = (Map<String, Object>) bitvcCn.get("result");
-            bitvcCnAvailableCny = bitvcCnResult.get("available_cny").toString();
-            bitvcCnAvailableBtc = bitvcCnResult.get("available_btc").toString();
-            bitvcCnAvailableLtc = bitvcCnResult.get("available_ltc").toString();
-        } else {
-            //输出日志（交易中断!bitvcCn资产无法获取）
-            userService.addUserLog(user, Dict.LOGTYPE.ANALYSE, "交易中断!bitvcCn资产无法获取");
-            logger.info("用户:{},交易中断!bitvcCn资产无法获取", user.getUsername());
-            return;
-        }
 
-        //分析用户资产
-        String doSellPlatformCoinAmount = null;    //卖空平台的可用币数量
-        String doBuyPlatformCoinAmount = null;    //买多平台的可用币数量
+            //分析用户资产
+            String doSellPlatformCoinAmount = null;    //卖空平台的可用币数量
+            String doBuyPlatformCoinAmount = null;    //买多平台的可用币数量
 
-        if (Dict.PLATFORM.OKCOIN_CN.equals(doSellPlatform)) {
-            if (Dict.COIN.BTC.equals(coin)) {
-                doSellPlatformCoinAmount = okcoinCnAvailableBtc;
-            } else if (Dict.COIN.LTC.equals(coin)) {
-                doSellPlatformCoinAmount = okcoinCnAvailableLtc;
-            }
-        } else if (Dict.PLATFORM.OKCOIN_CN.equals(doBuyPlatform)) {
-            doBuyPlatformCoinAmount = okcoinCnAvailableCny;
-        }
-
-        if (Dict.PLATFORM.BITVC_CN.equals(doSellPlatform)) {
-            if (Dict.COIN.BTC.equals(coin)) {
-                doSellPlatformCoinAmount = bitvcCnAvailableBtc;
-            } else if (Dict.COIN.LTC.equals(coin)) {
-                doSellPlatformCoinAmount = bitvcCnAvailableLtc;
-            }
-        } else if (Dict.PLATFORM.BITVC_CN.equals(doBuyPlatform)) {
-            doBuyPlatformCoinAmount = bitvcCnAvailableCny;
-        }
-
-        //用于 0:为对冲中断 1:对冲流程正常
-        int allOk = 1;
-        String doSellPlatformMsg;
-        String doBuyPlatformMsg;
-
-        //准备日志的数据
-        String coinName = Dict.translateDicName(Dict.DICTYPE.COIN, coin);
-        String doSellPlatformName = Dict.translateDicName(Dict.DICTYPE.PLATFORM, doSellPlatform);
-        String doBuyPlatformName = Dict.translateDicName(Dict.DICTYPE.PLATFORM, doBuyPlatform);
-
-        //准备缓存中价格数据，用于判断是否有足够的CNY买入
-        Map<String, Object> priceMap = CacheManager.getCachesByType(Dict.TYPE.PRICE);
-        String buyPrice = ((Map<String, Object>) priceMap.get(Dict.TYPE.PRICE + doBuyPlatform + coin + Dict.DIRECTION.SELL)).get("price").toString();
-
-        //比较是否有足够的数量卖出,doSellPlatformCoinAmount(可用币数)和eachAmount(每次交易最小数量)比较
-        if ((new BigDecimal(doSellPlatformCoinAmount)).compareTo(new BigDecimal(eachAmount)) < 0) {
-            allOk = 0;
-            doSellPlatformMsg = doSellPlatformName + ":没有足够的" + coinName + ",剩余:" + doSellPlatformCoinAmount + coinName + ",需要:" + eachAmount + coinName;
-        } else {
-            doSellPlatformMsg = doSellPlatformName + ":" + coinName + "充足,剩余:" + doSellPlatformCoinAmount;
-        }
-
-        //比较是否有足够的CNY买入,doBuyPlatformCoinAmount和eachAmount*(doBuyPlatformSellPriceOne)比较
-        BigDecimal buyCny = new BigDecimal(eachAmount).multiply(new BigDecimal(buyPrice));   //购买最小单位需要的CNY
-        if ((new BigDecimal(doBuyPlatformCoinAmount)).compareTo(buyCny) < 0) {
-            allOk = 0;
-            doBuyPlatformMsg = doBuyPlatformName + ":没有足够CNY,剩余:" + doBuyPlatformCoinAmount + ",需要:" + buyCny + "CNY";
-        } else {
-            doBuyPlatformMsg = doBuyPlatformName + ":CNY充足,剩余:" + doBuyPlatformCoinAmount;
-        }
-
-        //对冲分析完成
-        if (allOk == 1) {   //交易中断
-            //输出日志（对冲分析完成）
-            userService.addTradeLog(user, Dict.LOGTYPE.ANALYSE, "完成分析!  [做空]:" + doSellPlatformMsg + "  [做多]:" + doBuyPlatformMsg);
-            logger.info("用户:{},完成分析!  [做空]:{}  [做多]:{}", user.getUsername(), doSellPlatformMsg, doBuyPlatformMsg);
-            Map<String, Object> doBuyMap = null;
-            Map<String, Object> doSellMap = null;
-
-            try {
-                doBuyMap = trade(Dict.ENABLE.YES, user, doBuyPlatform, coin, Dict.DIRECTION.BUY, eachAmount);
-                doSellMap = trade(Dict.ENABLE.YES, user, doSellPlatform, coin, Dict.DIRECTION.SELL, eachAmount);
-
-                //失败则重试一遍
-                if ("0".equals(doBuyMap.get("code").toString())) {
-                    doBuyMap = trade(Dict.ENABLE.YES, user, doBuyPlatform, coin, Dict.DIRECTION.BUY, eachAmount);
+            if (Dict.PLATFORM.OKCOIN_CN.equals(doSellPlatform)) {
+                if (Dict.COIN.BTC.equals(coin)) {
+                    doSellPlatformCoinAmount = okcoinCnAvailableBtc;
+                } else if (Dict.COIN.LTC.equals(coin)) {
+                    doSellPlatformCoinAmount = okcoinCnAvailableLtc;
                 }
+            } else if (Dict.PLATFORM.OKCOIN_CN.equals(doBuyPlatform)) {
+                doBuyPlatformCoinAmount = okcoinCnAvailableCny;
+            }
 
-                if ("0".equals(doSellMap.get("code").toString())) {
-                    doSellMap = trade(Dict.ENABLE.YES, user, doSellPlatform, coin, Dict.DIRECTION.SELL, eachAmount);
+            if (Dict.PLATFORM.BITVC_CN.equals(doSellPlatform)) {
+                if (Dict.COIN.BTC.equals(coin)) {
+                    doSellPlatformCoinAmount = bitvcCnAvailableBtc;
+                } else if (Dict.COIN.LTC.equals(coin)) {
+                    doSellPlatformCoinAmount = bitvcCnAvailableLtc;
                 }
+            } else if (Dict.PLATFORM.BITVC_CN.equals(doBuyPlatform)) {
+                doBuyPlatformCoinAmount = bitvcCnAvailableCny;
+            }
 
-                //交易成功
-                if ("1".equals(doBuyMap.get("code").toString()) && "1".equals(doSellMap.get("code").toString())) {
-                    userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易完成![币种:" + coin + "],[对冲数量:" + eachAmount + "]" + "[做空平台:" + doSellPlatform + "]" + "[做多平台:" + doBuyPlatform + "]");
+            //用于 0:为对冲中断 1:对冲流程正常
+            int allOk = 1;
+            String doSellPlatformMsg;
+            String doBuyPlatformMsg;
 
-                } else {
-                    //交易失败
-                    String doBuyResult = "交易成功";
-                    String doSellResult = "交易成功";
-                    if ("0".equals(doBuyMap.get("code").toString())) {
-                        doBuyResult = "交易失败";
+            //准备日志的数据
+            String coinName = Dict.translateDicName(Dict.DICTYPE.COIN, coin);
+            String doSellPlatformName = Dict.translateDicName(Dict.DICTYPE.PLATFORM, doSellPlatform);
+            String doBuyPlatformName = Dict.translateDicName(Dict.DICTYPE.PLATFORM, doBuyPlatform);
+
+            //准备缓存中价格数据，用于判断是否有足够的CNY买入
+            Map<String, Object> priceMap = CacheManager.getCachesByType(Dict.TYPE.PRICE);
+            String buyPrice = ((Map<String, Object>) priceMap.get(Dict.TYPE.PRICE + doBuyPlatform + coin + Dict.DIRECTION.SELL)).get("price").toString();
+
+            //比较是否有足够的数量卖出,doSellPlatformCoinAmount(可用币数)和eachAmount(每次交易最小数量)比较
+            if ((new BigDecimal(doSellPlatformCoinAmount)).compareTo(new BigDecimal(eachAmount)) < 0) {
+                allOk = 0;
+                doSellPlatformMsg = doSellPlatformName + ":没有足够的" + coinName + ",剩余:" + doSellPlatformCoinAmount + coinName + ",需要:" + eachAmount + coinName;
+            } else {
+                doSellPlatformMsg = doSellPlatformName + ":" + coinName + "充足,剩余:" + doSellPlatformCoinAmount;
+            }
+
+            //比较是否有足够的CNY买入,doBuyPlatformCoinAmount和eachAmount*(doBuyPlatformSellPriceOne)比较
+            BigDecimal buyCny = new BigDecimal(eachAmount).multiply(new BigDecimal(buyPrice));   //购买最小单位需要的CNY
+            if ((new BigDecimal(doBuyPlatformCoinAmount)).compareTo(buyCny) < 0) {
+                allOk = 0;
+                doBuyPlatformMsg = doBuyPlatformName + ":没有足够CNY,剩余:" + doBuyPlatformCoinAmount + ",需要:" + buyCny + "CNY";
+            } else {
+                doBuyPlatformMsg = doBuyPlatformName + ":CNY充足,剩余:" + doBuyPlatformCoinAmount;
+            }
+
+            //对冲分析完成
+            if (allOk == 1) {   //交易中断
+                //输出日志（对冲分析完成）
+                userService.addTradeLog(user, Dict.LOGTYPE.ANALYSE, "完成分析!  [做空]:" + doSellPlatformMsg + "  [做多]:" + doBuyPlatformMsg);
+                logger.info("用户:{},完成分析!  [做空]:{}  [做多]:{}", user.getUsername(), doSellPlatformMsg, doBuyPlatformMsg);
+                Map<String, Object> doBuyMap = null;
+                Map<String, Object> doSellMap = null;
+
+                //先交易BITVC，如果BITVC交易失败则不继续交易
+                try {
+                    if (Dict.PLATFORM.BITVC_CN .equals(doBuyPlatform)){
+                        doBuyMap = trade(Dict.ENABLE.YES, user, doBuyPlatform, coin, Dict.DIRECTION.BUY, eachAmount);
+                        //失败则重试一遍
+                        if ("0".equals(doBuyMap.get("code").toString())) {
+                            userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易失败，重试![做多平台:" + doBuyPlatformName + "]" );
+                            doBuyMap = trade(Dict.ENABLE.YES, user, doBuyPlatform, coin, Dict.DIRECTION.BUY, eachAmount);
+                        }
+                        //如果还是失败，则终止该次交易
+                        if ("0".equals(doBuyMap.get("code").toString())){
+                            userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易异常![做多平台:" + doBuyPlatformName + "]重试交易异常中断该次交易");
+                            return;
+                        }else if ("1".equals(doBuyMap.get("code").toString())){ //如果BITVC交易成功再进行其他平台的操作
+                            doSellMap = trade(Dict.ENABLE.YES, user, doSellPlatform, coin, Dict.DIRECTION.SELL, eachAmount);
+                            if ("0".equals(doSellMap.get("code").toString())) {
+                                userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易失败，重试![做空平台:" + doSellPlatformName + "]" );
+                                doSellMap = trade(Dict.ENABLE.YES, user, doSellPlatform, coin, Dict.DIRECTION.SELL, eachAmount);
+                            }
+                        }
+                    }else if (Dict.PLATFORM.BITVC_CN .equals(doSellPlatform)){
+                        doSellMap = trade(Dict.ENABLE.YES, user, doSellPlatform, coin, Dict.DIRECTION.SELL, eachAmount);
+                        //失败则重试一遍
+                        if ("0".equals(doSellMap.get("code").toString())) {
+                            userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易失败，重试![做空平台:" + doSellPlatformName + "]" );
+                            doSellMap = trade(Dict.ENABLE.YES, user, doSellPlatform, coin, Dict.DIRECTION.SELL, eachAmount);
+                        }
+                        //如果还是失败，则终止该次交易
+                        if ("0".equals(doSellMap.get("code").toString())) {
+                            userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易异常![做空平台:" + doSellPlatformName + "]重试交易异常中断该次交易");
+                            return;
+                        }else if ("1".equals(doSellMap.get("code").toString())){    //如果BITVC交易成功再进行其他平台的操作
+                            doBuyMap = trade(Dict.ENABLE.YES, user, doBuyPlatform, coin, Dict.DIRECTION.BUY, eachAmount);
+                            if ("0".equals(doBuyMap.get("code").toString())) {
+                                userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易失败，重试![做多平台:" + doBuyPlatformName + "]" );
+                                doBuyMap = trade(Dict.ENABLE.YES, user, doBuyPlatform, coin, Dict.DIRECTION.BUY, eachAmount);
+                            }
+                        }
                     }
-                    if ("0".equals(doSellMap.get("code").toString())) {
-                        doSellResult = "交易失败";
+
+
+                    //交易成功
+                    if ("1".equals(doBuyMap.get("code").toString()) && "1".equals(doSellMap.get("code").toString())) {
+                        userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易完成![币种:" + coin + "],[对冲数量:" + eachAmount + "]" + "[做空平台:" + doSellPlatform + "]" + "[做多平台:" + doBuyPlatform + "]");
+
+                    } else {
+                        //交易失败
+                        String doBuyResult = "交易成功";
+                        String doSellResult = "交易成功";
+                        if ("0".equals(doBuyMap.get("code").toString())) {
+                            doBuyResult = "交易失败";
+                        }
+                        if ("0".equals(doSellMap.get("code").toString())) {
+                            doSellResult = "交易失败";
+                        }
+                        //输出交易失败日志日志
+                        userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易失败![币种:" + coin + "],[对冲数量:" + eachAmount + "]" + "[做空平台:" + doSellPlatform + doSellResult + "]" + "[做多平台:" + doBuyPlatform + doBuyResult + "]");
+                        userService.addUserLog(user, Dict.LOGTYPE.TRADE, "暂停所有自动交易");
+
+                        //暂停所有自动交易
+                        userService.updateUserTradeSettingAuto(Dict.ENABLE.NO, Dict.ENABLE.NO);
                     }
-                    //输出交易失败日志日志
-                    userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易失败![币种:" + coin + "],[对冲数量:" + eachAmount + "]" + "[做空平台:" + doSellPlatform + doSellResult + "]" + "[做多平台:" + doBuyPlatform + doBuyResult + "]");
+                } catch (IOException e) {
+                    //输出异常日志
+                    userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易异常![币种:" + coin + "],[对冲数量:" + eachAmount + "]" + "[做空平台:" + doSellPlatform + "]" + "[做多平台:" + doBuyPlatform + "]");
+                    userService.addUserLog(user, Dict.LOGTYPE.TRADE, e.toString());
                     userService.addUserLog(user, Dict.LOGTYPE.TRADE, "暂停所有自动交易");
-
                     //暂停所有自动交易
                     userService.updateUserTradeSettingAuto(Dict.ENABLE.NO, Dict.ENABLE.NO);
                 }
-            } catch (IOException e) {
-                //输出异常日志
-                userService.addUserLog(user, Dict.LOGTYPE.TRADE, "交易异常![币种:" + coin + "],[对冲数量:" + eachAmount + "]" + "[做空平台:" + doSellPlatform + "]" + "[做多平台:" + doBuyPlatform + "]");
-                userService.addUserLog(user, Dict.LOGTYPE.TRADE, e.toString());
-                userService.addUserLog(user, Dict.LOGTYPE.TRADE, "暂停所有自动交易");
-                //暂停所有自动交易
-                userService.updateUserTradeSettingAuto(Dict.ENABLE.NO, Dict.ENABLE.NO);
+            } else if (allOk == 0) {
+                // 输出日志（("交易中断!用户{},对冲分析:" + "{[做空]:" + doSellPlatformMsg + "}" + "{[做多]:" + doBuyPlatformMsg + "}");
+                userService.addUserLog(user, Dict.LOGTYPE.ANALYSE, "交易中断! 对冲分析: [做空]:" + doSellPlatformMsg + "  [做多]:" + doBuyPlatformMsg);
+                logger.info("用户:{},交易中断! 对冲分析: [做空]:{}  [做多]:{}", user.getUsername(), doSellPlatformMsg, doBuyPlatformMsg);
             }
-        } else if (allOk == 0) {
-            // 输出日志（("交易中断!用户{},对冲分析:" + "{[做空]:" + doSellPlatformMsg + "}" + "{[做多]:" + doBuyPlatformMsg + "}");
-            userService.addUserLog(user, Dict.LOGTYPE.ANALYSE, "交易中断! 对冲分析: [做空]:" + doSellPlatformMsg + "  [做多]:" + doBuyPlatformMsg);
-            logger.info("用户:{},交易中断! 对冲分析: [做空]:{}  [做多]:{}", user.getUsername(), doSellPlatformMsg, doBuyPlatformMsg);
         }
-
     }
 
     @Override

@@ -72,10 +72,15 @@ public class BitvcServiceImpl implements BitvcService{
                 url =bitvcCnConfig.getUserinfo();
             }
             String result = HttpUtils.doPost(url,params);
-            map.put("code","1");
-            map.put("msg","OK");
             Gson gson = new Gson();
-            map.put("result",gson.fromJson(result,Map.class));
+            Map<String,Object> resultMap = gson.fromJson(result,Map.class);
+            if (resultMap.get("total")!=null&&!"".equals(resultMap.get("total").toString())){
+                map.put("code", "1");
+            }else {
+                map.put("code", "0");
+                map.put("msg", "Bitvc资产请求失败");
+            }
+            map.put("result", resultMap);
         } catch (IOException e) {
             logger.error("Bitvc用户资产请求失败");
             //e.printStackTrace();
@@ -126,8 +131,15 @@ public class BitvcServiceImpl implements BitvcService{
             String sign = MD5Util.buildMysignV1(params, secretKey);
             params.put("sign", sign.toLowerCase());
             String resultHttp = HttpUtils.doPost(url,params);
-            result.put("code", "1");
-            result.put("result", resultHttp);
+            Gson gson = new Gson();
+            Map<String,Object> resultMap = gson.fromJson(resultHttp,Map.class);
+            if (resultMap.get("result")!=null&&"success".equals(resultMap.get("result").toString())){
+                result.put("code", "1");
+            }else {
+                result.put("code", "0");
+                result.put("msg", "Bitvc交易请求失败");
+            }
+            result.put("result", resultMap);
         } else {
             result.put("code", "0");
             result.put("msg", "Bitvc的key不完整，请检查！");

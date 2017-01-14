@@ -3,6 +3,7 @@ package com.awinson.service;
 import com.awinson.Entity.User;
 import com.awinson.Entity.UserApi;
 import com.awinson.config.OkcoinCnConfig;
+import com.awinson.config.OkcoinFutureConfig;
 import com.awinson.config.OkcoinUnConfig;
 import com.awinson.dictionary.Dict;
 import com.awinson.repository.UserApiRepository;
@@ -35,6 +36,8 @@ public class OkcoinServiceImpl implements OkcoinService {
     @Autowired
     private OkcoinUnConfig okcoinUnConfig;
     @Autowired
+    private OkcoinFutureConfig okcoinFutureConfig;
+    @Autowired
     private UserService userService;
 @Autowired
 private UserApiRepository userApiRepository;
@@ -57,6 +60,7 @@ private UserApiRepository userApiRepository;
     @Override
     public Map<String, Object> getSpotUserinfo(String platform, String apiKey, String secretKey) {
         Map<String, Object> map = new HashMap();
+        Gson gson = new Gson();
         if (!StringUtil.isEmpty(apiKey) && !StringUtil.isEmpty(secretKey)) {
             // 构造参数签名
             Map<String, String> params = new HashMap();
@@ -65,20 +69,24 @@ private UserApiRepository userApiRepository;
             params.put("sign", sign);
             // 发送post请求
             try {
-                String url;
-                if (platform.equals(Dict.PLATFORM.OKCOIN_CN)) {
-                    url = okcoinCnConfig.getUserinfo();
-                } else {
-                    url = okcoinUnConfig.getUserinfo();
+                String url=null;
+                switch (platform){
+                    case Dict.PLATFORM.OKCOIN_CN:url=okcoinCnConfig.getUserinfo();break;
+                    case Dict.PLATFORM.OKCOIN_UN:url=okcoinUnConfig.getUserinfo();break;
+                    case Dict.PLATFORM.OKCOIN_FUTURE:url=okcoinFutureConfig.getUserinfo();break;
+                    default:break;
                 }
                 String result = HttpUtils.doPost(url, params);
-                map.put("code", "1");
-                map.put("msg", "OK");
-                Gson gson = new Gson();
-                map.put("result", gson.fromJson(result, Map.class));
+                Map<String,Object> resultMap = gson.fromJson(result,Map.class);
+                if (resultMap.get("result")!=null&&"true".equals(resultMap.get("result").toString())){
+                    map.put("code", "1");
+                }else {
+                    map.put("code", "0");
+                    map.put("msg", "Okcoin用户资产请求失败");
+                }
+                map.put("result", resultMap);
             } catch (IOException e) {
                 logger.error("Okcoin用户资产请求失败");
-                //e.printStackTrace();
             }
             return map;
         }
@@ -130,9 +138,16 @@ private UserApiRepository userApiRepository;
             params.put("sign", sign);
 
             // 发送post请求
-            String resultMsg = HttpUtils.doPost(url, params);
-            result.put("code", "1");
-            result.put("result", resultMsg);
+            String resultHttp = HttpUtils.doPost(url, params);
+            Gson gson = new Gson();
+            Map<String,Object> resultMap = gson.fromJson(resultHttp,Map.class);
+            if (resultMap.get("result")!=null&&"true".equals(resultMap.get("result").toString())){
+                result.put("code", "1");
+            }else {
+                result.put("code", "0");
+                result.put("msg", "Okcoin交易请求失败");
+            }
+            result.put("result", resultMap);
         } else {
             result.put("code", "0");
             result.put("msg", "Okcoind的key不完整，请检查！");

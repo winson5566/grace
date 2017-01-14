@@ -14,7 +14,8 @@ public class Dict {
     }
     public static class PLATFORM {
         public static final String OKCOIN_CN = "00";     //Okcoin中国站
-        public static final String OKCOIN_UN = "01";     //Okcoin国际站
+        public static final String OKCOIN_UN = "01";     //Okcoin国际站现货
+        public static final String OKCOIN_FUTURE = "02";     //Okcoin国际站现货
         public static final String BITVC_CN = "10";      //Bitvc中国站
         public static final String BITVC_UN = "11";      //Bitvc国际站
     }

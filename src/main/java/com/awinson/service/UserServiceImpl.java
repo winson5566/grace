@@ -6,6 +6,7 @@ import com.awinson.WebSocket.web.WebSocketBaseService;
 import com.awinson.cache.CacheManager;
 import com.awinson.config.BitvcCnConfig;
 import com.awinson.config.OkcoinCnConfig;
+import com.awinson.config.OkcoinFutureConfig;
 import com.awinson.config.OkcoinUnConfig;
 import com.awinson.dictionary.Dict;
 import com.awinson.repository.*;
@@ -55,6 +56,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private OkcoinCnConfig okcoinCnConfig;
+    @Autowired
+    private OkcoinFutureConfig okcoinFutureConfig;
     @Autowired
     private OkcoinUnConfig okcoinUnConfig;
     @Autowired
@@ -254,13 +257,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Map<String, Object> getUserAssetsInfo2CacheByPlatform(User user,String platform) {
-        Map<String,Object> result = new HashMap();
+    public Map<String, Object> getUserAssetsInfo2CacheByPlatform(User user, String platform) {
+        Map<String, Object> result = new HashMap();
         //获取平台的API key
-        String apiKey = userApiRepository.findByUserIdAndPlatformAndApiType(user.getId(),platform,Dict.KEY.API).getApi();
-        String secretKey = userApiRepository.findByUserIdAndPlatformAndApiType(user.getId(),platform,Dict.KEY.SECRET).getApi();
+        String apiKey = userApiRepository.findByUserIdAndPlatformAndApiType(user.getId(), platform, Dict.KEY.API).getApi();
+        String secretKey = userApiRepository.findByUserIdAndPlatformAndApiType(user.getId(), platform, Dict.KEY.SECRET).getApi();
         Map<String, Object> map = new HashMap();
-        if (Dict.PLATFORM.OKCOIN_CN.equals(platform) || Dict.PLATFORM.OKCOIN_UN.equals(platform)) {
+        if (Dict.PLATFORM.OKCOIN_CN.equals(platform) || Dict.PLATFORM.OKCOIN_UN.equals(platform) || Dict.PLATFORM.OKCOIN_FUTURE.equals(platform)) {
             map = okcoinService.getSpotUserinfo(platform, apiKey, secretKey);
         } else if (Dict.PLATFORM.BITVC_CN.equals(platform) || Dict.PLATFORM.BITVC_UN.equals(platform)) {
             map = bitvcService.getSpotUserinfo(platform, apiKey, secretKey);
@@ -268,11 +271,11 @@ public class UserServiceImpl implements UserService {
         if (map != null && map.size() > 0) {
             map.put("timestamp", String.valueOf(System.currentTimeMillis()));
             CacheManager.update(Dict.TYPE.ASSETS + platform + "_" + user.getId(), map);
-            result.put("code","1");
-            result.put("msg","获取资产成功");
-        }else {
-            result.put("code","0");
-            result.put("msg","获取资产失败");
+            result.put("code", "1");
+            result.put("msg", "获取资产成功");
+        } else {
+            result.put("code", "0");
+            result.put("msg", "获取资产失败");
         }
         return result;
     }
@@ -299,6 +302,9 @@ public class UserServiceImpl implements UserService {
                     case Dict.PLATFORM.OKCOIN_UN:
                         url = okcoinUnConfig.getUserinfo();
                         break;
+                    case Dict.PLATFORM.OKCOIN_FUTURE:
+                        url = okcoinFutureConfig.getUserinfo();
+                        break;
                     case Dict.PLATFORM.BITVC_CN:
                         url = bitvcCnConfig.getUserinfo();
                         break;
@@ -314,7 +320,7 @@ public class UserServiceImpl implements UserService {
 
     private void getUserInfo2Cache(String userId, String platform, String apiKey, String secretKey) {
         Map<String, Object> map = new HashMap();
-        if (Dict.PLATFORM.OKCOIN_CN.equals(platform) || Dict.PLATFORM.OKCOIN_UN.equals(platform)) {
+        if (Dict.PLATFORM.OKCOIN_CN.equals(platform) || Dict.PLATFORM.OKCOIN_UN.equals(platform) || Dict.PLATFORM.OKCOIN_FUTURE.equals(platform)) {
             map = okcoinService.getSpotUserinfo(platform, apiKey, secretKey);
         } else if (Dict.PLATFORM.BITVC_CN.equals(platform) || Dict.PLATFORM.BITVC_UN.equals(platform)) {
             map = bitvcService.getSpotUserinfo(platform, apiKey, secretKey);
@@ -456,20 +462,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserLog> getUserLog(String userId, String type,String amount) {
-        if ("10".equals(amount)){
-             return userLogRepository.findTop10ByUserIdAndTypeOrderByCreateTimestampDesc(userId, type);
+    public List<UserLog> getUserLog(String userId, String type, String amount) {
+        if ("10".equals(amount)) {
+            return userLogRepository.findTop10ByUserIdAndTypeOrderByCreateTimestampDesc(userId, type);
         }
         return userLogRepository.findTop10ByUserIdAndTypeOrderByCreateTimestampDesc(userId, type);
     }
+
     @Override
-    public String  getLogByTypeAndAmount(String type, String amount){
+    public String getLogByTypeAndAmount(String type, String amount) {
         Gson gson = new Gson();
         List<UserLog> list;
-        if ("200".equals(amount)){
-            list =  userLogRepository.findTop200ByUserIdAndTypeOrderByCreateTimestampDesc(getUserId(), type);
-        }else {
-            list =  userLogRepository.findTop200ByUserIdAndTypeOrderByCreateTimestampDesc(getUserId(), type);
+        if ("200".equals(amount)) {
+            list = userLogRepository.findTop200ByUserIdAndTypeOrderByCreateTimestampDesc(getUserId(), type);
+        } else {
+            list = userLogRepository.findTop200ByUserIdAndTypeOrderByCreateTimestampDesc(getUserId(), type);
         }
         return gson.toJson(list);
     }
@@ -494,9 +501,15 @@ public class UserServiceImpl implements UserService {
         for (User user : list) {
             Map<String, Object> map = new HashMap();
             Map<String, Object> okcoinCnMap = (Map<String, Object>) CacheManager.get(Dict.TYPE.ASSETS + Dict.PLATFORM.OKCOIN_CN + "_" + user.getId());
+            Map<String, Object> okcoinUnMap = (Map<String, Object>) CacheManager.get(Dict.TYPE.ASSETS + Dict.PLATFORM.OKCOIN_UN + "_" + user.getId());
+            Map<String, Object> okcoinFutureMap = (Map<String, Object>) CacheManager.get(Dict.TYPE.ASSETS + Dict.PLATFORM.OKCOIN_FUTURE + "_" + user.getId());
             Map<String, Object> bitvcCnMap = (Map<String, Object>) CacheManager.get(Dict.TYPE.ASSETS + Dict.PLATFORM.BITVC_CN + "_" + user.getId());
             if (okcoinCnMap != null && okcoinCnMap.size() > 0)
                 map.put("p" + Dict.PLATFORM.OKCOIN_CN, okcoinCnMap);
+            if (okcoinUnMap != null && okcoinUnMap.size() > 0)
+                map.put("p" + Dict.PLATFORM.OKCOIN_UN, okcoinUnMap);
+            if (okcoinFutureMap != null && okcoinFutureMap.size() > 0)
+                map.put("p" + Dict.PLATFORM.OKCOIN_FUTURE, okcoinFutureMap);
             if (bitvcCnMap != null && bitvcCnMap.size() > 0)
                 map.put("p" + Dict.PLATFORM.BITVC_CN, bitvcCnMap);
             if (map.size() > 0) {
@@ -512,9 +525,9 @@ public class UserServiceImpl implements UserService {
         Gson gson = new Gson();
         for (User user : list) {
             Map<String, List<UserLog>> map = new HashMap();
-            List<UserLog> thresholdList = getUserLog(user.getId(), Dict.LOGTYPE.THRESHOLD,"10");
-            List<UserLog> analyseList = getUserLog(user.getId(), Dict.LOGTYPE.ANALYSE,"10");
-            List<UserLog> tradeList = getUserLog(user.getId(), Dict.LOGTYPE.TRADE,"10");
+            List<UserLog> thresholdList = getUserLog(user.getId(), Dict.LOGTYPE.THRESHOLD, "10");
+            List<UserLog> analyseList = getUserLog(user.getId(), Dict.LOGTYPE.ANALYSE, "10");
+            List<UserLog> tradeList = getUserLog(user.getId(), Dict.LOGTYPE.TRADE, "10");
             if (thresholdList != null && thresholdList.size() > 0)
                 map.put("thresholdList", thresholdList);
             if (analyseList != null && analyseList.size() > 0)

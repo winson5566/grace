@@ -107,6 +107,49 @@ function showAssets(message) {
         $("#assets-bitvc-net-asset").text(result.result.net_asset);
         $("#assets-bitvc-total-asset").text(result.result.total);
     }
+
+    //OkcoinUN
+    if (obj.p01 != null) {
+        var result = obj.p01;
+        if (result.result.info.funds != null) {
+            $("#assets-okcoin-un-btc-free").text(result.result.info.funds.free.btc);
+            $("#assets-okcoin-un-ltc-free").text(result.result.info.funds.free.ltc);
+            $("#assets-okcoin-un-usd-free").text(result.result.info.funds.free.usd);
+            if (result.result.info.funds.borrow != null) {
+                $("#assets-okcoin-un-btc-borrow").text(result.result.info.funds.borrow.btc);
+                $("#assets-okcoin-un-ltc-borrow").text(result.result.info.funds.borrow.ltc);
+                $("#assets-okcoin-un-usd-borrow").text(result.result.info.funds.borrow.usd);
+            }
+            $("#assets-okcoin-un-btc-freezed").text(result.result.info.funds.freezed.btc);
+            $("#assets-okcoin-un-ltc-freezed").text(result.result.info.funds.freezed.ltc);
+            $("#assets-okcoin-un-usd-freezed").text(result.result.info.funds.freezed.usd);
+            $("#assets-okcoin-un-net-asset").text(result.result.info.funds.asset.net);
+            $("#assets-okcoin-un-total-asset").text(result.result.info.funds.asset.total);
+        }
+    }
+
+    //OkcoinFuture
+    if (obj.p02 != null) {
+        var result = obj.p02;
+        if (result.result.info != null) {
+            $("#assets-okcoin-future-btc-accountRights").text((result.result.info.btc.account_rights).toFixed(2));
+            $("#assets-okcoin-future-btc-keepDeposit").text((result.result.info.btc.keep_deposit).toFixed(2));
+            $("#assets-okcoin-future-btc-riskRate").text((result.result.info.btc.risk_rate*100).toFixed(0)+'%');
+            $("#assets-okcoin-future-btc-profitReal").text((result.result.info.btc.profit_real).toFixed(2));
+            $("#assets-okcoin-future-btc-profitUnreal").text((result.result.info.btc.profit_unreal).toFixed(2));
+
+            $("#assets-okcoin-future-ltc-accountRights").text((result.result.info.ltc.account_rights).toFixed(2));
+            $("#assets-okcoin-future-ltc-keepDeposit").text((result.result.info.ltc.keep_deposit).toFixed(2));
+            $("#assets-okcoin-future-ltc-riskRate").text((result.result.info.ltc.risk_rate*100).toFixed(0)+'%');
+            $("#assets-okcoin-future-ltc-profitReal").text((result.result.info.ltc.profit_real).toFixed(2));
+            $("#assets-okcoin-future-ltc-profitUnreal").text((result.result.info.ltc.profit_unreal).toFixed(2));
+        }
+    }
+    var spotAssets = $("#assets-okcoin-net-asset").text()*1.0+$("#assets-bitvc-net-asset").text()*1.0;
+    var futureBtcAssets =($("#assets-okcoin-future-btc-accountRights").text()*1.0)*($("#okcoin-btc-last-price").text()*1.0);
+    var futureLtcAssets =($("#assets-okcoin-future-ltc-accountRights").text()*1.0)*($("#okcoin-ltc-last-price").text()*1.0);
+    var totalAssets =spotAssets*1.0+futureBtcAssets*1.0+futureLtcAssets*1.0;
+    $("#assets-net-total").text((totalAssets).toFixed(2));
 }
 
 
